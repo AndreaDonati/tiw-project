@@ -14,13 +14,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.utils.ConnectionHandler;
 
 @WebServlet("/Home")
 public class GoToHomePage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-//	private TemplateEngine templateEngine;
+	private TemplateEngine templateEngine;
 	private Connection connection = null;
 
 	public GoToHomePage() {
@@ -29,6 +34,11 @@ public class GoToHomePage extends HttpServlet {
 
 	public void init() throws ServletException {
 		ServletContext servletContext = getServletContext();
+		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
+		templateResolver.setTemplateMode(TemplateMode.HTML);
+		this.templateEngine = new TemplateEngine();
+		this.templateEngine.setTemplateResolver(templateResolver);
+		templateResolver.setSuffix(".html");
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
@@ -42,6 +52,10 @@ public class GoToHomePage extends HttpServlet {
 			return;
 		}
 		User user = (User) session.getAttribute("user");
+//		PROVA + temporaneo
+		session.setAttribute("username", user.getUsername());
+		session.setAttribute("lastAccessedTime", new java.util.Date());
+//		---------------
 
 //		try {
 //			missions = missionsDAO.findMissionsByUser(user.getId());
@@ -51,12 +65,11 @@ public class GoToHomePage extends HttpServlet {
 //		}
 
 		// Redirect to the Home page and add missions to the parameters
-		String path = "Home.jsp";
+		String path = "/Templates/Login/Home.html";
 		ServletContext servletContext = getServletContext();
-//		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 //		ctx.setVariable("missions", missions);
-//		templateEngine.process(path, ctx, response.getWriter());
-		response.sendRedirect(path);
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

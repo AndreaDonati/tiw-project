@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Home</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" media="all"
+	href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
+</head>
+<body>
+	<h1>Benvenuto nel servizio clienti Vodafone</h1>
+
+	<p>
+		Username: <span th:text="${{session.username}}">US</span>
+	</p>
+
+	<p>
+		Your last visit was on (implicit object and double-bracket operator
+		for conversion): <span th:text="${{session.lastAccessedTime}}">2020/01/01</span>
+	</p>
+
+	<p>
+		Your last visit was on (#syntax and explicit converter): <span
+			th:text="${#dates.format(session.lastAccessedTime, 'dd-MMM-yyyy')}">2020/01/01</span>
+	</p>
+
+</body>
+</html>
+
