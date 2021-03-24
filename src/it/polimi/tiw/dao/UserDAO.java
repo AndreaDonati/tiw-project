@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import it.polimi.tiw.beans.User;
 
 public class UserDAO {
@@ -32,5 +35,24 @@ public class UserDAO {
 				}
 			}
 		}
+	}
+	
+	public List<User> getAllUsers() throws SQLException {
+		List<User> users = new ArrayList<User>();
+		
+		String query = "SELECT name, surname, username FROM user";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			try (ResultSet result = pstatement.executeQuery();) {
+				while(!result.isLast()) { // FUNZIONA????
+					result.next();
+					User user = new User();
+					user.setUsername(result.getString("username"));
+					user.setName(result.getString("name"));
+					user.setSurname(result.getString("surname"));
+					users.add(user);
+				}
+			}
+		}
+		return users;
 	}
 }

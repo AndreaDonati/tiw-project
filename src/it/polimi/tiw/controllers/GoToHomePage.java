@@ -20,6 +20,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
 @WebServlet("/Home")
@@ -56,19 +57,20 @@ public class GoToHomePage extends HttpServlet {
 		session.setAttribute("username", user.getUsername());
 		session.setAttribute("lastAccessedTime", new java.util.Date());
 //		---------------
-
-//		try {
-//			missions = missionsDAO.findMissionsByUser(user.getId());
-//		} catch (SQLException e) {
-//			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover missions");
-//			return;
-//		}
+		List<User> users = null;
+		try {
+			UserDAO userDao = new UserDAO(connection);
+			users = userDao.getAllUsers();
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users"+e.toString());
+			return;
+		}
 
 		// Redirect to the Home page and add missions to the parameters
 		String path = "/Templates/Login/Home.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-//		ctx.setVariable("missions", missions);
+		ctx.setVariable("allUsers", users);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

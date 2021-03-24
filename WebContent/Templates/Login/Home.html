@@ -13,15 +13,23 @@
 		Username: <span th:text="${{session.username}}">US</span>
 	</p>
 
-	<p>
-		Your last visit was on (implicit object and double-bracket operator
-		for conversion): <span th:text="${{session.lastAccessedTime}}">2020/01/01</span>
-	</p>
+	<p th:text="${'Nice to see you again ' + session.user.name + ' ' + session.user.surname}"></p>
 
-	<p>
-		Your last visit was on (#syntax and explicit converter): <span
-			th:text="${#dates.format(session.lastAccessedTime, 'dd-MMM-yyyy')}">2020/01/01</span>
-	</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Surname</th>
+				<th>Username</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="u : ${allUsers}">
+				<td th:text="${u.name}"></td>
+				<td th:text="${ u.surname }"></td>
+				<td th:text="${ u.username }"></td>
+			</tr>
+		</tbody>
 
 </body>
 </html>
