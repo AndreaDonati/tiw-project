@@ -2,17 +2,18 @@ package it.polimi.tiw.beans;
 
 public class User {
 
-	private int id;
+	private int matricola;
 	private String username;
 	private String name;
 	private String surname;
+	private String ruolo;
 
-	public int getId() {
-		return id;
+	public int getMatricola() {
+		return matricola;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setMatricola(int matricola) {
+		this.matricola = matricola;
 	}
 
 	public String getUsername() {
@@ -37,6 +38,14 @@ public class User {
 
 	public void setSurname(String surname) {
 		this.surname = surname;
+	}
+	
+	public void setRuolo(String ruolo) {
+		this.ruolo = ruolo;
+	}
+	
+	public String getRuolo() {
+		return ruolo;
 	}
 
 }
