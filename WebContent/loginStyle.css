@@ -4,6 +4,7 @@ body {
     font-family: "Montserrat", sans-serif;
     background: linear-gradient(to right, #b92b27, #1565c0);
     background-repeat: no-repeat;
+    background-size: 150vw 150vh;
     background-image: url('https://image.jimcdn.com/app/cms/image/transf/none/path/sf63059cf0e80ccf2/image/i7001d23fa637ce9c/version/1593436367/image.jpg')
 }
 
