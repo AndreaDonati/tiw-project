@@ -78,8 +78,10 @@ public class CheckLogin extends HttpServlet {
 
 		// If the user exists, add info to the session and go to home page, otherwise
 		// show login page with error message
-
-		String path;
+		
+		// Controllo se lo user che si è loggato è uno studente o un professore e lo reindirizzo 
+		// alla home corrispondende allo studente o al professore
+		String path="";
 		if (user == null) {
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
@@ -88,10 +90,14 @@ public class CheckLogin extends HttpServlet {
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);
-			path = getServletContext().getContextPath() + "/HomeStudente";
-			response.sendRedirect(path);
-		}
+			// seleziono il path corretto in base al ruolo dello user
+			if(user.getRuolo().equals("student")) 
+				path = getServletContext().getContextPath() + "/HomeStudente";
+			else if(user.getRuolo().equals("teacher")) 
+				path = getServletContext().getContextPath() + "/HomeProf";
 
+			response.sendRedirect(path);
+		} 
 	}
 
 	public void destroy() {

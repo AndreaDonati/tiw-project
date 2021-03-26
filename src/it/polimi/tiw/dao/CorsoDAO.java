@@ -23,7 +23,7 @@ public class CorsoDAO {
 	 * @param matricola
 	 * @return
 	 */
-	public List<Corso> getCorsiFromMatricolaStudente(String matricola) throws SQLException{
+	public List<Corso> getCorsiFromMatricolaStudente(int matricola) throws SQLException{
 		List<Corso> corsi = new ArrayList<Corso>();
 		
 		String query = "SELECT  idCorso, nomeCorso, annoCorso "
@@ -31,7 +31,7 @@ public class CorsoDAO {
 				+ "		WHERE corso.id = frequentazione.idCorso "
 				+ "     AND matricolaStudente = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setInt(1, Integer.parseInt(matricola));
+			pstatement.setInt(1, matricola);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (!result.isLast()) {
 					result.next();
@@ -47,8 +47,26 @@ public class CorsoDAO {
 		return corsi;
 	}
 	
-	public List<Corso> getCorsiFromMatricolaProfessore(){
+	public List<Corso> getCorsiFromMatricolaProfessore(int matricola) throws SQLException {
 		List<Corso> corsi = new ArrayList<Corso>();
+		
+		String query = "SELECT  id, nomeCorso, annoCorso "
+				+ "		FROM corso "
+				+ "		WHERE matricolaProfessore = ? ";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1,matricola);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (!result.isLast()) {
+					result.next();
+					Corso corso = new Corso();
+					corso.setId(result.getInt("id"));
+					corso.setNome(result.getString("nomeCorso"));
+					corso.setAnno(result.getInt("annoCorso"));
+					corsi.add(corso);
+				}
+			}
+		}
+		
 		return corsi;
 	}
 }

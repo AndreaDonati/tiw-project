@@ -25,13 +25,13 @@ import it.polimi.tiw.dao.CorsoDAO;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-@WebServlet("/HomeStudente")
-public class GoToHomePageStudente extends HttpServlet {
+@WebServlet("/HomeProf")
+public class GoToHomePageProf extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	private Connection connection = null;
 
-	public GoToHomePageStudente() {
+	public GoToHomePageProf() {
 		super();
 	}
 
@@ -62,7 +62,7 @@ public class GoToHomePageStudente extends HttpServlet {
 		List<Corso> corsi = null;
 		try {
 			CorsoDAO corsoDao = new CorsoDAO(connection);
-			corsi = corsoDao.getCorsiFromMatricolaStudente(((User) session.getAttribute("user")).getMatricola());
+			corsi = corsoDao.getCorsiFromMatricolaProfessore(((User) session.getAttribute("user")).getMatricola());
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users"+e.toString());
 			return;
