@@ -1,0 +1,73 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", sans-serif;
+    background: linear-gradient(to right, #b92b27, #1565c0);
+    background-repeat: no-repeat;
+    background-image: url('https://image.jimcdn.com/app/cms/image/transf/none/path/sf63059cf0e80ccf2/image/i7001d23fa637ce9c/version/1593436367/image.jpg')
+}
+
+/* Checkbox styling (iOS style sadly) */
+.toggle.ios, .toggle-on.ios, .toggle-off.ios { border-radius: 20rem; padding: 10px 40px;}
+.toggle.ios .toggle-handle { border-radius: 20rem; }
+
+.box {
+    width: 500px;
+    padding: 30px;
+    position: absolute;
+    border-radius: 20px;
+    top: 50%;
+    left: 50%;
+    background: black;
+    text-align: center;
+    transition: 0.25s;
+    margin-top: 80px;
+    opacity: 0.85
+}
+
+.box input[type="text"],
+.box input[type="password"] {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: left;
+    border: 2px solid #3498db;
+    padding: 10px 30px;
+    width: 250px;
+    outline: none;
+    color: white;
+    border-radius: 24px;
+    transition: 0.25s;
+}
+
+.box h1 {
+    color: white;
+    font-weight: 800;
+}
+
+.box input[type="text"]:focus,
+.box input[type="password"]:focus {
+    width: 300px;
+    border-color: #2ecc71
+}
+
+.box input[type="submit"] {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid white;
+    padding: 12px 40px;
+    color: white;
+    border-radius: 24px;
+    transition: 0.25s;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.box input[type="submit"]:hover {
+    background: white;
+    color: black;    
+}
