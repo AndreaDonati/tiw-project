@@ -37,7 +37,7 @@ CREATE TABLE `esaminazione` (
   CONSTRAINT `fk_idEsame` FOREIGN KEY (`idEsame`) REFERENCES `esame` (`id`),
   CONSTRAINT `fk_idStudente` FOREIGN KEY (`idStudente`) REFERENCES `utente` (`matricola`),
   CONSTRAINT `fk_idVerbale` FOREIGN KEY (`idVerbale`) REFERENCES `verbale` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20007 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,6 +46,7 @@ CREATE TABLE `esaminazione` (
 
 LOCK TABLES `esaminazione` WRITE;
 /*!40000 ALTER TABLE `esaminazione` DISABLE KEYS */;
+INSERT INTO `esaminazione` VALUES (10000,800001,3000,3000,'rimandato',0,'verbalizzato'),(10001,800001,3001,3001,'30',1,'verbalizzato'),(20000,800001,2005,2005,'rimandato',0,'verbalizzato'),(20001,800001,2006,2006,'rimandato',0,'verbalizzato'),(20002,800001,2010,NULL,NULL,0,'non inserito'),(20003,800002,2010,NULL,NULL,0,'non inserito'),(20004,800003,2010,NULL,NULL,0,'non inserito'),(20005,800004,2010,NULL,NULL,0,'non inserito'),(20006,800005,2010,NULL,NULL,0,'non inserito');
 /*!40000 ALTER TABLE `esaminazione` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -58,4 +59,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-25 17:30:21
+-- Dump completed on 2021-03-26 14:52:19

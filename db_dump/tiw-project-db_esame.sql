@@ -16,32 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `frequentazione`
+-- Table structure for table `esame`
 --
 
-DROP TABLE IF EXISTS `frequentazione`;
+DROP TABLE IF EXISTS `esame`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `frequentazione` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `matricolaStudente` int NOT NULL,
+CREATE TABLE `esame` (
+  `id` int NOT NULL,
   `idCorso` int NOT NULL,
+  `dataAppello` date NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_matricolaStudente_idx` (`matricolaStudente`),
   KEY `fk_idCorso_idx` (`idCorso`),
-  CONSTRAINT `fk_idCorso` FOREIGN KEY (`idCorso`) REFERENCES `corso` (`id`),
-  CONSTRAINT `fk_matricolaStudente` FOREIGN KEY (`matricolaStudente`) REFERENCES `utente` (`matricola`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `fk_corso` FOREIGN KEY (`idCorso`) REFERENCES `corso` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `frequentazione`
+-- Dumping data for table `esame`
 --
 
-LOCK TABLES `frequentazione` WRITE;
-/*!40000 ALTER TABLE `frequentazione` DISABLE KEYS */;
-INSERT INTO `frequentazione` VALUES (1,800001,1001),(2,800001,2000),(3,800001,2001),(4,800001,3000),(5,800002,1001),(6,800002,2001),(7,800002,3000),(8,800002,4000),(9,800003,1001),(10,800003,2000),(11,800003,3000),(12,800003,3001),(13,800004,1000),(14,800005,1000);
-/*!40000 ALTER TABLE `frequentazione` ENABLE KEYS */;
+LOCK TABLES `esame` WRITE;
+/*!40000 ALTER TABLE `esame` DISABLE KEYS */;
+INSERT INTO `esame` VALUES (2000,1000,'2019-06-18'),(2001,1000,'2019-07-10'),(2002,1000,'2019-09-04'),(2003,1000,'2020-01-18'),(2004,1000,'2020-02-10'),(2005,1001,'2020-06-18'),(2006,1001,'2020-07-10'),(2007,1001,'2020-09-04'),(2008,1001,'2021-01-18'),(2009,1001,'2021-02-10'),(2010,1002,'2021-06-18'),(3000,2000,'2020-01-20'),(3001,2000,'2020-02-14'),(3002,2000,'2020-06-20'),(3003,2000,'2020-07-14'),(3004,2000,'2020-09-10'),(3005,2001,'2021-01-20'),(3006,2001,'2021-02-14');
+/*!40000 ALTER TABLE `esame` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -53,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-25 17:30:21
+-- Dump completed on 2021-03-26 14:52:18
