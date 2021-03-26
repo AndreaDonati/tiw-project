@@ -25,13 +25,20 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="c : ${allCorsi}">
-				<td th:text="${c.id}"></td>
-				<td th:text="${c.nome}"></td>
-<!-- 				<td th:text="${ u.professore.nome }"></td> -->
-				<td th:text="${ c.anno }"></td>
+			<tr>
+				<td>asiuhdiusohd</td>
 			</tr>
 		</tbody>
+	</table>
+
+<div th:each="i : ${#numbers.sequence( 0, allCorsi.size-1)}">
+	<span th:text="${allCorsi[i].nome}"></span>
+	<div th:each="e : ${allCorsiEsami[i]}">
+		<div th:each="y : ${e}">
+			<span th:text="${y.dataAppello}"></span>
+		</div>
+	</div>
+</div>
 
 </body>
 </html>

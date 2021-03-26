@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -20,8 +22,10 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.beans.Corso;
+import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.CorsoDAO;
+import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
@@ -67,12 +71,35 @@ public class GoToHomePageProf extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users"+e.toString());
 			return;
 		}
+		
+		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
+		// QUESTA E' UNA PROVA KEKW
+		try {
+			EsameDAO esameDao = new EsameDAO(connection);
+			for (Corso c : corsi) {
+				corsiEsami.add(esameDao.getEsamiFromCorso(c.getId()));
+			}
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users"+e.toString());
+			return;
+		}
+
+		
+//		for (Corso corso : corsoEsameMap.keySet()) {
+//			List<Esame> esami = corsoEsameMap.get(corso);
+//			System.out.println("Corso: "+corso.getNome()+" - ");
+//			for (Esame es : esami) {
+//				System.out.println(es.getDataAppello());
+//			}
+//		}
+		
 
 		// Redirect to the Home page and add missions to the parameters
 		String path = "/Templates/Login/Home.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("allCorsi", corsi);
+		ctx.setVariable("allCorsiEsami", corsiEsami);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

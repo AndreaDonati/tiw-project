@@ -7,12 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.polimi.tiw.beans.Corso;
+import it.polimi.tiw.beans.Esame;
+
 public class EsameDAO {
 	
-	private Connection connection;
+	private Connection con;
 	
 	public EsameDAO(Connection connection) {
-		this.connection = connection;
+		this.con = connection;
 	}
 	
 //	-----------------------------------------------------------------------------------
@@ -25,9 +28,27 @@ public class EsameDAO {
 	 * @param idCorso
 	 * @return
 	 */
-	public List<String> getEsamiFromCorso(int idCorso){
-		//TODO: implement
-		return null;
+	public List<Esame> getEsamiFromCorso(int idCorso) throws SQLException {
+		List<Esame> esami = new ArrayList<Esame>();
+		
+		String query = "SELECT  id, dataAppello  "
+				+ "		FROM esame "
+				+ "		WHERE idCorso = ? "
+				+ "		ORDER BY dataAppello DESC";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, idCorso);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (!result.isLast()) {
+					result.next();
+					Esame esame = new Esame();
+					esame.setId(result.getInt("id"));
+					esame.setDataAppello(result.getString("dataAppello"));
+					esami.add(esame);
+				}
+			}
+		}
+
+		return esami;
 	}
 	
 	/**

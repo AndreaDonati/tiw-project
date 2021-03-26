@@ -6,7 +6,7 @@ public class Esame {
 
 	private int id;
 	private Corso corso;	// temporaneo, poterbbe non servire
-	private Date dataAppello;
+	private String dataAppello;
 	
 	public Esame() {
 		// Default constructor
@@ -28,11 +28,11 @@ public class Esame {
 		this.corso = corso;
 	}
 	
-	public Date getDataAppello() {
+	public String getDataAppello() {
 		return dataAppello;
 	}
 	
-	public void setDataAppello(Date dataAppello) {
+	public void setDataAppello(String dataAppello) {
 		this.dataAppello = dataAppello;
 	}
 	

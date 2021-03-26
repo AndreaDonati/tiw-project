@@ -45,7 +45,13 @@ public class CheckLogin extends HttpServlet {
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
 	}
-
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		super.doGet(req, resp);
+	}
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// obtain and escape params
@@ -57,12 +63,17 @@ public class CheckLogin extends HttpServlet {
 			usrn = request.getParameter("username");
 			pwd = request.getParameter("pwd");
 			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
-				throw new Exception("Missing or empty credential value");
+				throw new Exception("Credenziali vuote o mancanti.");
 			}
 
 		} catch (Exception e) {
 			// for debugging only e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
+			String path;
+			ServletContext servletContext = getServletContext();
+			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+			ctx.setVariable("errorMsg", "Credenziali vuote o mancanti.");
+			path = "/index.html";
+			templateEngine.process(path, ctx, response.getWriter());
 			return;
 		}
 
@@ -85,7 +96,7 @@ public class CheckLogin extends HttpServlet {
 		if (user == null) {
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("errorMsg", "Incorrect username or password");
+			ctx.setVariable("errorMsg", "Matricola o password non corretti.");
 			path = "/index.html";
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
