@@ -19,17 +19,19 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.beans.Corso;
 import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.CorsoDAO;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-@WebServlet("/Home")
-public class GoToHomePage extends HttpServlet {
+@WebServlet("/HomeStudente")
+public class GoToHomePageStudente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	private Connection connection = null;
 
-	public GoToHomePage() {
+	public GoToHomePageStudente() {
 		super();
 	}
 
@@ -57,10 +59,10 @@ public class GoToHomePage extends HttpServlet {
 		session.setAttribute("username", user.getUsername());
 		session.setAttribute("lastAccessedTime", new java.util.Date());
 //		---------------
-		List<User> users = null;
+		List<Corso> corsi = null;
 		try {
-			UserDAO userDao = new UserDAO(connection);
-			users = userDao.getAllUsers();
+			CorsoDAO corsoDao = new CorsoDAO(connection);
+			corsi = corsoDao.getCorsiFromMatricolaStudente(""+((User) session.getAttribute("user")).getMatricola());
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users"+e.toString());
 			return;
@@ -70,7 +72,7 @@ public class GoToHomePage extends HttpServlet {
 		String path = "/Templates/Login/Home.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("allUsers", users);
+		ctx.setVariable("allCorsi", corsi);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

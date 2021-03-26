@@ -10,7 +10,7 @@
 	<h1>Benvenuto nel servizio clienti Vodafone</h1>
 
 	<p>
-		Username: <span th:text="${{session.username}}">US</span>
+		Mail: <span th:text="${{session.username}}">US</span>
 	</p>
 
 	<p th:text="${'Nice to see you again ' + session.user.name + ' ' + session.user.surname}"></p>
@@ -18,16 +18,18 @@
 	<table>
 		<thead>
 			<tr>
-				<th>Name</th>
-				<th>Surname</th>
-				<th>Username</th>
+				<th>Id Corso</th>
+				<th>Nome Corso</th>
+				<th>Anno Corso</th>
+<!-- 				<th>Username</th> -->
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="u : ${allUsers}">
-				<td th:text="${u.name}"></td>
-				<td th:text="${ u.surname }"></td>
-				<td th:text="${ u.username }"></td>
+			<tr th:each="c : ${allCorsi}">
+				<td th:text="${c.id}"></td>
+				<td th:text="${c.nome}"></td>
+<!-- 				<td th:text="${ u.professore.nome }"></td> -->
+				<td th:text="${ c.anno }"></td>
 			</tr>
 		</tbody>
 

@@ -25,7 +25,7 @@ public class UserDAO {
 	 * @throws SQLException
 	 */
 	public User checkCredentials(String usrn, String pwd) throws SQLException {
-		String query = "SELECT  matricola, username, name, surname, ruolo FROM user  WHERE username = ? AND password =?";
+		String query = "SELECT  matricola, email, nome, cognome, role FROM utente  WHERE matricola = ? AND password =?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, usrn);
 			pstatement.setString(2, pwd);
@@ -36,10 +36,10 @@ public class UserDAO {
 					result.next();
 					User user = new User();
 					user.setMatricola(result.getInt("matricola"));
-					user.setUsername(result.getString("username"));
-					user.setName(result.getString("name"));
-					user.setSurname(result.getString("surname"));
-					user.setRuolo(result.getString("ruolo"));
+					user.setUsername(result.getString("email"));
+					user.setName(result.getString("nome"));
+					user.setSurname(result.getString("cognome"));
+					user.setRuolo(result.getString("role"));
 					return user;
 				}
 			}
@@ -77,7 +77,7 @@ public class UserDAO {
      * @throws SQLException
      */
 	public User getUserFromMatricola(String matricola) throws SQLException {
-		String query = "SELECT  username, name, surname FROM user  WHERE matricola = ?";
+		String query = "SELECT  matricola, username, name, surname FROM user  WHERE matricola = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, Integer.parseInt(matricola));
 			try (ResultSet result = pstatement.executeQuery();) {
@@ -86,6 +86,7 @@ public class UserDAO {
 				else {
 					result.next();
 					User user = new User();
+					user.setMatricola(result.getInt("matricola"));
 					user.setUsername(result.getString("username"));
 					user.setName(result.getString("name"));
 					user.setSurname(result.getString("surname"));
@@ -95,35 +96,37 @@ public class UserDAO {
 		}
 	}
 	
-	// POSSIBILMENTE INUTILE	
-	/**
-	 * ritorna tutti gli studenti iscritti all'esame con id idEsame
-	 * e anche tutte le informazioni sui voti degli studenti iscritti all'esame
-	 * @param idEsame
-	 * @return
-	 */
-	public List<User> getStudentiVotiFromIdEsame(String idEsame) throws SQLException{
-		List<User> users = new ArrayList<User>();
-		// FIXARE QUESTA QUERY SECONDO I NOMI DEGLI ATTRIBUTI SCELTI DA BAGA NEL DB
-		// E ANCHE SECONDO A QUALI ATTRIBUTI BISOGNA RITORNARE
-		String query = "SELECT  matricola, name, surname, voto, lode, stato "
-				+ "		FROM user JOIN esaminazione ON user.matricola = esaminazione.matricolaStudente  "
-				+ "		WHERE esaminazione.idEsame = ?";
-		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setInt(1, Integer.parseInt(idEsame));
-			try (ResultSet result = pstatement.executeQuery();) {
-				if (!result.isBeforeFirst()) // no results, credential check failed
-					return null;
-				else {
-					result.next();
-					User user = new User();
-					user.setMatricola(result.getInt("matricola"));
-					user.setName(result.getString("name"));
-					user.setSurname(result.getString("surname"));
-					users.add(user);
-				}
-			}
-		}
-		return users;
-	}
+//	// POSSIBILMENTE INUTILE	
+//	/**
+//	 * ritorna tutti gli studenti iscritti all'esame con id idEsame
+//	 * e anche tutte le informazioni sui voti degli studenti iscritti all'esame
+//	 * @param idEsame
+//	 * @return
+//	 */
+//	public List<User> getStudentiVotiFromIdEsame(String idEsame) throws SQLException{
+//		List<User> users = new ArrayList<User>();
+//		// FIXARE QUESTA QUERY SECONDO I NOMI DEGLI ATTRIBUTI SCELTI DA BAGA NEL DB
+//		// E ANCHE SECONDO A QUALI ATTRIBUTI BISOGNA RITORNARE
+//		String query = "SELECT  matricola, name, surname, voto, lode, stato "
+//				+ "		FROM user JOIN esaminazione ON user.matricola = esaminazione.matricolaStudente  "
+//				+ "		WHERE esaminazione.idEsame = ?";
+//		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+//			pstatement.setInt(1, Integer.parseInt(idEsame));
+//			try (ResultSet result = pstatement.executeQuery();) {
+//				if (!result.isBeforeFirst()) // no results, credential check failed
+//					return null;
+//				else {
+//					result.next();
+//					User user = new User();
+//					user.setMatricola(result.getInt("matricola"));
+//					user.setName(result.getString("name"));
+//					user.setSurname(result.getString("surname"));
+//					users.add(user);
+//				}
+//			}
+//		}
+//		return users;
+//	}
+	
+	// get tutti gli studenti iscritti ad un esame
 }
