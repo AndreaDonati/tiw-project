@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Login</title>
   <meta charset="utf-8">
@@ -22,6 +22,7 @@
                     <p class="text-muted"> Inserisci le tue credenziali per accedere!</p> <input type="text" name="username" placeholder="username"> <input type="password" name="pwd" placeholder="password">
 					<input type="checkbox" name="dio" checked data-toggle="toggle" data-on="Student" data-off="Professor" data-onstyle="primary" data-offstyle="success" data-style="ios">
                     <input type="submit" value="Login">
+                     <p class="text-muted" color="red" th:text="${#ctx.errorMsg}"></p> 
                 </form>
             </div>
         </div>
