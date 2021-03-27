@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
   <title>Login</title>
   <meta charset="utf-8">
@@ -7,28 +7,25 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" media="all" href="./loginStyle.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700,800" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
 </head>
 <body>
 <div class="container">
     <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-4">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
             <div class="card">
-                <form action="CheckLogin" method="POST" class="box">
-                    <h1>LOGIN</h1>
+                <form action="Login" method="POST" class="box">
+                    <h1>Login</h1>
                     <p class="text-muted"> Inserisci le tue credenziali per accedere!</p> <input type="text" name="username" placeholder="matricola"> <input type="password" name="pwd" placeholder="password">
 					<input type="checkbox" name="ruolo" checked data-toggle="toggle" data-on="Studente" data-off="Professore" data-onstyle="primary" data-offstyle="success" data-style="ios">
-                    <input type="submit" value="Login">
-                    <p class="text-muted" style="color:red" th:text="${#ctx.errorMsg}"></p> 
+                    <input type="submit" value="LOGIN">
                 </form>
             </div>
         </div>
-        <div class="col-md-1"></div>
+        <div class="col-md-3"></div>
     </div>
 </div>
 </body>

@@ -2,10 +2,23 @@ body {
     margin: 0;
     padding: 0;
     font-family: "Montserrat", sans-serif;
-    background: linear-gradient(to right, #b92b27, #1565c0);
-    background-repeat: no-repeat;
-    background-size: 150vw 150vh;
-    background-image: url('https://image.jimcdn.com/app/cms/image/transf/none/path/sf63059cf0e80ccf2/image/i7001d23fa637ce9c/version/1593436367/image.jpg')
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    /*background-image: url('https://image.jimcdn.com/app/cms/image/transf/none/path/sf63059cf0e80ccf2/image/i7001d23fa637ce9c/version/1593436367/image.jpg')*/
+}
+
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
 /* Checkbox styling (iOS style sadly) */
@@ -13,16 +26,13 @@ body {
 .toggle.ios .toggle-handle { border-radius: 20rem; }
 
 .box {
-    width: 500px;
-    padding: 30px;
-    position: absolute;
+    width: 100%;
     border-radius: 20px;
-    top: 50%;
-    left: 50%;
+    padding: 8vh;
+    margin-top: 10vh;
     background: black;
     text-align: center;
     transition: 0.25s;
-    margin-top: 80px;
     opacity: 0.85
 }
 
@@ -31,11 +41,11 @@ body {
     border: 0;
     background: none;
     display: block;
-    margin: 20px auto;
+    margin: 4vh auto;
     text-align: left;
     border: 2px solid #3498db;
     padding: 10px 30px;
-    width: 250px;
+    width: 60%;
     outline: none;
     color: white;
     border-radius: 24px;
@@ -49,7 +59,7 @@ body {
 
 .box input[type="text"]:focus,
 .box input[type="password"]:focus {
-    width: 300px;
+    width: 80%;
     border-color: #2ecc71
 }
 
