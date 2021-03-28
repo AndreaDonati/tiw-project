@@ -7,6 +7,7 @@ public class User {
 	private String nome;
 	private String cognome;
 	private String ruolo;
+	private String cdl;
 
 	public int getMatricola() {
 		return matricola;
@@ -46,6 +47,14 @@ public class User {
 	
 	public String getRuolo() {
 		return ruolo;
+	}
+	
+	public void setCdl(String cdl) {
+		this.cdl = cdl;
+	}
+	
+	public String getCdl() {
+		return cdl;
 	}
 
 }

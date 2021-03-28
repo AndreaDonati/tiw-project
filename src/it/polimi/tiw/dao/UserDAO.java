@@ -77,7 +77,7 @@ public class UserDAO {
      * @throws SQLException
      */
 	public User getUserFromMatricola(String matricola) throws SQLException {
-		String query = "SELECT  matricola, username, name, surname FROM user  WHERE matricola = ?";
+		String query = "SELECT  matricola, nome, cognome, email, role, cdl FROM user  WHERE matricola = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, Integer.parseInt(matricola));
 			try (ResultSet result = pstatement.executeQuery();) {
@@ -87,9 +87,11 @@ public class UserDAO {
 					result.next();
 					User user = new User();
 					user.setMatricola(result.getInt("matricola"));
-					user.setMail(result.getString("username"));
-					user.setNome(result.getString("name"));
-					user.setCognome(result.getString("surname"));
+					user.setNome(result.getString("nome"));
+					user.setCognome(result.getString("cognome"));
+					user.setMail(result.getString("mail"));
+					user.setRuolo(result.getString("role"));
+					user.setCdl(result.getString("cdl"));
 					return user;
 				}
 			}
