@@ -10,10 +10,10 @@
 	<h1>Benvenuto nel servizio clienti Vodafone</h1>
 
 	<p>
-		Mail: <span th:text="${{session.username}}">US</span>
+		Mail: <span th:text="${{session.mail}}">US</span>
 	</p>
 
-	<p th:text="${'Nice to see you again ' + session.user.name + ' ' + session.user.surname}"></p>
+	<p th:text="${'Nice to see you again ' + session.user.nome + ' ' + session.user.cognome}"></p>
 
 	<table>
 		<thead>
