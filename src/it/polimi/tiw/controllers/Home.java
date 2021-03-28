@@ -24,16 +24,15 @@ import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.CorsoDAO;
 import it.polimi.tiw.dao.EsameDAO;
-import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-@WebServlet("/HomeStudente")
-public class GoToHomePageStudente extends HttpServlet {
+@WebServlet("/Home")
+public class Home extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	private Connection connection = null;
 
-	public GoToHomePageStudente() {
+	public Home() {
 		super();
 	}
 
@@ -57,48 +56,69 @@ public class GoToHomePageStudente extends HttpServlet {
 			return;
 		}
 		User user = (User) session.getAttribute("user");
+		
 //		PROVA + temporaneo
-		session.setAttribute("username", user.getMail());
+		session.setAttribute("mail", user.getMail());
 		session.setAttribute("lastAccessedTime", new java.util.Date());
 //		---------------
-		List<Corso> corsi = null;
+		
+		/**
+		 * La homepage mostra, sia per Studente sia per Professore, gli stessi contenuti
+		 * cioè una lista di corsi e per ogni corso una lista di esami.
+		 */
+		
+		List<Corso> corsi;
 		try {
-			CorsoDAO corsoDao = new CorsoDAO(connection);
-			corsi = corsoDao.getCorsiFromMatricolaStudente(((User) session.getAttribute("user")).getMatricola());
+			corsi = this.getCorsiContentByUserRole(user);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users"+e.toString());
+			//e1.printStackTrace();
+			//TODO: modificare questo possibilmente
+			// l'eccezione indica un errore nella query al db
+			response.sendError(400);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users "+e.toString());
 			return;
 		}
 		
-		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
-		// QUESTA E' UNA PROVA KEKW
+		List<List<Esame>> corsiEsami;
 		try {
-			EsameDAO esameDao = new EsameDAO(connection);
-			for (Corso c : corsi) {
-				corsiEsami.add(esameDao.getEsamiFromCorso(c.getId()));
-			}
+			corsiEsami = this.getEsamiFromCorsi(corsi);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users"+e.toString());
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users "+e.toString());
 			return;
 		}
-
-		
-//		for (Corso corso : corsoEsameMap.keySet()) {
-//			List<Esame> esami = corsoEsameMap.get(corso);
-//			System.out.println("Corso: "+corso.getNome()+" - ");
-//			for (Esame es : esami) {
-//				System.out.println(es.getDataAppello());
-//			}
-//		}
-		
-
-		// Redirect to the Home page and add missions to the parameters
+				
+		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
 		String path = "/Templates/Login/Home.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("allCorsi", corsi);
 		ctx.setVariable("allCorsiEsami", corsiEsami);
 		templateEngine.process(path, ctx, response.getWriter());
+	}
+
+	private List<List<Esame>> getEsamiFromCorsi(List<Corso> corsi) throws SQLException{
+		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
+		// QUESTA E' UNA PROVA KEKW
+		EsameDAO esameDao = new EsameDAO(connection);
+		for (Corso c : corsi) {
+			corsiEsami.add(esameDao.getEsamiFromCorso(c.getId()));
+		}
+
+		return corsiEsami;
+	}
+
+	private List<Corso> getCorsiContentByUserRole(User user) throws SQLException{
+		List<Corso> corsi = null;
+		// nelle righe seguenti viene fatta un'interrogazione al db che può
+		// lanciare una SQLException, la gestione dell'eccezione viene fatta
+		// dal chiamante di questo metodo
+		//TODO: decidere se implementarlo così opppure differenziare nel DAO
+		CorsoDAO corsoDao = new CorsoDAO(connection);
+		if(user.getRuolo().equals("teacher"))
+			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola());
+		else if(user.getRuolo().equals("student"))
+			corsi = corsoDao.getCorsiFromMatricolaStudente(user.getMatricola());
+		return corsi;
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
