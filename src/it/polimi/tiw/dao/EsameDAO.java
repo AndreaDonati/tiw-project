@@ -9,6 +9,8 @@ import java.util.List;
 
 import it.polimi.tiw.beans.Corso;
 import it.polimi.tiw.beans.Esame;
+import it.polimi.tiw.beans.Esaminazione;
+import it.polimi.tiw.beans.User;
 
 public class EsameDAO {
 	
@@ -69,7 +71,7 @@ public class EsameDAO {
 	 * @param idEsame
 	 * @return
 	 */
-	public String getRisultatiEsameStudente(int matricola, int idEsame){
+	public List<Esaminazione> getRisultatiEsameStudente(int matricola, int idEsame){
 		//TODO: implement
 		return null;
 	}
@@ -81,9 +83,53 @@ public class EsameDAO {
 	 * @param idEsame
 	 * @return
 	 */
-	public List<String> getRisultatiEsameProfessore(int matricola, int idEsame){
-		//TODO: implement
-		return null;
+	public List<Esaminazione> getRisultatiEsameProfessore(int idEsame) throws SQLException {
+		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
+		
+		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, "
+				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato"
+				+ "		FROM esaminazione, utente, esame "
+				+ "		WHERE esame.id = ? " // così o con questa dopo le altre condizioni
+				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
+				+ "		ORDER BY dataAppello DESC";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, idEsame);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (!result.isLast()) {
+					result.next();
+					Esaminazione risultato = new Esaminazione();
+					// id
+					risultato.setId(result.getInt("esaminazione.id"));
+					// esame
+					Esame esame = new Esame();
+					esame.setId(result.getInt("esaminazione.idEsame"));
+					esame.setDataAppello(result.getString("esame.dataAppello"));
+					risultato.setEsame(esame);
+					// studente
+					User studente = new User();
+					studente.setMatricola(result.getInt("utente.matricola"));
+					studente.setNome(result.getString("utente.nome"));
+					studente.setCognome(result.getString("utente.cognome"));
+					studente.setMail(result.getString("utente.email"));
+					studente.setRuolo("student");
+					studente.setCdl(result.getString("utente.cdl"));
+					risultato.setStudente(studente);
+					// voto
+					risultato.setVoto(result.getString("esaminazione.voto"));
+					// stato
+					risultato.setStato(result.getString("esaminazione.stato"));
+					// idVerbale
+					risultato.setIdVerbale(result.getInt("esaminazione.idverbale"));
+					
+					risultati.add(risultato);					
+				}
+			}
+		}
+		for (Esaminazione esaminazione : risultati) {
+			System.out.println(esaminazione.getStudente().getNome()+" "+ esaminazione.getStudente().getCognome()+" - "
+					+ esaminazione.getVoto() + " - " + esaminazione.getStato());
+		}
+		return risultati;
 	}
 	
 }
