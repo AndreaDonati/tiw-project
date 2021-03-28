@@ -67,6 +67,9 @@ public class Home extends HttpServlet {
 		 * cioè una lista di corsi e per ogni corso una lista di esami.
 		 */
 		
+		// recupero i corsi associati allo user
+		// se lo user è Studente: i corsi che frequenta
+		// se lo user è Profesore: i corsi che insegna
 		List<Corso> corsi;
 		try {
 			corsi = this.getCorsiContentByUserRole(user);
@@ -79,6 +82,7 @@ public class Home extends HttpServlet {
 			return;
 		}
 		
+		// recupero gli esami dai ai corsi associati allo user
 		List<List<Esame>> corsiEsami;
 		try {
 			corsiEsami = this.getEsamiFromCorsi(corsi);
