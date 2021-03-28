@@ -51,7 +51,7 @@ public class Login extends HttpServlet {
 			}
 
 		} catch (Exception e) {
-			response.setStatus(400);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write("{\"errorMessage\":\"Credenziali vuote o mancanti.\"}");
@@ -75,7 +75,7 @@ public class Login extends HttpServlet {
 		// alla home corrispondende allo studente o al professore
 		String path="";
 		if (user == null) {
-			response.setStatus(401);
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write("{\"errorMessage\":\"Matricola o password non corretti.\"}");
