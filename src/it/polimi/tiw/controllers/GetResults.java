@@ -94,16 +94,16 @@ public class GetResults extends HttpServlet {
 		// uso json.encode per codificare l'oggetto complesso da mandare 
 		// al client come risultatos
 		
-		Gson gson = new Gson();
-		
-		String jsonObj = gson.toJson(risultati);
-		System.out.println(jsonObj);
+//		Gson gson = new Gson();
+//		
+//		String jsonObj = gson.toJson(risultati);
+//		System.out.println(jsonObj);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(jsonObj);
-		
+//		response.getWriter().write(jsonObj);
+		response.getWriter().write(risultati.toString());		
 	}
 
 	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame) throws SQLException{
