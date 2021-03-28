@@ -37,7 +37,7 @@ public class Login extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// obtain and escape params
+		// prendo le credenziali dalla richiesta
 		String usrn = null;
 		String pwd = null;
 		try {
@@ -58,7 +58,9 @@ public class Login extends HttpServlet {
 			return;
 		}
 
-		// query db to authenticate for user
+		// controllo le credenziali dello user per l'autenticazione
+		// se lo user esiste, lo redireziono alla home
+		// altrimenti mando un messaggio di errore
 		UserDAO userDao = new UserDAO(connection);
 		User user = null;
 		try {
@@ -80,14 +82,9 @@ public class Login extends HttpServlet {
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write("{\"errorMessage\":\"Matricola o password non corretti.\"}");
 			return;
-//			ServletContext servletContext = getServletContext();
-//			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-//			ctx.setVariable("errorMsg", "Matricola o password non corretti.");
-//			path = "/index.html";
-//			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);
-			// seleziono il path corretto in base al ruolo dello user
+			// redireziono lo user alla home
 			path = getServletContext().getContextPath() + "/Home";
 			response.sendRedirect(path);
 		} 
