@@ -36,9 +36,9 @@ public class UserDAO {
 					result.next();
 					User user = new User();
 					user.setMatricola(result.getInt("matricola"));
-					user.setUsername(result.getString("email"));
-					user.setName(result.getString("nome"));
-					user.setSurname(result.getString("cognome"));
+					user.setMail(result.getString("email"));
+					user.setNome(result.getString("nome"));
+					user.setCognome(result.getString("cognome"));
 					user.setRuolo(result.getString("role"));
 					return user;
 				}
@@ -60,9 +60,9 @@ public class UserDAO {
 				while(!result.isLast()) {
 					result.next();
 					User user = new User();
-					user.setUsername(result.getString("username"));
-					user.setName(result.getString("name"));
-					user.setSurname(result.getString("surname"));
+					user.setMail(result.getString("username"));
+					user.setNome(result.getString("name"));
+					user.setCognome(result.getString("surname"));
 					users.add(user);
 				}
 			}
@@ -87,9 +87,9 @@ public class UserDAO {
 					result.next();
 					User user = new User();
 					user.setMatricola(result.getInt("matricola"));
-					user.setUsername(result.getString("username"));
-					user.setName(result.getString("name"));
-					user.setSurname(result.getString("surname"));
+					user.setMail(result.getString("username"));
+					user.setNome(result.getString("name"));
+					user.setCognome(result.getString("surname"));
 					return user;
 				}
 			}

@@ -3,9 +3,9 @@ package it.polimi.tiw.beans;
 public class User {
 
 	private int matricola;
-	private String username;
-	private String name;
-	private String surname;
+	private String email;
+	private String nome;
+	private String cognome;
 	private String ruolo;
 
 	public int getMatricola() {
@@ -16,28 +16,28 @@ public class User {
 		this.matricola = matricola;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getMail() {
+		return email;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setMail(String username) {
+		this.email = username;
 	}
 
-	public String getName() {
-		return name;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public String getSurname() {
-		return surname;
+	public String getCognome() {
+		return cognome;
 	}
 
-	public void setSurname(String surname) {
-		this.surname = surname;
+	public void setCognome(String cognome) {
+		this.cognome = cognome;
 	}
 	
 	public void setRuolo(String ruolo) {

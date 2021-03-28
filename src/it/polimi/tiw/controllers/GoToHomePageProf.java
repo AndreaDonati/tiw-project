@@ -60,7 +60,7 @@ public class GoToHomePageProf extends HttpServlet {
 		}
 		User user = (User) session.getAttribute("user");
 //		PROVA + temporaneo
-		session.setAttribute("username", user.getUsername());
+		session.setAttribute("username", user.getMail());
 		session.setAttribute("lastAccessedTime", new java.util.Date());
 //		---------------
 		List<Corso> corsi = null;
