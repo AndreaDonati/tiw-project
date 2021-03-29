@@ -16,37 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `esaminazione`
+-- Table structure for table `esame`
 --
 
-DROP TABLE IF EXISTS `esaminazione`;
+DROP TABLE IF EXISTS `esame`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `esaminazione` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `idStudente` int NOT NULL,
-  `idEsame` int NOT NULL,
-  `idVerbale` int DEFAULT NULL,
-  `voto` varchar(45) DEFAULT NULL,
-  `lode` tinyint(1) DEFAULT '0',
-  `stato` enum('non inserito','inserito','pubblicato','rifiutato','verbalizzato') NOT NULL DEFAULT 'non inserito',
+CREATE TABLE `esame` (
+  `id` int NOT NULL,
+  `idCorso` int NOT NULL,
+  `dataAppello` date NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_idStudente_idx` (`idStudente`),
-  KEY `fk_idEsame_idx` (`idEsame`),
-  KEY `fk_idVerbale_idx` (`idVerbale`),
-  CONSTRAINT `fk_idEsame` FOREIGN KEY (`idEsame`) REFERENCES `esame` (`id`),
-  CONSTRAINT `fk_idStudente` FOREIGN KEY (`idStudente`) REFERENCES `utente` (`matricola`),
-  CONSTRAINT `fk_idVerbale` FOREIGN KEY (`idVerbale`) REFERENCES `verbale` (`id`)
+  KEY `fk_idCorso_idx` (`idCorso`),
+  CONSTRAINT `fk_corso` FOREIGN KEY (`idCorso`) REFERENCES `corso` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `esaminazione`
+-- Dumping data for table `esame`
 --
 
-LOCK TABLES `esaminazione` WRITE;
-/*!40000 ALTER TABLE `esaminazione` DISABLE KEYS */;
-/*!40000 ALTER TABLE `esaminazione` ENABLE KEYS */;
+LOCK TABLES `esame` WRITE;
+/*!40000 ALTER TABLE `esame` DISABLE KEYS */;
+INSERT INTO `esame` VALUES (2000,1000,'2019-06-18'),(2001,1000,'2019-07-10'),(2002,1000,'2019-09-04'),(2003,1000,'2020-01-18'),(2004,1000,'2020-02-10'),(2005,1001,'2020-06-18'),(2006,1001,'2020-07-10'),(2007,1001,'2020-09-04'),(2008,1001,'2021-01-18'),(2009,1001,'2021-02-10'),(2010,1002,'2021-06-18'),(3000,2000,'2020-01-20'),(3001,2000,'2020-02-14'),(3002,2000,'2020-06-20'),(3003,2000,'2020-07-14'),(3004,2000,'2020-09-10'),(3005,2001,'2021-01-20'),(3006,2001,'2021-02-14');
+/*!40000 ALTER TABLE `esame` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -58,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-25 17:30:21
+-- Dump completed on 2021-03-29 17:08:49

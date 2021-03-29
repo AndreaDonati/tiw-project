@@ -16,37 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `esaminazione`
+-- Table structure for table `verbale`
 --
 
-DROP TABLE IF EXISTS `esaminazione`;
+DROP TABLE IF EXISTS `verbale`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `esaminazione` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `idStudente` int NOT NULL,
-  `idEsame` int NOT NULL,
-  `idVerbale` int DEFAULT NULL,
-  `voto` varchar(45) DEFAULT NULL,
-  `lode` tinyint(1) DEFAULT '0',
-  `stato` enum('non inserito','inserito','pubblicato','rifiutato','verbalizzato') NOT NULL DEFAULT 'non inserito',
-  PRIMARY KEY (`id`),
-  KEY `fk_idStudente_idx` (`idStudente`),
-  KEY `fk_idEsame_idx` (`idEsame`),
-  KEY `fk_idVerbale_idx` (`idVerbale`),
-  CONSTRAINT `fk_idEsame` FOREIGN KEY (`idEsame`) REFERENCES `esame` (`id`),
-  CONSTRAINT `fk_idStudente` FOREIGN KEY (`idStudente`) REFERENCES `utente` (`matricola`),
-  CONSTRAINT `fk_idVerbale` FOREIGN KEY (`idVerbale`) REFERENCES `verbale` (`id`)
+CREATE TABLE `verbale` (
+  `id` int NOT NULL,
+  `dataVerbale` date NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `esaminazione`
+-- Dumping data for table `verbale`
 --
 
-LOCK TABLES `esaminazione` WRITE;
-/*!40000 ALTER TABLE `esaminazione` DISABLE KEYS */;
-/*!40000 ALTER TABLE `esaminazione` ENABLE KEYS */;
+LOCK TABLES `verbale` WRITE;
+/*!40000 ALTER TABLE `verbale` DISABLE KEYS */;
+INSERT INTO `verbale` VALUES (2000,'2019-07-18'),(2001,'2019-08-10'),(2002,'2019-10-04'),(2003,'2020-02-18'),(2004,'2020-03-10'),(2005,'2020-07-18'),(2006,'2020-08-10'),(2007,'2020-10-04'),(2008,'2021-02-18'),(2009,'2021-02-10'),(3000,'2020-02-20'),(3001,'2020-03-14'),(3002,'2020-07-20'),(3003,'2020-08-14'),(3004,'2020-10-10'),(3005,'2021-02-20'),(3006,'2021-03-14');
+/*!40000 ALTER TABLE `verbale` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -58,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-25 17:30:21
+-- Dump completed on 2021-03-29 17:08:48
