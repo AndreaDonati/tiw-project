@@ -33,6 +33,7 @@
  <filter-mapping> 
     <filter-name>AuthorizationChecker</filter-name> 
     <url-pattern>/pubblicaVoti</url-pattern>
+    <url-pattern>/insertGrades</url-pattern>
  </filter-mapping> 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

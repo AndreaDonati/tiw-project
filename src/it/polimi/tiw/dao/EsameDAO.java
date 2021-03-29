@@ -172,7 +172,7 @@ public class EsameDAO {
 	public List<Esaminazione> getRisultatiEsameProfessore(int idEsame) throws SQLException {
 		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
 		
-		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, utente.image "
+		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, utente.image, "
 				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato"
 				+ "		FROM esaminazione, utente, esame "
 				+ "		WHERE esame.id = ? " // cos� o con questa dopo le altre condizioni
