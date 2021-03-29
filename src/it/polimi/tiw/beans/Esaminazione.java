@@ -4,9 +4,9 @@ public class Esaminazione {
 	private int id;
 	private User studente;
 	private Esame esame;
+	private Corso corso;
 	private int idVerbale;
 	private String voto;
-	private int lode; // ?
 	private String stato;
 	
 	public Esaminazione() {
@@ -59,5 +59,13 @@ public class Esaminazione {
 	
 	public String getStato() {
 		return stato;
+	}
+
+	public Corso getCorso() {
+		return corso;
+	}
+
+	public void setCorso(Corso corso) {
+		this.corso = corso;
 	}
 }

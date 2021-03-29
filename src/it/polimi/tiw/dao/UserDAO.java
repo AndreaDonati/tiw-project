@@ -25,7 +25,7 @@ public class UserDAO {
 	 * @throws SQLException
 	 */
 	public User checkCredentials(String usrn, String pwd) throws SQLException {
-		String query = "SELECT  matricola, email, nome, cognome, role FROM utente  WHERE matricola = ? AND password =?";
+		String query = "SELECT  matricola, email, nome, cognome, role, image FROM utente  WHERE matricola = ? AND password =?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, usrn);
 			pstatement.setString(2, pwd);
@@ -40,6 +40,7 @@ public class UserDAO {
 					user.setNome(result.getString("nome"));
 					user.setCognome(result.getString("cognome"));
 					user.setRuolo(result.getString("role"));
+					user.setImage(result.getString("image"));
 					return user;
 				}
 			}
@@ -77,7 +78,7 @@ public class UserDAO {
      * @throws SQLException
      */
 	public User getUserFromMatricola(String matricola) throws SQLException {
-		String query = "SELECT  matricola, nome, cognome, email, role, cdl FROM user  WHERE matricola = ?";
+		String query = "SELECT  matricola, nome, cognome, email, role, cdl, image FROM user  WHERE matricola = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, Integer.parseInt(matricola));
 			try (ResultSet result = pstatement.executeQuery();) {
@@ -92,6 +93,7 @@ public class UserDAO {
 					user.setMail(result.getString("mail"));
 					user.setRuolo(result.getString("role"));
 					user.setCdl(result.getString("cdl"));
+					user.setImage(result.getString("image"));
 					return user;
 				}
 			}

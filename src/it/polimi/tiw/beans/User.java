@@ -8,6 +8,7 @@ public class User {
 	private String cognome;
 	private String ruolo;
 	private String cdl;
+	private String image;
 
 	public int getMatricola() {
 		return matricola;
@@ -55,6 +56,14 @@ public class User {
 	
 	public String getCdl() {
 		return cdl;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 }
