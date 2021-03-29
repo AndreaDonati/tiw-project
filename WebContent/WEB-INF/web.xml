@@ -3,7 +3,7 @@
   <display-name>TIW-Project</display-name>
   <context-param>
     <param-name>dbUrl</param-name>
-    <param-value>jdbc:mysql://localhost:3306/dbtestdon</param-value>
+    <param-value>jdbc:mysql://localhost:3306/tiw-project-db</param-value>
   </context-param>
   <context-param>
     <param-name>dbUser</param-name>
@@ -11,12 +11,21 @@
   </context-param>
   <context-param>
     <param-name>dbPassword</param-name>
-    <param-value>G1org1na</param-value>
+    <param-value>--------</param-value>
   </context-param>
   <context-param>
     <param-name>dbDriver</param-name>
     <param-value>com.mysql.cj.jdbc.Driver</param-value>
   </context-param>
+ <filter> 
+  <filter-name>LoginChecker</filter-name> 
+      <filter-class>it.polimi.tiw.filters.LoginChecker</filter-class> 
+ </filter> 
+ <filter-mapping> 
+    <filter-name>LoginChecker</filter-name> 
+    <url-pattern>/Home</url-pattern> 
+    <url-pattern>/getResults</url-pattern> 
+ </filter-mapping> 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
