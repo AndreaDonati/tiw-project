@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Login</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" media="all"
+	href="./loginStyleJS.css" />
+<script
+	src="./loginJS.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link
+	href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+</head>
+<body onload="init()">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="card">
+					<form action="#" method="POST" class="box" id="loginForm">
+						<h1>Login</h1>
+						<p class="text-muted">Inserisci le tue credenziali per
+							accedere!</p>
+						<input type="text" name="username" placeholder="matricola">
+						<input type="password" name="pwd" placeholder="password">
+						<!--
+							<input type="checkbox" name="ruolo" checked data-toggle="toggle"
+							data-on="Studente" data-off="Professore" data-onstyle="primary"
+							data-offstyle="success" data-style="ios">
+						-->
+						<input
+							type="submit" value="LOGIN" id="loginButton">
+						<p id="errorMessage" style="color:red"></p>
+						<a href="../pureHTML/indexHTML.html" class="switch-btn">Switch to HTML version</p>
+					</form>
+				</div>
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+	</div>
+</body>
+<!--
+<script type="text/javascript">
+//Gestore dell'evento lato client
+
+var request;
+
+// rimpiazza la gestione del browser
+document.getElementById("loginButton").addEventListener('click', (event) => {
+  console.log("Evento avvenuto");
+  event.preventDefault(); // evita il submit
+  makePost(); // chiamata asincrona 
+});
+
+
+
+function makePost() {
+	
+	//richiesta asincrona non cambia la pagina
+
+	console.log("mando richiesta post");
+	request = new XMLHttpRequest();
+	var url = 'Login';
+	var formElement = document.querySelector("form");
+	var formData = new FormData(formElement);
+	//------------------------------------
+	for (var value of formData.values()) {
+	  console.log(value);
+	}
+	//------------------------------------
+	request.onreadystatechange = showResults;
+	request.open("POST", url);
+	request.send(formData);
+}
+
+
+// callback: presenta risultato nella pagina
+function showResults() {
+	console.log("faccio cose");
+	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) {
+	 	document.getElementById("errorMessage").textContent=JSON.parse(request.responseText)["errorMessage"];
+	}
+	if (request.readyState == 4 && request.status == 200 ) {
+		window.location = request.responseURL;
+	}
+
+}</script>
+-->
+</html>

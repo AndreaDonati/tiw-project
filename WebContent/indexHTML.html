@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Login</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" media="all"
+	href="./loginStyleHTML.css" />
+<link
+	href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+	rel="stylesheet">
+
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="card">
+					<form action="Login" method="POST" class="box" id="loginForm">
+						<h1>Login</h1>
+						<p class="text-muted">Inserisci le tue credenziali per
+							accedere!</p>
+						<input type="text" name="username" placeholder="matricola">
+						<input type="password" name="pwd" placeholder="password">
+						<input type="submit" value="LOGIN" id="loginButton">
+						<p id="errorMessage" style="color:red"></p>
+						<a href="../JS/indexJS.html" class="switch-btn">Switch to JS version</p>
+					</form>
+				</div>
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+	</div>
+</body>
+</html>

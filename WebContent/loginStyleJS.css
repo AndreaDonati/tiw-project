@@ -1,0 +1,86 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", sans-serif;
+    background: linear-gradient(-45deg, #a21bb4, #23a6d5, #23d5ab, #26e25e);
+	background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+/* Checkbox styling (iOS style sadly) */
+.toggle.ios, .toggle-on.ios, .toggle-off.ios { border-radius: 20rem; padding: 10px 40px;}
+.toggle.ios .toggle-handle { border-radius: 20rem; }
+
+.box {
+    width: 100%;
+    border-radius: 20px;
+    padding: 8vh;
+    margin-top: 10vh;
+    background: black;
+    text-align: center;
+    transition: 0.25s;
+    opacity: 0.85
+}
+
+.box input[type="text"],
+.box input[type="password"] {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 4vh auto;
+    text-align: left;
+    border: 2px solid #3498db;
+    padding: 10px 30px;
+    width: 60%;
+    outline: none;
+    color: white;
+    border-radius: 24px;
+    transition: 0.25s;
+}
+
+.box input[type="text"]:focus,
+.box input[type="password"]:focus {
+    width: 80%;
+    border-color: #2ecc71
+}
+
+.box h1 {
+    color: white;
+    font-weight: 800;
+}
+
+.box input[type="submit"] {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid white;
+    padding: 12px 40px;
+    color: white;
+    border-radius: 24px;
+    transition: 0.25s;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.box input[type="submit"]:hover {
+    background: white;
+    color: black;    
+}
+
+.switch-btn {
+    text-decoration: underline;
+}
