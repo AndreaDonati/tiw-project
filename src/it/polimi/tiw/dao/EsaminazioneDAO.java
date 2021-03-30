@@ -2,7 +2,11 @@ package it.polimi.tiw.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class EsaminazioneDAO {
 	private Connection con;
@@ -31,5 +35,60 @@ public class EsaminazioneDAO {
 			pstatement.setInt(3, idEsame);
 			pstatement.executeUpdate();
 		}
+	}
+	
+	public void publishGrades(int idEsame) throws SQLException {
+		String query = "UPDATE esaminazione"
+				+"		SET stato = 'pubblicato'"
+				+"		WHERE idEsame = ?"
+				+"		AND stato = 'inserito'";
+		
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, idEsame);
+			pstatement.executeUpdate();
+		}
+	}
+	
+	public void recordGrades(int idEsame) throws SQLException {
+		// prendo l'id massimo dei verbali
+		String query = "SELECT  MAX(id), dataVerbale FROM verbale";
+		int idVerbale = 0;
+		
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			try (ResultSet result = pstatement.executeQuery();) {
+				result.next();
+				idVerbale = result.getInt("MAX(id)") + 1;
+			}
+		}
+
+		// creo un nuovo verbale
+		query = "INSERT INTO verbale (id, dataVerbale)"
+				+"		VALUES ( ? , ? )";
+		
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			Calendar cal = Calendar.getInstance();
+			Date today = cal.getTime();
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String date = dateFormat.format(today);
+
+			pstatement.setInt(1, idVerbale);
+			pstatement.setString(2, date);
+			pstatement.execute();
+		}
+		
+		// cambio stato di tutti i voti 'inseriti' in 'verbalizzati' e aggiungo la dipendenza al nuovo verbale
+		query = "UPDATE esaminazione"
+				+"		SET stato = 'verbalizzato', idVerbale = ?"
+				+"		WHERE idEsame = ?"
+				+"		AND stato = 'pubblicato'";
+		
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, idVerbale);
+			pstatement.setInt(2, idEsame);
+			pstatement.executeUpdate();
+		}
+		
+
 	}
 }

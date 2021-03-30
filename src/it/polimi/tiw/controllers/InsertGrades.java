@@ -51,8 +51,7 @@ public class InsertGrades extends HttpServlet {
 		}
 		
 		
-
-		// insrisco il voto nel db
+		// inserisco il voto nel db
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
 		
 		try {

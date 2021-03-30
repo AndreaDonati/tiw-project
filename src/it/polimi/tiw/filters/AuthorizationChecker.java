@@ -52,10 +52,16 @@ public class AuthorizationChecker implements Filter {
 		HttpSession session = req.getSession();
 		User user = (User) session.getAttribute("user");
 		
+		// Controllo che esista una sessione attiva
+		String loginpath = req.getServletContext().getContextPath() + "/index.html";
+		if (user == null) {
+			resp.sendRedirect(loginpath);
+			return;
+		}
+		
 		// controllo che lo user sia un professore
-		// se non lo è, redirecto alla pagina di login
+		// se non lo ï¿½, redirecto alla pagina di login
 		if(!user.getRuolo().equals("teacher")) {
-			String loginpath = req.getServletContext().getContextPath() + "/index.html";
 			resp.sendRedirect(loginpath);
 		}
 		
@@ -65,13 +71,13 @@ public class AuthorizationChecker implements Filter {
 		try {
 			corsiInsegnati = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola());
 		} catch (SQLException e) {
-			System.out.println("qualcosa è andato molto storto.");
+			System.out.println("qualcosa ï¿½ andato molto storto.");
 			e.printStackTrace();
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		}
 		
-		// cerco se tra i corsiInsegnati c'è  il corso a cui 
+		// cerco se tra i corsiInsegnati c'ï¿½  il corso a cui 
 		// corrisponde l'esame di cui sta modificando il voto
 		int idCorso = Integer.parseInt(req.getParameter("idCorso"));
 		if(!checkIdCorsoInCorsiInsegnati(idCorso, corsiInsegnati)) {

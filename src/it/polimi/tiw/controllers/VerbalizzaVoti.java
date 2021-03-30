@@ -13,16 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 import it.polimi.tiw.dao.EsaminazioneDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-@WebServlet("/pubblicaVoti")
-public class PubblicaVoti extends HttpServlet {
+@WebServlet("/verbalizzaVoti")
+public class VerbalizzaVoti extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-
 	
-    public PubblicaVoti() {
+    public VerbalizzaVoti() {
         super();
     }
-    
+
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
@@ -43,18 +42,18 @@ public class PubblicaVoti extends HttpServlet {
 		}
 		
 		
-		// cambio lo stato dei voti relativi all'esame specificato in 'pubblicato'
+		// cambio lo stato dei voti relativi all'esame specificato in 'verbalizzato'
+		// e creo un nuovo verbale relativo all'esame
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
 		
 		try {
-			esaminazioneDAO.publishGrades(idEsame);
+			esaminazioneDAO.recordGrades(idEsame);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
 		}
 
-
-		//TODO: MESSAGGIO DI SUCCESSO?
+		//TODO: REDIRECT A PAGINA VERBALE
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
