@@ -51,18 +51,13 @@ public class AuthorizationChecker implements Filter {
 		// recupero lo user dalla sessione
 		HttpSession session = req.getSession();
 		User user = (User) session.getAttribute("user");
-		
-		// Controllo che esista una sessione attiva
-		String loginpath = req.getServletContext().getContextPath() + "/index.html";
-		if (user == null) {
-			resp.sendRedirect(loginpath);
-			return;
-		}
-		
+				
 		// controllo che lo user sia un professore
-		// se non lo �, redirecto alla pagina di login
+		// se non lo e', redirecto alla pagina di login
+		String loginpath = req.getServletContext().getContextPath() + "/index.html";
 		if(!user.getRuolo().equals("teacher")) {
 			resp.sendRedirect(loginpath);
+			return;
 		}
 		
 		// recupero i corsi insegnati dal professore
@@ -71,7 +66,7 @@ public class AuthorizationChecker implements Filter {
 		try {
 			corsiInsegnati = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola());
 		} catch (SQLException e) {
-			System.out.println("qualcosa � andato molto storto.");
+			System.out.println("qualcosa e' andato molto storto.");
 			e.printStackTrace();
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;

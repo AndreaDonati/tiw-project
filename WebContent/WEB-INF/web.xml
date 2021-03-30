@@ -24,7 +24,11 @@
  <filter-mapping> 
     <filter-name>LoginChecker</filter-name> 
     <url-pattern>/Home</url-pattern> 
-    <url-pattern>/getResults</url-pattern> 
+    <url-pattern>/getResults</url-pattern>
+    <url-pattern>/inserisciVoti</url-pattern>
+    <url-pattern>/pubblicaVoti</url-pattern>
+    <url-pattern>/verbalizzaVoti</url-pattern>
+    <url-pattern>/rifiutaVoti</url-pattern>
  </filter-mapping> 
  <filter> 
   <filter-name>AuthorizationChecker</filter-name> 
@@ -33,7 +37,15 @@
  <filter-mapping> 
     <filter-name>AuthorizationChecker</filter-name> 
     <url-pattern>/pubblicaVoti</url-pattern>
-    <url-pattern>/insertGrades</url-pattern>
+    <url-pattern>/inserisciVoti</url-pattern>
+ </filter-mapping> 
+ <filter> 
+  <filter-name>StudentChecker</filter-name> 
+      <filter-class>it.polimi.tiw.filters.StudentChecker</filter-class> 
+ </filter> 
+ <filter-mapping> 
+    <filter-name>StudentChecker</filter-name> 
+    <url-pattern>/rifiutaVoti</url-pattern>
  </filter-mapping> 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

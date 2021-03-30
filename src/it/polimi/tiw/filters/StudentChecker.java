@@ -46,18 +46,12 @@ public class StudentChecker implements Filter {
 		HttpSession session = req.getSession();
 		User user = (User) session.getAttribute("user");
 		
-		// Controllo che esista una sessione attiva
-		String loginpath = req.getServletContext().getContextPath() + "/index.html";
-		if (user == null) {
-			resp.sendRedirect(loginpath);
-			return;
-		}
-		
-		
 		// controllo che lo user sia uno studente
-		// se non lo �, redirecto alla pagina di login
+		// se non lo e', redirecto alla pagina di login
+		String loginpath = req.getServletContext().getContextPath() + "/index.html";
 		if(!user.getRuolo().equals("student")) {
 			resp.sendRedirect(loginpath);
+			return;
 		}
 		
 		// pass the request along the filter chain
