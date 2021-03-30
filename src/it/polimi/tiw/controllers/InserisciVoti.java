@@ -10,15 +10,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsaminazioneDAO;
+import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-@WebServlet("/verbalizzaVoti")
-public class VerbalizzaVoti extends HttpServlet {
+
+@WebServlet("/inserisciVoti")
+public class InserisciVoti extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	
-    public VerbalizzaVoti() {
+    public InserisciVoti() {
         super();
     }
 
@@ -27,35 +30,42 @@ public class VerbalizzaVoti extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int matricolaStudente;
 		int idEsame;
+		String voto;
 		
 		try {
+			matricolaStudente = Integer.parseInt(request.getParameter("matricola"));
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
+			voto = request.getParameter("voto");
 
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Identificativo dell'esame errato\"}");
+			response.getWriter().write("{\"errorMessage\":\"Campi vuoti o errati\"}");
 			return;
 		}
 		
 		
-		// cambio lo stato dei voti relativi all'esame specificato in 'verbalizzato'
-		// e creo un nuovo verbale relativo all'esame
+		// inserisco il voto nel db
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
 		
 		try {
-			esaminazioneDAO.recordGrades(idEsame);
+			esaminazioneDAO.insertGrade(matricolaStudente, idEsame, voto);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
 		}
 
-		//TODO: REDIRECT A PAGINA VERBALE
+
+		// redireziono il professore alla pagina con i risultati dell'esame
+		String path = getServletContext().getContextPath() + "/getResults?idEsame=" + idEsame;
+		response.sendRedirect(path);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

@@ -37,6 +37,12 @@ public class EsaminazioneDAO {
 		}
 	}
 	
+	/**
+	 * Pubblca i voti precedentemente inseriti relativi all'esame specificato
+	 * @param idEsame
+	 * @return
+	 * @throws SQLException
+	 */
 	public void publishGrades(int idEsame) throws SQLException {
 		String query = "UPDATE esaminazione"
 				+"		SET stato = 'pubblicato'"
@@ -49,6 +55,12 @@ public class EsaminazioneDAO {
 		}
 	}
 	
+	/**
+	 * Crea un nuovo verbale e verbalizza i voti precedentemente pubblicati relativi all'esame specificato
+	 * @param idEsame
+	 * @return
+	 * @throws SQLException
+	 */
 	public void recordGrades(int idEsame) throws SQLException {
 		// prendo l'id massimo dei verbali
 		String query = "SELECT  MAX(id), dataVerbale FROM verbale";
@@ -88,7 +100,26 @@ public class EsaminazioneDAO {
 			pstatement.setInt(2, idEsame);
 			pstatement.executeUpdate();
 		}
+	}
+	
+	/**
+	 * Rifiuta il voto pubblicato relativo all'esame e all'utente specificati
+	 * @param idEsame
+	 * @param matricola
+	 * @return
+	 * @throws SQLException
+	 */
+	public void rejectGrade(int idEsame, int matricola) throws SQLException {
+		String query = "UPDATE esaminazione"
+				+"		SET stato = 'rifiutato'"
+				+"		WHERE idEsame = ? "
+				+"		AND idStudente = ? "
+				+"		AND stato = 'pubblicato' ";
 		
-
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, idEsame);
+			pstatement.setInt(2, matricola);
+			pstatement.executeUpdate();
+		}
 	}
 }
