@@ -72,8 +72,9 @@ public class AuthorizationChecker implements Filter {
 			return;
 		}
 		
-		// cerco se tra i corsiInsegnati c'ï¿½  il corso a cui 
+		// cerco se tra i corsiInsegnati c'e'  il corso a cui 
 		// corrisponde l'esame di cui sta modificando il voto
+		//TODO: se questo parametro non è nella richiesta il server ritorna una pagina di errore, ok o non ok?
 		int idCorso = Integer.parseInt(req.getParameter("idCorso"));
 		if(!checkIdCorsoInCorsiInsegnati(idCorso, corsiInsegnati)) {
 			System.out.println("Professore non autorizzato.");
