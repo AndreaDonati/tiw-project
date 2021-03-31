@@ -48,6 +48,6 @@
     <url-pattern>/rifiutaVoti</url-pattern>
  </filter-mapping> 
   <welcome-file-list>
-    <welcome-file>indexHTML.html</welcome-file>
+    <welcome-file>index.html</welcome-file>
   </welcome-file-list>
 </web-app>

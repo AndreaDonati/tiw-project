@@ -4,12 +4,18 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 //import org.apache.commons.lang.StringEscapeUtils;
 //import org.thymeleaf.TemplateEngine;
@@ -26,6 +32,7 @@ import it.polimi.tiw.utils.ConnectionHandler;
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
+	private TemplateEngine templateEngine;
 
 	public Login() {
 		super();
@@ -33,6 +40,12 @@ public class Login extends HttpServlet {
 
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
+		ServletContext servletContext = getServletContext();
+		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
+		templateResolver.setTemplateMode(TemplateMode.HTML);
+		this.templateEngine = new TemplateEngine();
+		this.templateEngine.setTemplateResolver(templateResolver);
+		templateResolver.setSuffix(".html");
 	}
 	
 	@Override
@@ -51,10 +64,15 @@ public class Login extends HttpServlet {
 			}
 
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Credenziali vuote o mancanti.\"}");
+			// for debugging only e.printStackTrace();
+			// redireziono il client a una pagina con lo stesso template del login
+			// ma con in aggiunta il messaggio d'errore da mostrare all'utente
+			String path;
+			ServletContext servletContext = getServletContext();
+			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+			ctx.setVariable("errorMsg", "Credenziali vuote o mancanti.");
+			path = "/index.html";
+			templateEngine.process(path, ctx, response.getWriter());
 			return;
 		}
 
@@ -78,14 +96,17 @@ public class Login extends HttpServlet {
 		String path="";
 		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Matricola o password non corretti.\"}");
+			ServletContext servletContext = getServletContext();
+			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+			ctx.setVariable("errorMsg", "Matricola o password non corretti.");
+			path = "/index.html";
+			templateEngine.process(path, ctx, response.getWriter());
 			return;
 		} else {
 			request.getSession().setAttribute("user", user);
-			// redireziono lo user alla home
+			// seleziono il path corretto in base al ruolo dello user
 			path = getServletContext().getContextPath() + "/Home";
+
 			response.sendRedirect(path);
 		} 
 	}

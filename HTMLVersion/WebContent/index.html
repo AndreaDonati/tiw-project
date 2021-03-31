@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
 <title>Login</title>
-<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -26,8 +26,8 @@
 						<input type="text" name="username" placeholder="matricola">
 						<input type="password" name="pwd" placeholder="password">
 						<input type="submit" value="LOGIN" id="loginButton">
-						<p id="errorMessage" style="color:red"></p>
-						<a href="../JS/indexJS.html" class="switch-btn">Switch to JS version</p>
+						<p th:text="${errorMsg}" id="errorMessage" style="color:red"></p>
+<!-- 						<a href="../JS/indexJS.html" class="switch-btn">Switch to JS version</p> -->
 					</form>
 				</div>
 			</div>
