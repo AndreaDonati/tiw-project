@@ -72,7 +72,6 @@ public class Home extends HttpServlet {
 			//e1.printStackTrace();
 			//TODO: modificare questo possibilmente
 			// l'eccezione indica un errore nella query al db
-			response.sendError(400);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users "+e.toString());
 			return;
 		}
