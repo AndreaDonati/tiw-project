@@ -63,21 +63,23 @@ public class EsameDAO {
 	public List<Esame> getEsamiFromStudenteCorso(int matricola, int idCorso) throws SQLException {
 		List<Esame> esami = new ArrayList<Esame>();
 		
-		String query = "SELECT  esame.id, dataAppello  "
-				+ "		FROM esame "
-				+"		JOIN frequentazione ON frequentazione.idCorso = esame.idCorso"	
-				+ "		WHERE esame.idCorso = ? "
-				+"		AND matricolaStudente = ?"
+		String query = "SELECT  esame.id, esame.dataAppello  "
+				+ "		FROM esaminazione, esame "
+				+ "		WHERE esaminazione.idEsame = esame.id"
+				+ "		AND esame.idCorso = ? "
+				+ "		AND esaminazione.idStudente = ?"
 				+ "		ORDER BY dataAppello DESC";
+		
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, idCorso);
 			pstatement.setInt(2, matricola);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (!result.isLast()) {
 					result.next();
+					// controllo su empty result set 
 					Esame esame = new Esame();
 					esame.setId(result.getInt("esame.id"));
-					esame.setDataAppello(result.getString("dataAppello"));
+					esame.setDataAppello(result.getString("esame.dataAppello"));
 					esami.add(esame);
 				}
 			}

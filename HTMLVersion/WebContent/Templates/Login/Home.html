@@ -2,9 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Home</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" type="text/css" media="all"
-	href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" media="all" th:href="@{./Templates/Login/homeStyle.css}" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700,800" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
 	<h1>Benvenuto nel servizio clienti Vodafone</h1>
@@ -13,7 +16,7 @@
 		Mail: <span th:text="${{session.mail}}">US</span>
 	</p>
 
-	<p th:text="${'Nice to see you again ' + session.user.nome + ' ' + session.user.cognome}"></p>
+	<p th:text="${session.user.nome + ' ' + session.user.cognome}"></p>
 
 	<table>
 		<thead>
@@ -35,11 +38,105 @@
 	<span th:text="${allCorsi[i].nome}"></span>
 	<div th:each="e : ${allCorsiEsami[i]}">
 		<div th:each="y : ${e}">
-			<span th:text="${y.dataAppello}"></span>
+			<a th:href="@{/getResults(idEsame=${y.id})}"><input type="button" th:text="${y.dataAppello}"></span></a>
 		</div>
 	</div>
 </div>
 
+
+<!-- PROVA -->
+
+  
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="navbar-header">
+    <!--<i class="fas fa-book navbar-brand"></i>-->
+    <a class="navbar-brand">Verbalizer</a>
+
+  </div>
+</nav>   
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-2">
+      <div class="sidenav">
+        <!-- immagine profilo -->
+        <img src="./tizio.jpg" class="profile-img" alt="">
+        <h3>Nome e Cognome</h3>
+        <h4 th:text="${{session.user.nome + ' ' + session.user.cognome}}">Gregorio Galletti</h4>
+        <h3>E-mail</h3>
+        <h4 th:text="${{session.user.mail}}">gregorio.galletti<br/>&nbsp;&nbsp;&nbsp;&nbsp;@mail.polimi.it</h4>
+        <h3>Matricola</h3>
+        <h4 th:text="${{session.user.matricola}}">10494196</h4>
+      </div>
+    </div>
+    <div class="col-xs-10">
+      <div class="jumbotron">
+        <h3>I tuoi corsi</h3>
+        <p class="lead">Clicca sul corso per visualizzare gli appelli</p>
+      </div>
+      
+      <!-- Accordion -->
+
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" th:remove="all-but-first">
+                    <div class="panel panel-default" th:each="i : ${#numbers.sequence( 0, allCorsi.size-1)}">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a data-parent="#accordion" th:text="${allCorsi[i].nome + ' ' +allCorsi[i].anno}">
+                                    Tecnologie Informatiche per il Web
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <p>Clicca sull'appello per visualizzare gli iscritti: </p>
+                                <div th:each="e : ${allCorsiEsami[i]}">
+									<div th:each="y : ${e}">
+										<a class="a-btn" th:href="@{/getResults(idEsame=${y.id})}" th:text="${y.dataAppello}"></a>
+									</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a data-parent="#accordion">
+                                    DataBases 2
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="panel-body">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nisl lorem, dictum id pellentesque at, vestibulum ut arcu. Curabitur erat libero, egestas eu tincidunt ac, rutrum ac justo. Vivamus condimentum laoreet lectus, blandit posuere tortor aliquam vitae. Curabitur molestie eros. </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <h4 class="panel-title">
+                                <a data-parent="#accordion">
+                                    Computer Security
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nisl lorem, dictum id pellentesque at, vestibulum ut arcu. Curabitur erat libero, egestas eu tincidunt ac, rutrum ac justo. Vivamus condimentum laoreet lectus, blandit posuere tortor aliquam vitae. Curabitur molestie eros. </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+
+
+
+    </div>
+  </div>
+</div>  
+
+
+</nav>
+
+  
 </body>
 </html>
-

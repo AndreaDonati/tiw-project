@@ -79,7 +79,7 @@ public class Home extends HttpServlet {
 		// recupero gli esami dai ai corsi associati allo user
 		List<List<Esame>> corsiEsami;
 		try {
-			corsiEsami = this.getEsamiFromCorsi(corsi);
+			corsiEsami = this.getEsamiFromCorsiByUserRole(corsi,user);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users "+e.toString());
 			return;
@@ -94,13 +94,20 @@ public class Home extends HttpServlet {
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
-	private List<List<Esame>> getEsamiFromCorsi(List<Corso> corsi) throws SQLException{
+	private List<List<Esame>> getEsamiFromCorsiByUserRole(List<Corso> corsi, User user) throws SQLException{
 		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
-		// QUESTA E' UNA PROVA KEKW
 		EsameDAO esameDao = new EsameDAO(connection);
-		for (Corso c : corsi) {
-			corsiEsami.add(esameDao.getEsamiFromCorso(c.getId()));
+		if(user.getRuolo().equals("teacher")) {
+			for (Corso c : corsi) {
+				corsiEsami.add(esameDao.getEsamiFromCorso(c.getId()));
+			}
+		}else if(user.getRuolo().equals("student")) {
+			for (Corso c : corsi) {
+				corsiEsami.add(esameDao.getEsamiFromStudenteCorso(user.getMatricola(),c.getId()));
+			}
 		}
+
+
 
 		return corsiEsami;
 	}
