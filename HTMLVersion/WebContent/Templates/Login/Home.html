@@ -10,40 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-	<h1>Benvenuto nel servizio clienti Vodafone</h1>
-
-	<p>
-		Mail: <span th:text="${{session.mail}}">US</span>
-	</p>
-
-	<p th:text="${session.user.nome + ' ' + session.user.cognome}"></p>
-
-	<table>
-		<thead>
-			<tr>
-				<th>Id Corso</th>
-				<th>Nome Corso</th>
-				<th>Anno Corso</th>
-<!-- 				<th>Username</th> -->
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>asiuhdiusohd</td>
-			</tr>
-		</tbody>
-	</table>
-
-<div th:each="i : ${#numbers.sequence( 0, allCorsi.size-1)}">
-	<span th:text="${allCorsi[i].nome}"></span>
-	<div th:each="e : ${allCorsiEsami[i]}">
-		<div th:each="y : ${e}">
-			<a th:href="@{/getResults(idEsame=${y.id})}"><input type="button" th:text="${y.dataAppello}"></span></a>
-		</div>
-	</div>
-</div>
-
-
 <!-- PROVA -->
 
   
@@ -64,7 +30,7 @@
         <h3>Nome e Cognome</h3>
         <h4 th:text="${{session.user.nome + ' ' + session.user.cognome}}">Gregorio Galletti</h4>
         <h3>E-mail</h3>
-        <h4 th:text="${{session.user.mail}}">gregorio.galletti<br/>&nbsp;&nbsp;&nbsp;&nbsp;@mail.polimi.it</h4>
+        <h4 th:utext="${#strings.substringBefore(session.user.mail,'@') + '<br/>&nbsp;&nbsp;&nbsp;&nbsp;@' + #strings.substringAfter(session.user.mail,'@')}">gregorio.galletti<br/>&nbsp;&nbsp;&nbsp;&nbsp;@mail.polimi.it</h4>
         <h3>Matricola</h3>
         <h4 th:text="${{session.user.matricola}}">10494196</h4>
       </div>
@@ -88,7 +54,19 @@
                         </div>
                         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
-                                <p>Clicca sull'appello per visualizzare gli iscritti: </p>
+								<!-- Formattazione condizionale: controllo se ci sono esami da mostrare o meno -->
+                                <p th:text="${allCorsiEsami[i].size != 0} ? 
+                                											(${#strings.equals(session.user.ruolo,'teacher')} ? 
+                                																		 'Clicca sull\'appello per visualizzare gli iscritti:' : 
+                                																		 'Clicca sull\'appello per visualizzare il risultato:'
+                                											) 
+                                											: 
+                                											(${#strings.equals(session.user.ruolo,'teacher')} ? 
+                                																		 'Non sono presenti appelli per questo corso' : 
+                                																		 'Non sei iscritto/a a nessun appello di questo corso.'
+                                											 )">
+                                										  Clicca sull'appello per visualizzare gli iscritti: 
+                                </p>
                                 <div th:each="e : ${allCorsiEsami[i]}">
 									<div th:each="y : ${e}">
 										<a class="a-btn" th:href="@{/getResults(idEsame=${y.id})}" th:text="${y.dataAppello}"></a>
@@ -126,10 +104,6 @@
                         </div>
                     </div>
                 </div>
-        
-
-
-
     </div>
   </div>
 </div>  
