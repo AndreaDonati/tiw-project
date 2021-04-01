@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Home</title>
+<title>Esito</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" media="all" th:href="@{./Templates/Login/homeStyle.css}" />
+  <link rel="stylesheet" type="text/css" media="all" th:href="@{./css/homeStyle.css}" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700,800" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
@@ -26,18 +26,18 @@
     <div class="col-xs-2">
       <div class="sidenav">
         <!-- immagine profilo -->
-        <img src="./tizio.jpg" class="profile-img" alt="">
+        <img  th:src="@{${session.user.image}}" class="profile-img" alt="">
         <h3>Nome e Cognome</h3>
         <h4 th:text="${{session.user.nome + ' ' + session.user.cognome}}">Gregorio Galletti</h4>
         <h3>E-mail</h3>
-        <h4 th:utext="${#strings.substringBefore(session.user.mail,'@') + '<br/>&nbsp;&nbsp;&nbsp;&nbsp;@' + #strings.substringAfter(session.user.mail,'@')}">gregorio.galletti<br/>&nbsp;&nbsp;&nbsp;&nbsp;@mail.polimi.it</h4>
+        <h4 th:utext="${#strings.substringBefore(session.user.mail,'@') + ' @' + #strings.substringAfter(session.user.mail,'@')}">gregorio.galletti<br/>&nbsp;&nbsp;&nbsp;&nbsp;@mail.polimi.it</h4>
         <h3>Matricola</h3>
         <h4 th:text="${{session.user.matricola}}">10494196</h4>
       </div>
     </div>
     <div class="col-xs-10">
       <div class="jumbotron">
-        <h3>Risultati</h3>
+        <h3>Esito</h3>
       </div>
       
       <!-- Accordion -->
@@ -54,23 +54,50 @@
                         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
 								<!-- Formattazione condizionale: controllo se ci sono esami da mostrare o meno -->
-								<table border="2" align="center">
-									<thead>
-										<tr>
-											<th>Studente</th><th>Corso</th><th>Data Appello</th><th>Voto</th><th>Stato Voto</th><th></th>
-										</tr>
-									</thead>
-									<tbody th:remove="all-but-first">
-										<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
-											<td th:text="${risultati[i].studente.nome + ' ' + risultati[i].studente.cognome}">Studente Bravo</td>
-											<td th:text="${risultati[i].corso.nome}">Tecnologie Informatiche per il Web</td>
-											<td th:text="${risultati[i].esame.dataAppello}">09-06-1996</td>
-											<td th:text="${risultati[i].voto}">30 e Lode</td>
-											<td th:text="${risultati[i].stato}">Verbalizzato</td>
-											<td th:if="${#strings.equals(session.user.ruolo,'student') and risultati[i].voto != null and risultati[i].isRifiutabile()}"><a class="a-btn" th:href="@{/rifiutaVoti(idEsame=${risultati[i].esame.id})}">Rifiuta</a></td>
-										</tr>
-									</tbody>
-								</table>
+								<div th:if="${#strings.equals(session.user.ruolo,'teacher')}">
+									<table class="table" align="center">
+										<thead>
+											<tr>
+												<th>Matricola</th><th>Cognome</th><th>Nome</th><th>e-mail</th><th>Corso di Laurea</th><th>Voto</th><th>Stato</th><th></th>
+											</tr>
+										</thead>
+										<tbody th:remove="all-but-first">
+											<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
+												<td th:text="${risultati[i].studente.matricola}">000000</td>
+												<td th:text="${risultati[i].studente.cognome}">Bravo</td>
+												<td th:text="${risultati[i].studente.nome}">Studente</td>
+												<td th:text="${risultati[i].studente.mail}">studente.bravo@mail.polimi.it</td>
+												<td th:text="${risultati[i].studente.cdl}">Corso degli Studenti Bravi</td>
+												<td th:text="${risultati[i].voto}">30 e Lode</td>
+												<td th:text="${risultati[i].stato}">Verbalizzato</td>
+												<td th:if="${not #strings.equals(risultati[i].stato,'verbalizzato')}"><a class="modifica-btn" th:href="@{/modificaVoto(idEsame=${risultati[i].esame.id},matricolaStudente=${risultati[i].studente.matricola})}">Modifica</a></td>
+											</tr>
+										</tbody>
+									</table>
+									<a class="a-btn" th:href="@{/pubblicaVoti(idEsame=${risultati[0].esame.id})}">Pubblica</a>
+									<a class="a-btn" th:href="@{/verbalizzaVoti(idEsame=${risultati[0].esame.id})}">Verbalizza</a>
+									
+								</div>
+								<div th:if="${#strings.equals(session.user.ruolo,'student') and not #strings.equals(risultati[0].stato,'non inserito')}">
+									<table class="table" align="center">
+										<thead>
+											<tr>
+												<th>Matricola</th><th>Nome e Cognome</th><th>Data Appello</th><th>Voto</th><th></th>
+											</tr>
+										</thead>
+										<tbody th:remove="all-but-first">
+											<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
+												<td th:text="${risultati[i].studente.matricola}">Studente Bravo</td>
+												<td th:text="${risultati[i].studente.nome + ' ' + risultati[i].studente.cognome}">Studente Bravo</td>
+												<td th:text="${risultati[i].esame.dataAppello}">09-06-1996</td>
+												<td th:text="${risultati[i].voto}">30 e Lode</td>
+												<td th:if="${#strings.equals(risultati[i].stato,'rifiutato')}">Il voto è stato rifiutato.</td>
+												<td th:if="${risultati[i].voto != null and risultati[i].isRifiutabile()}"><a class="rifiuta-btn" th:href="@{/rifiutaVoti(idEsame=${risultati[i].esame.id})}">Rifiuta</a></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div th:if="${#strings.equals(session.user.ruolo,'student') and #strings.equals(risultati[0].stato,'non inserito')}"><p>Voto non ancora definito.</p></div>
                             </div>
                         </div>
                     </div>

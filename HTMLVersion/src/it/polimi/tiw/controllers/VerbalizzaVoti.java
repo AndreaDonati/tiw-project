@@ -52,7 +52,9 @@ public class VerbalizzaVoti extends HttpServlet {
 			return;
 		}
 
-		//TODO: REDIRECT A PAGINA VERBALE
+		// redireziono il professore alla pagina con i risultati dell'esame
+		String path = getServletContext().getContextPath() + "/getResults?idEsame=" + idEsame;
+		response.sendRedirect(path);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Modifica Voto</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" media="all" th:href="@{./css/homeStyle.css}" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700,800" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<!-- PROVA -->
+
+  
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="navbar-header">
+    <!--<i class="fas fa-book navbar-brand"></i>-->
+    <a class="navbar-brand">Verbalizer</a>
+
+  </div>
+</nav>   
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-2">
+      <div class="sidenav">
+        <!-- immagine profilo -->
+        <img  th:src="@{${session.user.image}}" class="profile-img" alt="">
+        <h3>Nome e Cognome</h3>
+        <h4 th:text="${{session.user.nome + ' ' + session.user.cognome}}">Gregorio Galletti</h4>
+        <h3>E-mail</h3>
+        <h4 th:utext="${#strings.substringBefore(session.user.mail,'@') + ' @' + #strings.substringAfter(session.user.mail,'@')}">gregorio.galletti<br/>&nbsp;&nbsp;&nbsp;&nbsp;@mail.polimi.it</h4>
+        <h3>Matricola</h3>
+        <h4 th:text="${{session.user.matricola}}">10494196</h4>
+      </div>
+    </div>
+    <div class="col-xs-10">
+      <div class="jumbotron">
+        <h3>Modifica Voto</h3>
+      </div>
+      
+      <!-- Form -->
+	
+		<form action="inserisciVoti" method="GET">
+			<table class="table" align="center">
+				<thead>
+					<tr>
+						<th>Matricola</th><th>Cognome</th><th>Nome</th><th>e-mail</th><th>Corso di Laurea</th><th>Voto</th><th></th>
+					</tr>
+				</thead>
+				<tbody th:remove="all-but-first">
+					<tr>
+						<td th:text="${studente.matricola}">000000</td>
+						<td th:text="${studente.cognome}">Bravo</td>
+						<td th:text="${studente.nome}">Studente</td>
+						<td th:text="${studente.mail}">studente.bravo@mail.polimi.it</td>
+						<td th:text="${studente.cdl}">Corso degli Studenti Bravi</td>
+						<td >
+							<select name="voto" id="voto">
+							    <option>assente</option>
+							    <option>rimandato</option>
+							    <option>riprovato</option>
+							    <option th:each="i : ${#numbers.sequence( 18, 30)}" th:text="${i}"></option>
+							    <option>30 e Lode</option>
+							</select>
+						</td>
+						<td><input type="submit" class="modifica-btn" value="Applica"></td>
+					</tr>
+				</tbody>
+			</table>
+			<input type="hidden" th:value="${idEsame}" name="idEsame">
+			<input type="hidden" th:value="${studente.matricola}" name="matricolaStudente">
+		</form>
+       
+    </div>
+  </div>
+</div>  
+
+
+</nav>
+
+  
+</body>
+</html>

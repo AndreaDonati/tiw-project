@@ -35,15 +35,12 @@ public class InserisciVoti extends HttpServlet {
 		String voto;
 		
 		try {
-			matricolaStudente = Integer.parseInt(request.getParameter("matricola"));
+			matricolaStudente = Integer.parseInt(request.getParameter("matricolaStudente"));
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 			voto = request.getParameter("voto");
 
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Campi vuoti o errati\"}");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Oooooooh ma cosa provi a fare.");
 			return;
 		}
 		

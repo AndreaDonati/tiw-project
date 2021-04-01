@@ -86,7 +86,7 @@ public class Home extends HttpServlet {
 		}
 				
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
-		String path = "/Templates/Login/Home.html";
+		String path = "/Templates/Home.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("allCorsi", corsi);
