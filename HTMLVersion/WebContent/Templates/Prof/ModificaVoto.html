@@ -27,7 +27,7 @@
     <div class="col-xs-2">
       <div class="sidenav">
         <!-- immagine profilo -->
-        <img  th:src="@{${session.user.image}}" class="profile-img" alt="">
+        <img th:src="@{${session.user.image}}" class="profile-img" alt="">
         <h3>Nome e Cognome</h3>
         <h4 th:text="${{session.user.nome + ' ' + session.user.cognome}}">Gregorio Galletti</h4>
         <h3>E-mail</h3>
@@ -38,7 +38,10 @@
     </div>
     <div class="col-xs-10">
       <div class="jumbotron">
-        <h3>Modifica Voto</h3>
+        <h3>
+          <a href="./home.html"><i class="fas fa-chevron-left back-btn"></i></a>
+          Modifica Voto
+        </h3>
       </div>
       
       <!-- Form -->

@@ -229,3 +229,15 @@ select{
 .my-table{
   font-family: "Montserrat", sans-serif;
 }
+
+.back-btn{
+  padding-right: 20px;
+  transition: 0.3s;
+}
+
+.back-btn:hover{
+  padding-right: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-left: 5px;
+}
