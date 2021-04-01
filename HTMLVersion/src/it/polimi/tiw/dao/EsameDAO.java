@@ -174,10 +174,12 @@ public class EsameDAO {
 		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
 		
 		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, utente.image, "
-				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato"
-				+ "		FROM esaminazione, utente, esame "
+				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato, "
+				+ "		corso.nomeCorso, corso.annoCorso, corso.id"
+				+ "		FROM esaminazione, utente, esame, corso "
 				+ "		WHERE esame.id = ? " // cos� o con questa dopo le altre condizioni
 				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
+				+ "		AND esame.idCorso = corso.id"
 				+ "		ORDER BY dataAppello DESC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, idEsame);
@@ -208,6 +210,12 @@ public class EsameDAO {
 					risultato.setStato(result.getString("esaminazione.stato"));
 					// idVerbale
 					risultato.setIdVerbale(result.getInt("esaminazione.idverbale"));
+					// corso
+					Corso corso = new Corso();
+					corso.setId(result.getInt("corso.id"));
+					corso.setNome(result.getString("corso.nomeCorso"));
+					corso.setAnno(result.getInt("corso.annoCorso"));
+					risultato.setCorso(corso);
 					
 					risultati.add(risultato);					
 				}
