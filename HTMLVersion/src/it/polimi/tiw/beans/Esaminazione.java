@@ -70,6 +70,13 @@ public class Esaminazione {
 	}
 	
 	public boolean isRifiutabile() {
-		return voto.equals("30 e Lode") || ( voto != null && !voto.equals("rimandato") && !voto.equals("riprovato") && !voto.equals("assente"));
+		return voto.equals("30 e Lode") || 
+				( voto != null 
+					&& !voto.equals("rimandato") 
+					&& !voto.equals("riprovato") 
+					&& !voto.equals("assente")
+					&& !stato.equals("verbalizzato")
+					&& !stato.equals("rifiutato")
+				);
 	}
 }
