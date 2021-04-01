@@ -71,10 +71,7 @@ public class GetResults extends HttpServlet {
 				throw new Exception();
 			idEsame = Integer.parseInt(idEsameParam);
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Richiesta incompleta: parametri mancanti.\"}");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta incompleta. Parametri mancanti.");
 			return;
 		}
 		
