@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" media="all" th:href="@{./css/homeStyle.css}" />
+  <!--<link rel="stylesheet" type="text/css" media="all" href="../../css/homeStyle.css" />-->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700,800" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
@@ -41,12 +42,14 @@
       </div>
       
       <!-- Form -->
-	
+	    <div class="col-xs-1"></div>
+      <div class="col-xs-10">
+
 		<form action="inserisciVoti" method="GET">
-			<table class="table" align="center">
+			<table class="table my-table">
 				<thead>
 					<tr>
-						<th>Matricola</th><th>Cognome</th><th>Nome</th><th>e-mail</th><th>Corso di Laurea</th><th>Voto</th><th></th>
+						<th>Matricola</th><th>Cognome</th><th>Nome</th><th>E-mail</th><th>Corso di Laurea</th><th>Voto</th><th></th>
 					</tr>
 				</thead>
 				<tbody th:remove="all-but-first">
@@ -55,7 +58,7 @@
 						<td th:text="${studente.cognome}">Bravo</td>
 						<td th:text="${studente.nome}">Studente</td>
 						<td th:text="${studente.mail}">studente.bravo@mail.polimi.it</td>
-						<td th:text="${studente.cdl}">Corso degli Studenti Bravi</td>
+						<td th:text="${studente.cdl}">Corso Ingegneria degli Studenti Bravi</td>
 						<td >
 							<select name="voto" id="voto">
 							    <option>assente</option>
@@ -72,7 +75,9 @@
 			<input type="hidden" th:value="${idEsame}" name="idEsame">
 			<input type="hidden" th:value="${studente.matricola}" name="matricolaStudente">
 		</form>
-       
+      </div>
+      <div class="col-xs-1"></div>
+
     </div>
   </div>
 </div>  
