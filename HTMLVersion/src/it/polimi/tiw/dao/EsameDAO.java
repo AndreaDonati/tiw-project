@@ -74,8 +74,7 @@ public class EsameDAO {
 			pstatement.setInt(1, idCorso);
 			pstatement.setInt(2, matricola);
 			try (ResultSet result = pstatement.executeQuery();) {
-				while (!result.isLast()) {
-					result.next();
+				while (result.next()) {
 					// controllo su empty result set 
 					Esame esame = new Esame();
 					esame.setId(result.getInt("esame.id"));
