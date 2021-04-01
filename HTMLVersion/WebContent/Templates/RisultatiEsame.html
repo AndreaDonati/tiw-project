@@ -67,6 +67,7 @@
 											<td th:text="${risultati[i].esame.dataAppello}">09-06-1996</td>
 											<td th:text="${risultati[i].voto}">30 e Lode</td>
 											<td th:text="${risultati[i].stato}">Verbalizzato</td>
+											<td th:if="${#strings.equals(session.user.ruolo,'student') and risultati[i].voto != null and risultati[i].isRifiutabile()}"><a class="a-btn" th:href="@{/rifiutaVoti(idEsame=${risultati[i].esame.id})}">Rifiuta</a></td>
 										</tr>
 									</tbody>
 								</table>
