@@ -17,16 +17,24 @@
 .navbar-right{
   font-size: 18px;
   font-weight: 400;
-  padding-inline: 10px;
   margin-right: 20px;
   margin-top: 12px;
   color: white !important;
+  transition: 0.3s;
 }
 
-.icon{
-  margin-top: 14px;
-  color: white !important;
+.navbar-right:hover{
+  margin-right: 30px;
+  margin-top: 12px;
+  color: #c7c7c7 !important;
+  cursor: pointer;
+  transition: 0.3s;
 }
+
+.logout-btn{
+  padding-right: 10px;
+}
+
 
 /* Animation */
 .animate{
