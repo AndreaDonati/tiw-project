@@ -17,7 +17,7 @@
   <div class="navbar-header">
     <a class="navbar-brand">Verbalizer</a>
   </div>
-  <a class="navbar-right"><i class="fas fa-sign-out-alt logout-btn"></i>LOGOUT</a>
+  <a th:href="@{/Logout}" class="navbar-right"><i class="fas fa-sign-out-alt logout-btn"></i>LOGOUT</a>
 </nav>   
 
 <div class="container">
@@ -42,13 +42,13 @@
         </h3>
       </div>
       
-      <!-- Accordion -->
+      <!-- Static Accordion element -->
 
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
-                                <a data-parent="#accordion" th:text="${risultati[0].corso.nome + ' ' +risultati[0	].corso.anno}">
+                                <a data-parent="#accordion" th:text="${risultati[0].corso.nome + ' ' +risultati[0].corso.anno}">
                                     Tecnologie Informatiche per il Web
                                 </a>
                             </h4>
@@ -57,7 +57,7 @@
                             <div class="panel-body">
 								<!-- Formattazione condizionale: controllo se ci sono esami da mostrare o meno -->
 								<div th:if="${#strings.equals(session.user.ruolo,'teacher')}">
-									<table class="table" align="center">
+									<table class="table">
 										<thead>
 											<tr>
 												<th>Matricola</th><th>Cognome</th><th>Nome</th><th>e-mail</th><th>Corso di Laurea</th><th>Voto</th><th>Stato</th><th></th>
@@ -81,7 +81,7 @@
 									
 								</div>
 								<div th:if="${#strings.equals(session.user.ruolo,'student') and not #strings.equals(risultati[0].stato,'non inserito')}">
-									<table class="table" align="center">
+									<table class="table">
 										<thead>
 											<tr>
 												<th>Matricola</th><th>Nome e Cognome</th><th>Data Appello</th><th>Voto</th><th></th>

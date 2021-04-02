@@ -16,7 +16,7 @@
   <div class="navbar-header">
     <a class="navbar-brand">Verbalizer</a>
   </div>
-  <a class="navbar-right"><i class="fas fa-sign-out-alt logout-btn"></i>LOGOUT</a>
+  <a th:href="@{/Logout}" class="navbar-right"><i class="fas fa-sign-out-alt logout-btn"></i>LOGOUT</a>
 </nav>   
 
 <div class="container">
@@ -38,7 +38,7 @@
         <h3>I tuoi corsi</h3>
       </div>
       
-      <!-- Accordion -->
+      <!-- Static Accordion -->
 
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" th:remove="all-but-first">
                     <div class="panel panel-default" th:each="i : ${#numbers.sequence( 0, allCorsi.size-1)}">
