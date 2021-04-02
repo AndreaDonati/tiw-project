@@ -30,7 +30,7 @@ public class CorsoDAO {
 				+ "		FROM corso, frequentazione "
 				+ "		WHERE corso.id = frequentazione.idCorso "
 				+ "     AND matricolaStudente = ? "
-				+ "		ORDER BY nomeCorso DESC";
+				+ "		ORDER BY nomeCorso DESC, annoCorso DESC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, matricola);
 			try (ResultSet result = pstatement.executeQuery();) {
@@ -54,7 +54,7 @@ public class CorsoDAO {
 		String query = "SELECT  id, nomeCorso, annoCorso "
 				+ "		FROM corso "
 				+ "		WHERE matricolaProfessore = ? "
-				+ "		ORDER BY nomeCorso DESC";
+				+ "		ORDER BY nomeCorso DESC, annoCorso DESC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1,matricola);
 			try (ResultSet result = pstatement.executeQuery();) {
