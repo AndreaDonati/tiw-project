@@ -5,7 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import it.polimi.tiw.beans.Corso;
 import it.polimi.tiw.beans.Esame;
@@ -15,9 +19,18 @@ import it.polimi.tiw.beans.User;
 public class EsameDAO {
 	
 	private Connection con;
+	private Map<String,String> escaping;
 	
 	public EsameDAO(Connection connection) {
 		this.con = connection;
+		this.escaping = new HashMap<String, String>();
+		this.escaping.put("matricola", "utente.matricola");
+		this.escaping.put("cognome", "utente.cognome");
+		this.escaping.put("nome", "utente.nome");
+		this.escaping.put("email", "utente.email");
+		this.escaping.put("cdl", "utente.cdl");
+		this.escaping.put("voto", "esaminazione.voto");
+		this.escaping.put("stato", "esaminazione.stato");
 	}
 	
 //	-----------------------------------------------------------------------------------
@@ -170,6 +183,103 @@ public class EsameDAO {
 	 * @param idEsame
 	 * @return
 	 */
+	public List<Esaminazione> getRisultatiEsameProfessore(int idEsame, String ordine, String campo) throws SQLException {
+		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
+		
+		campo = escaping.get(campo);
+		
+		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, utente.image, "
+				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato, "
+				+ "		corso.nomeCorso, corso.annoCorso, corso.id"
+				+ "		FROM esaminazione, utente, esame, corso "
+				+ "		WHERE esame.id = ? " // cosi' o con questa dopo le altre condizioni
+				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
+				+ "		AND esame.idCorso = corso.id"
+				+ "		ORDER BY "+campo+" "+ordine;
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, idEsame);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (result.next()) {
+					Esaminazione risultato = new Esaminazione();
+					// id
+					risultato.setId(result.getInt("esaminazione.id"));
+					// esame
+					Esame esame = new Esame();
+					esame.setId(result.getInt("esaminazione.idEsame"));
+					esame.setDataAppello(result.getString("esame.dataAppello"));
+					risultato.setEsame(esame);
+					// studente
+					User studente = new User();
+					studente.setMatricola(result.getInt("utente.matricola"));
+					studente.setNome(result.getString("utente.nome"));
+					studente.setCognome(result.getString("utente.cognome"));
+					studente.setMail(result.getString("utente.email"));
+					studente.setRuolo("student");
+					studente.setCdl(result.getString("utente.cdl"));
+					studente.setImage(result.getString("utente.image"));
+					risultato.setStudente(studente);
+					// voto
+					risultato.setVoto(result.getString("esaminazione.voto"));
+					// stato
+					risultato.setStato(result.getString("esaminazione.stato"));
+					// idVerbale
+					risultato.setIdVerbale(result.getInt("esaminazione.idverbale"));
+					// corso
+					Corso corso = new Corso();
+					corso.setId(result.getInt("corso.id"));
+					corso.setNome(result.getString("corso.nomeCorso"));
+					corso.setAnno(result.getInt("corso.annoCorso"));
+					risultato.setCorso(corso);
+					
+					risultati.add(risultato);					
+				}
+			}
+		}
+		// se il campo su cui ordinare è "voto", allora devo usare un ordinamento personalizzato
+		// ORDINE ASC : <vuoto>, assente, rimandato, riprovato, 18, 19, ... 30 e Lode
+		// ORDINE DESC: 30 e Lode, ..., 19, 18, riprovato, rimandato, assente, <vuoto>
+		// ORDINE ATTUALE ASC: <vuoto>, 18, 19, ... , assente, rimandato, riprovato 
+		// ORDINE ATTUALE DESC: riprovato, rimandato, assente, ..., 19, 18, <vuoto>
+		if(campo.equals("esaminazione.voto")) {
+			// ASC -> scorro la lista dall'inizio e metto in coda i numeri
+			if(ordine.equals("ASC")) {
+				List<Esaminazione> risultatiOrdinati = new ArrayList<Esaminazione>();
+				for (Esaminazione esaminazione : risultati) {
+					if(esaminazione.getVoto() != null && esaminazione.getVoto().matches(".*\\d.*")) {
+						risultatiOrdinati.add(esaminazione);
+					}
+				}
+				risultati.removeAll(risultatiOrdinati);
+				risultati.addAll(risultatiOrdinati);	
+			} else {
+				// DESC -> scorro la lista dalla fine e metto in testa i numeri
+				// prendo l'iteratore per scorrerla al contrario
+				
+				ListIterator li = risultati.listIterator(risultati.size());
+				List<Esaminazione> risultatiOrdinati = new ArrayList<Esaminazione>();
+				// Scorro la lista al contrario
+				while(li.hasPrevious()) {
+					Esaminazione esaminazione = (Esaminazione) li.previous();
+					if(esaminazione.getVoto() != null && esaminazione.getVoto().matches(".*\\d.*")) {
+						risultatiOrdinati.add(esaminazione);
+					}
+				}
+				risultati.removeAll(risultatiOrdinati);
+				Collections.reverse(risultatiOrdinati);
+				risultatiOrdinati.addAll(risultati);
+				risultati = risultatiOrdinati;	
+			}
+		}
+		return risultati;
+	}
+	
+	/**
+	 * Ritorna tutti i risultati di uno specifico esame (idEsame) di un corso insegnato da uno
+	 * specifico professore (matricola)
+	 * @param matricola: matricola del PROFESSORE
+	 * @param idEsame
+	 * @return
+	 */
 	public List<Esaminazione> getRisultatiEsameProfessore(int idEsame) throws SQLException {
 		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
 		
@@ -177,10 +287,9 @@ public class EsameDAO {
 				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato, "
 				+ "		corso.nomeCorso, corso.annoCorso, corso.id"
 				+ "		FROM esaminazione, utente, esame, corso "
-				+ "		WHERE esame.id = ? " // cosï¿½ o con questa dopo le altre condizioni
+				+ "		WHERE esame.id = ? " // cosi' o con questa dopo le altre condizioni
 				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
-				+ "		AND esame.idCorso = corso.id"
-				+ "		ORDER BY dataAppello DESC";
+				+ "		AND esame.idCorso = corso.id";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, idEsame);
 			try (ResultSet result = pstatement.executeQuery();) {

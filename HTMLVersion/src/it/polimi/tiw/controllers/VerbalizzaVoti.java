@@ -69,8 +69,6 @@ public class VerbalizzaVoti extends HttpServlet {
 		}
 		if(!checkVerbalizzabili(risultati)) {
 			//response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Non ci sono voti da verbalizzare");
-			// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
-			// seleziono il path corretto in base al ruolo dello user
 			String path = getServletContext().getContextPath() + "/getResults?idEsame="+idEsame;
 			response.sendRedirect(path);
 			return;

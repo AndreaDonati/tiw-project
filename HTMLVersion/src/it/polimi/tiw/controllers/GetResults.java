@@ -75,12 +75,24 @@ public class GetResults extends HttpServlet {
 			return;
 		}
 		
+		String ordine;
+		String campo;
+		ordine = request.getParameter("ordine");
+		campo = request.getParameter("campo");
+		// se ordine o campo non sono presenti metto quelli di default
+		if(ordine == null)
+			ordine = "ASC";
+		if(campo == null)
+			campo = "matricola";
+		
+		// se campo == Voto ordinare custom
+		
 		// recupero i risultati dell'esame chiesto dallo user:
 		// user == teacher: recupero tutti i risultati dell'esame
 		// user == student: recupero il solo risultato dello studente
 		List<Esaminazione> risultati;
 		try {
-			risultati = this.getRisultatiEsamiByUserRole(user, idEsame);
+			risultati = this.getRisultatiEsamiByUserRole(user, idEsame, ordine, campo);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			//TODO: modificare questo possibilmente
@@ -104,15 +116,17 @@ public class GetResults extends HttpServlet {
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("risultati", risultati);
+		ctx.setVariable("campo", campo);
+		ctx.setVariable("ordine", ordine.equals("ASC") ? "DESC" : "ASC");
 		templateEngine.process(path, ctx, response.getWriter());		
 	}
 
-	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame) throws SQLException{
+	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame, String ordine, String campo) throws SQLException{
 		List<Esaminazione> risultati = null;
 		
 		EsameDAO esameDao = new EsameDAO(connection);
 		if(user.getRuolo().equals("teacher"))
-			risultati = esameDao.getRisultatiEsameProfessore(idEsame);
+			risultati = esameDao.getRisultatiEsameProfessore(idEsame, ordine, campo);
 		else if(user.getRuolo().equals("student"))
 			risultati = esameDao.getRisultatiEsameStudente(user.getMatricola(), idEsame);
 		return risultati;
