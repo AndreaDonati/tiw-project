@@ -60,13 +60,13 @@
 									<table class="table">
 										<thead>
 											<tr>
-												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='matricola',ordine=${ordine})}">Matricola<i th:if="${#strings.equals(campo,'matricola')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down' : 'fas fa-chevron-up'}"></i></a></th>
-												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='cognome',ordine=${ordine})}">Cognome<i th:if="${#strings.equals(campo,'cognome')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down' : 'fas fa-chevron-up'}"></i></a></th>
-												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='nome',ordine=${ordine})}">Nome<i th:if="${#strings.equals(campo,'nome')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down' : 'fas fa-chevron-up'}"></i></a></th>
-												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='email',ordine=${ordine})}">E-mail<i th:if="${#strings.equals(campo,'email')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down' : 'fas fa-chevron-up'}"></i></a></th>
-												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='cdl',ordine=${ordine})}">Corso di Laurea<i th:if="${#strings.equals(campo,'cdl')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down' : 'fas fa-chevron-up'}"></i></a></th>
-												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='voto',ordine=${ordine})}">Voto<i th:if="${#strings.equals(campo,'voto')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down' : 'fas fa-chevron-up'}"></i></a></th>
-												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='stato',ordine=${ordine})}">Stato<i th:if="${#strings.equals(campo,'stato')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down' : 'fas fa-chevron-up'}"></i></a></th>
+												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='matricola',ordine=${ordine})}">Matricola<i th:if="${#strings.equals(campo,'matricola')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='cognome',ordine=${ordine})}">Cognome<i th:if="${#strings.equals(campo,'cognome')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='nome',ordine=${ordine})}">Nome<i th:if="${#strings.equals(campo,'nome')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='email',ordine=${ordine})}">E-mail<i th:if="${#strings.equals(campo,'email')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='cdl',ordine=${ordine})}">Corso di Laurea<i th:if="${#strings.equals(campo,'cdl')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='voto',ordine=${ordine})}">Voto<i th:if="${#strings.equals(campo,'voto')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='stato',ordine=${ordine})}">Stato<i th:if="${#strings.equals(campo,'stato')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
 												<th></th>
 											</tr>
 										</thead>
