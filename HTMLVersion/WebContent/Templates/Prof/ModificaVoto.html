@@ -57,7 +57,7 @@
 						<td th:text="${studente.matricola}">000000</td>
 						<td th:text="${studente.cognome}">Bravo</td>
 						<td th:text="${studente.nome}">Studente</td>
-						<td th:text="${studente.mail}">studente.bravo@mail.polimi.it</td>
+						<td th:text="${#strings.substringBefore(studente.mail,'@') + ' @'+#strings.substringAfter(studente.mail,'@')}">studente.bravo@mail.polimi.it</td>
 						<td th:text="${studente.cdl}">Corso Ingegneria degli Studenti Bravi</td>
 						<td >
 							<select name="voto" id="voto">

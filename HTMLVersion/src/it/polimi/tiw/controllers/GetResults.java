@@ -85,8 +85,6 @@ public class GetResults extends HttpServlet {
 		if(campo == null)
 			campo = "matricola";
 		
-		// se campo == Voto ordinare custom
-		
 		// recupero i risultati dell'esame chiesto dallo user:
 		// user == teacher: recupero tutti i risultati dell'esame
 		// user == student: recupero il solo risultato dello studente
@@ -107,9 +105,6 @@ public class GetResults extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ao zi nun ce stanno esami.");
 			return;
 		}
-		
-		// uso json.encode per codificare l'oggetto complesso da mandare 
-		// al client come risultatos
 		
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
 		String path = "/Templates/RisultatiEsame.html";
