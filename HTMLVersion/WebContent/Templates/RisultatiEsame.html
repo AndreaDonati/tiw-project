@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" media="all" th:href="@{./css/homeStyle.css}" />
+  <!--<link rel="stylesheet" type="text/css" media="all" href="../css/homeStyle.css" />-->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700,800" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
@@ -96,11 +97,11 @@
 										</thead>
 										<tbody th:remove="all-but-first">
 											<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
-												<td th:text="${risultati[i].studente.matricola}">Studente Bravo</td>
-												<td th:text="${risultati[i].studente.nome + ' ' + risultati[i].studente.cognome}">Studente Bravo</td>
-												<td th:text="${risultati[i].esame.dataAppello}">09-06-1996</td>
-												<td th:text="${risultati[i].voto}">30 e Lode</td>
-												<td th:if="${#strings.equals(risultati[i].stato,'rifiutato')}">Il voto è stato rifiutato.</td>
+												<td class="my-td" th:text="${risultati[i].studente.matricola}">Studente Bravo</td>
+												<td class="my-td" th:text="${risultati[i].studente.nome + ' ' + risultati[i].studente.cognome}">Studente Bravo</td>
+												<td class="my-td" th:text="${risultati[i].esame.dataAppello}">09-06-1996</td>
+												<td class="my-td" th:text="${risultati[i].voto}">30 e Lode</td>
+												<td class="my-td" th:if="${#strings.equals(risultati[i].stato,'rifiutato')}">Il voto è stato rifiutato.</td>
 												<td th:if="${risultati[i].voto != null and risultati[i].isRifiutabile()}"><a class="rifiuta-btn" th:href="@{/rifiutaVoti(idEsame=${risultati[i].esame.id})}">Rifiuta</a></td>
 											</tr>
 										</tbody>

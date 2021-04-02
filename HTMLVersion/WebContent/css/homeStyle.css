@@ -238,6 +238,10 @@ select{
   font-family: "Montserrat", sans-serif;
 }
 
+.my-td{
+  padding: 17px !important;
+}
+
 .sort-i{
   padding-left: 5px;
 }
