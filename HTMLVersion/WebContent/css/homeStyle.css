@@ -77,6 +77,7 @@
   background-color: #eeeeee; /* Black */
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 50px;
+  box-shadow: 3px 0 6px rgba(0,0,0,.05);
 }
 
 .sidenav h3{
