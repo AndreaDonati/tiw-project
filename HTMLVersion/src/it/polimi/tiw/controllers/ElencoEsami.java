@@ -26,13 +26,13 @@ import it.polimi.tiw.dao.CorsoDAO;
 import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-@WebServlet("/Home")
-public class Home extends HttpServlet {
+@WebServlet("/ElencoEsami")
+public class ElencoEsami extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	private Connection connection = null;
 
-	public Home() {
+	public ElencoEsami() {
 		super();
 	}
 
@@ -52,22 +52,25 @@ public class Home extends HttpServlet {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		
-//		PROVA + temporaneo
-		session.setAttribute("mail", user.getMail());
-		session.setAttribute("lastAccessedTime", new java.util.Date());
-//		---------------
-		
+		// recupero nomeCorso dai parametri della richiesta
+		String nomeCorso;
+		try {
+			nomeCorso = request.getParameter("nomeCorso");
+			if(nomeCorso == null) 
+				throw new Exception();
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta incompleta. Parametri mancanti.");
+			return;
+		}
 		/**
 		 * La homepage mostra, sia per Studente sia per Professore, gli stessi contenuti
 		 * cioè una lista di corsi e per ogni corso una lista di esami.
 		 */
 		
-		// recupero i corsi associati allo user
-		// se lo user è Studente: i corsi che frequenta
-		// se lo user è Profesore: i corsi che insegna
+		// recupero i diversi corsi con il nome specificato
 		List<Corso> corsi;
 		try {
-			corsi = this.getCorsiContentByUserRole(user);
+			corsi = this.getCorsoContentByUserRole(user, nomeCorso);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			//TODO: modificare questo possibilmente
@@ -75,16 +78,27 @@ public class Home extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
 		}
+
+		// recupero gli esami dal corso specificato
+		List<List<Esame>> corsiEsami;
+		try {
+			corsiEsami = this.getEsamiFromCorsoByUserRole(corsi,user);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			return;
+		}
 				
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
-		String path = "/Templates/Home.html";
+		String path = "/Templates/ElencoEsami.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("allCorsi", corsi);
+		ctx.setVariable("allCorsiEsami", corsiEsami);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
-	private List<List<Esame>> getEsamiFromCorsiByUserRole(List<Corso> corsi, User user) throws SQLException{
+	private List<List<Esame>> getEsamiFromCorsoByUserRole(List<Corso> corsi, User user) throws SQLException{
 		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
 		EsameDAO esameDao = new EsameDAO(connection);
 		if(user.getRuolo().equals("teacher")) {
@@ -102,7 +116,7 @@ public class Home extends HttpServlet {
 		return corsiEsami;
 	}
 
-	private List<Corso> getCorsiContentByUserRole(User user) throws SQLException{
+	private List<Corso> getCorsoContentByUserRole(User user, String nome) throws SQLException{
 		List<Corso> corsi = null;
 		// nelle righe seguenti viene fatta un'interrogazione al db che può
 		// lanciare una SQLException, la gestione dell'eccezione viene fatta
@@ -110,9 +124,9 @@ public class Home extends HttpServlet {
 		//TODO: decidere se implementarlo così opppure differenziare nel DAO
 		CorsoDAO corsoDao = new CorsoDAO(connection);
 		if(user.getRuolo().equals("teacher"))
-			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola());
+			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola(), nome);
 		else if(user.getRuolo().equals("student"))
-			corsi = corsoDao.getCorsiFromMatricolaStudente(user.getMatricola());
+			corsi = corsoDao.getCorsiFromMatricolaStudente(user.getMatricola(), nome);
 		return corsi;
 	}
 

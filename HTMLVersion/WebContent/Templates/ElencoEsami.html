@@ -35,7 +35,10 @@
     </div>
     <div class="col-xs-10">
       <div class="jumbotron">
-        <h3>I tuoi corsi</h3>
+        <h3>
+            <a th:href="@{/Home}"><i class="fas fa-chevron-left back-btn"></i></a>
+        	I tuoi esami
+        </h3>
       </div>
       
       <!-- Static Accordion -->
@@ -44,10 +47,32 @@
                     <div class="panel panel-default" th:each="i : ${#numbers.sequence( 0, allCorsi.size-1)}">
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
-                                <a data-parent="#accordion" th:href="@{/ElencoEsami(nomeCorso=${allCorsi[i].nome})}" th:text="${allCorsi[i].nome}">
+                                <a data-parent="#accordion" th:text="${allCorsi[i].nome + ' ' +allCorsi[i].anno}">
                                     Tecnologie Informatiche per il Web
                                 </a>
                             </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+								<!-- Formattazione condizionale: controllo se ci sono esami da mostrare o meno -->
+                                <p th:text="${allCorsiEsami[i].size != 0} ? 
+                                											(${#strings.equals(session.user.ruolo,'teacher')} ? 
+                                																		 'Clicca sull\'appello per visualizzare gli iscritti:' : 
+                                																		 'Clicca sull\'appello per visualizzare il risultato:'
+                                											) 
+                                											: 
+                                											(${#strings.equals(session.user.ruolo,'teacher')} ? 
+                                																		 'Non sono presenti appelli per questo corso' : 
+                                																		 'Non sei iscritto/a a nessun appello di questo corso.'
+                                											 )">
+                                										  Clicca sull'appello per visualizzare gli iscritti: 
+                                </p>
+                                <div th:each="e : ${allCorsiEsami[i]}">
+									<div th:each="y : ${e}">
+										<a class="a-btn" th:href="@{/getResults(idEsame=${y.id})}" th:text="${'Appello del ' + y.dataAppello}"></a>
+									</div>
+								</div>
+                            </div>
                         </div>
                     </div>
                     <div class="panel panel-default">
