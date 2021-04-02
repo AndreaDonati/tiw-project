@@ -76,7 +76,7 @@
 												<td th:text="${risultati[i].studente.matricola}">000000</td>
 												<td th:text="${risultati[i].studente.cognome}">Bravo</td>
 												<td th:text="${risultati[i].studente.nome}">Studente</td>
-												<td th:text="${#strings.substringBefore(risultati[i].studente.mail,'@') + ' @'+#strings.substringAfter(risultati[i].studente.mail,'@') }">studente.bravo@mail.polimi.it</td>
+												<td th:utext="${#strings.substringBefore(risultati[i].studente.mail,'@') + '<br/>'+'@'+#strings.substringAfter(risultati[i].studente.mail,'@') }">studente.bravo@mail.polimi.it</td>
 												<td th:text="${risultati[i].studente.cdl}">Corso degli Studenti Bravi</td>
 												<td th:text="${risultati[i].voto}">30 e Lode</td>
 												<td th:text="${risultati[i].stato}">Verbalizzato</td>
