@@ -72,7 +72,7 @@ public class EsaminazioneDAO {
 				idVerbale = result.getInt("MAX(id)") + 1;
 			}
 		}
-
+		
 		// creo un nuovo verbale
 		query = "INSERT INTO verbale (id, dataVerbale)"
 				+"		VALUES ( ? , ? )";

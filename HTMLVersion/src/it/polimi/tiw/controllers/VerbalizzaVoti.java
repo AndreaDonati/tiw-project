@@ -3,6 +3,7 @@ package it.polimi.tiw.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,7 +17,9 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.Verbale;
+import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.dao.EsaminazioneDAO;
 import it.polimi.tiw.dao.VerbaleDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
@@ -48,13 +51,30 @@ public class VerbalizzaVoti extends HttpServlet {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Identificativo dell'esame errato\"}");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame errato");
 			return;
 		}
 		
+		// controllo se ci sono voti con stato "pubblicato"
+		// se non ci sono allora non ci sono voti da verbalizzare e reindirizzo
+		// il professore alla stessa pagina
+		EsameDAO esameDao = new EsameDAO(connection);
+		List<Esaminazione> risultati = null;
+		try {
+			risultati = esameDao.getRisultatiEsameProfessore(idEsame);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.toString());
+			return;
+		}
+		if(!checkVerbalizzabili(risultati)) {
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Non ci sono voti da verbalizzare");
+			// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
+			// seleziono il path corretto in base al ruolo dello user
+			String path = getServletContext().getContextPath() + "/getResults?idEsame="+idEsame;
+			response.sendRedirect(path);
+			return;
+		}
 		
 		// cambio lo stato dei voti relativi all'esame specificato in 'verbalizzato'
 		// e creo un nuovo verbale relativo all'esame
@@ -83,6 +103,17 @@ public class VerbalizzaVoti extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("verbale", verbale);
 		templateEngine.process(path, ctx, response.getWriter());
+	}
+
+	private boolean checkVerbalizzabili(List<Esaminazione> risultati) {
+		if(risultati == null)
+			return false;
+		
+		for (Esaminazione esaminazione : risultati) 
+			if(esaminazione.getStato().equals("pubblicato"))
+				return true;
+		
+		return false;
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

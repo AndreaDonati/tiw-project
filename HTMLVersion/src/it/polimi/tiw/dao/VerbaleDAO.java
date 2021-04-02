@@ -38,8 +38,7 @@ public class VerbaleDAO {
 			pstatement.setInt(1, idVerbale);
 			
 			try (ResultSet result = pstatement.executeQuery();) {
-				while (!result.isLast()) {
-					result.next();
+				while (result.next()) {
 					// data del verbale
 					verbale.setDataVerbale(result.getString("verbale.dataVerbale"));
 					

@@ -184,8 +184,7 @@ public class EsameDAO {
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, idEsame);
 			try (ResultSet result = pstatement.executeQuery();) {
-				while (!result.isLast()) {
-					result.next();
+				while (result.next()) {
 					Esaminazione risultato = new Esaminazione();
 					// id
 					risultato.setId(result.getInt("esaminazione.id"));
