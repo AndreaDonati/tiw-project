@@ -32,8 +32,7 @@ import it.polimi.tiw.utils.ConnectionHandler;
 @WebServlet("/Logout")
 public class Logout extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
-	private Connection connection = null;
+
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -44,13 +43,7 @@ public class Logout extends HttpServlet {
     }
     
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		connection = ConnectionHandler.getConnection(getServletContext());
+
 	}
 
 	/**
@@ -64,9 +57,9 @@ public class Logout extends HttpServlet {
 		
 		// Reindirizza l'utente alla login page
 		String loginpath = request.getServletContext().getContextPath() + "/index.html";
-		request.sendRedirect(loginpath);
+		response.sendRedirect(loginpath);
 		return;
-		}
+		
 	}
 
 	/**

@@ -61,7 +61,7 @@ public class EsaminazioneDAO {
 	 * @return
 	 * @throws SQLException
 	 */
-	public void recordGrades(int idEsame) throws SQLException {
+	public int recordGrades(int idEsame) throws SQLException {
 		// prendo l'id massimo dei verbali
 		String query = "SELECT  MAX(id), dataVerbale FROM verbale";
 		int idVerbale = 0;
@@ -81,7 +81,7 @@ public class EsaminazioneDAO {
 			Calendar cal = Calendar.getInstance();
 			Date today = cal.getTime();
 
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = dateFormat.format(today);
 
 			pstatement.setInt(1, idVerbale);
@@ -100,6 +100,8 @@ public class EsaminazioneDAO {
 			pstatement.setInt(2, idEsame);
 			pstatement.executeUpdate();
 		}
+		
+		return idVerbale;
 	}
 	
 	/**

@@ -37,7 +37,7 @@
     <div class="col-xs-10">
       <div class="jumbotron">
         <h3>
-          <a href="./home.html"><i class="fas fa-chevron-left back-btn"></i></a>
+          <a href="Home"><i class="fas fa-chevron-left back-btn"></i></a>
           Esito
         </h3>
       </div>
@@ -80,7 +80,7 @@
 									<a class="a-btn" th:href="@{/verbalizzaVoti(idEsame=${risultati[0].esame.id})}">Verbalizza</a>
 									
 								</div>
-								<div th:if="${#strings.equals(session.user.ruolo,'student') and not #strings.equals(risultati[0].stato,'non inserito')}">
+								<div th:if="${#strings.equals(session.user.ruolo,'student') and risultati[0].isVisualizzabileByStudente()}">
 									<table class="table">
 										<thead>
 											<tr>
@@ -99,7 +99,7 @@
 										</tbody>
 									</table>
 								</div>
-								<div th:if="${#strings.equals(session.user.ruolo,'student') and #strings.equals(risultati[0].stato,'non inserito')}"><p>Voto non ancora definito.</p></div>
+								<div th:if="${#strings.equals(session.user.ruolo,'student') and (not risultati[0].isVisualizzabileByStudente())}"><p>Voto non ancora definito.</p></div>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Modifica Voto</title>
+<title>Verbale</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -35,46 +35,34 @@
     </div>
     <div class="col-xs-10">
       <div class="jumbotron">
-        <h3>
-          <a th:href="@{/getResults(idEsame=${idEsame})}"><i class="fas fa-chevron-left back-btn"></i></a>
-          Modifica Voto
-        </h3>
+      <h3>
+      	<a th:href="@{/getResults(idEsame=${verbale.risultati[0].esame.id})}"><i class="fas fa-chevron-left back-btn"></i></a>
+        <span th:text="${'Verbale ' + verbale.id + ' del '+verbale.dataVerbale}"
+        	  th:remove="tag">
+          Verbale
+         </span>
+      </h3>
+      <h4 th:text="${verbale.risultati[0].corso.nome + ' - appello del ' +verbale.risultati[0].esame.dataAppello}"></h4>
       </div>
       
-      <!-- Form -->
+      <!-- Dai del verbale -->
 	    <div class="col-xs-1"></div>
       <div class="col-xs-10">
-
-		<form action="inserisciVoti" method="GET">
 			<table class="table my-table">
 				<thead>
 					<tr>
-						<th>Matricola</th><th>Cognome</th><th>Nome</th><th>E-mail</th><th>Corso di Laurea</th><th>Voto</th><th></th>
+						<th>Matricola</th><th>Cognome</th><th>Nome</th><th>Voto</th>
 					</tr>
 				</thead>
 				<tbody th:remove="all-but-first">
-					<tr>
-						<td th:text="${studente.matricola}">000000</td>
-						<td th:text="${studente.cognome}">Bravo</td>
-						<td th:text="${studente.nome}">Studente</td>
-						<td th:text="${studente.mail}">studente.bravo@mail.polimi.it</td>
-						<td th:text="${studente.cdl}">Corso Ingegneria degli Studenti Bravi</td>
-						<td >
-							<select name="voto" id="voto">
-							    <option>assente</option>
-							    <option>rimandato</option>
-							    <option>riprovato</option>
-							    <option th:each="i : ${#numbers.sequence( 18, 30)}" th:text="${i}"></option>
-							    <option>30 e Lode</option>
-							</select>
-						</td>
-						<td><input type="submit" class="modifica-btn" value="Applica"></td>
+					<tr th:each="i : ${#numbers.sequence( 0, verbale.risultati.size-1)}">
+						<td th:text="${verbale.risultati[i].studente.matricola}">Studente Bravo</td>
+						<td th:text="${verbale.risultati[i].studente.cognome}">Bravo</td>
+						<td th:text="${verbale.risultati[i].studente.nome}">Studente</td>
+						<td th:text="${verbale.risultati[i].voto}">30 e Lode</td>
 					</tr>
 				</tbody>
 			</table>
-			<input type="hidden" th:value="${idEsame}" name="idEsame">
-			<input type="hidden" th:value="${studente.matricola}" name="matricolaStudente">
-		</form>
       </div>
       <div class="col-xs-1"></div>
 

@@ -79,4 +79,10 @@ public class Esaminazione {
 					&& !stato.equals("rifiutato")
 				);
 	}
+	
+	public boolean isVisualizzabileByStudente() {
+		return stato.equals("pubblicato") ||
+			   stato.equals("verbalizzato") ||
+			   stato.equals("rifiutato");
+	}
 }

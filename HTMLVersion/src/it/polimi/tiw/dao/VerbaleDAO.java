@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import it.polimi.tiw.beans.Corso;
 import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.User;
@@ -26,11 +27,11 @@ public class VerbaleDAO {
 		Verbale verbale = new Verbale();
 		verbale.setId(idVerbale);
 		
-		String query = "SELECT  verbale.dataVerbale, esaminazione.id, esaminazione.idEsame, esaminazione.idStudente, esaminazione.voto, "
-				+ "		utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, utente.image"
-				+ "		FROM verbale, esaminazione, esame, utente "
+		String query = "SELECT  verbale.dataVerbale, esaminazione.idEsame, esame.dataAppello, esaminazione.voto, "
+				+ "		utente.matricola, utente.nome, utente.cognome, corso.nomeCorso"
+				+ "		FROM verbale, esaminazione, esame, utente, corso "
 				+ "		WHERE verbale.id = ? "
-				+ "		AND esaminazione.idVerbale = verbale.id AND esame.id = esaminazione.idEsame"
+				+ "		AND esaminazione.idVerbale = verbale.id AND esame.id = esaminazione.idEsame AND esame.idCorso = corso.id"
 				+ "		AND utente.matricola = idStudente"
 				+ "		ORDER BY esaminazione.voto DESC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
@@ -43,22 +44,21 @@ public class VerbaleDAO {
 					verbale.setDataVerbale(result.getString("verbale.dataVerbale"));
 					
 					Esaminazione risultato = new Esaminazione();
-					// id
-					risultato.setId(result.getInt("esaminazione.id"));
 					// esame
 					Esame esame = new Esame();
 					esame.setId(result.getInt("esaminazione.idEsame"));
 					esame.setDataAppello(result.getString("esame.dataAppello"));
 					risultato.setEsame(esame);
+					// corso
+					Corso corso = new Corso();
+					corso.setNome(result.getString("corso.nomeCorso"));
+					risultato.setCorso(corso);
 					// studente
 					User studente = new User();
 					studente.setMatricola(result.getInt("utente.matricola"));
 					studente.setNome(result.getString("utente.nome"));
 					studente.setCognome(result.getString("utente.cognome"));
-					studente.setMail(result.getString("utente.email"));
 					studente.setRuolo("student");
-					studente.setCdl(result.getString("utente.cdl"));
-					studente.setImage(result.getString("utente.image"));
 					risultato.setStudente(studente);
 					// voto
 					risultato.setVoto(result.getString("esaminazione.voto"));
