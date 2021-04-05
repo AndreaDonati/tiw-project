@@ -75,16 +75,27 @@ public class GetResults extends HttpServlet {
 			return;
 		}
 		
+		// recupero la l'etichetta della colonna dalla sessione
+		String oldColonna = session.getAttribute("colonna");
+
+		// recupero i parametri dalla richiesta
 		String ordine;
 		String campo;
 		ordine = request.getParameter("ordine");
 		campo = request.getParameter("campo");
+
 		// se ordine o campo non sono presenti metto quelli di default
-		if(ordine == null)
-			ordine = "ASC";
+		// se la colonna "old" e quella "new" sono diverse, devo resettare l'ordine e mettere quello di default
+		// i dati arrivano dal db ordinati per matricola in modo ASC  
 		if(campo == null)
 			campo = "matricola";
-		
+		if(ordine == null || !oldColonna.equals(campo))
+			ordine = "ASC";
+
+		// aggiorno la colonna selezionata
+		session.setAttribute("colonna", campo);
+
+
 		// recupero i risultati dell'esame chiesto dallo user:
 		// user == teacher: recupero tutti i risultati dell'esame
 		// user == student: recupero il solo risultato dello studente
