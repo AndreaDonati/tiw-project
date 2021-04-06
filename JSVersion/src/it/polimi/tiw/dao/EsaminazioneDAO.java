@@ -72,7 +72,7 @@ public class EsaminazioneDAO {
 				idVerbale = result.getInt("MAX(id)") + 1;
 			}
 		}
-
+		
 		// creo un nuovo verbale
 		query = "INSERT INTO verbale (id, dataVerbale)"
 				+"		VALUES ( ? , ? )";
@@ -81,7 +81,7 @@ public class EsaminazioneDAO {
 			Calendar cal = Calendar.getInstance();
 			Date today = cal.getTime();
 
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = dateFormat.format(today);
 
 			pstatement.setInt(1, idVerbale);

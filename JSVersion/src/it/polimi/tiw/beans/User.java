@@ -63,7 +63,7 @@ public class User {
 	}
 
 	public void setImage(String image) {
-		this.image = image;
+		this.image = "./img/"+image;
 	}
 
 }

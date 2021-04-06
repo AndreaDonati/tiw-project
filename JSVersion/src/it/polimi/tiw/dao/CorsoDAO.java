@@ -26,13 +26,38 @@ public class CorsoDAO {
 	public List<Corso> getCorsiFromMatricolaStudente(int matricola) throws SQLException{
 		List<Corso> corsi = new ArrayList<Corso>();
 		
+		String query = "SELECT DISTINCT nomeCorso"
+				+ "		FROM corso, frequentazione "
+				+ "		WHERE corso.id = frequentazione.idCorso "
+				+ "     AND matricolaStudente = ? "
+				+ "		ORDER BY nomeCorso DESC, annoCorso DESC";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, matricola);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (!result.isLast()) {
+					result.next();
+					Corso corso = new Corso();
+					corso.setNome(result.getString("nomeCorso"));
+					corsi.add(corso);
+				}
+			}
+		}
+		
+		return corsi;
+	}
+	
+	public List<Corso> getCorsiFromMatricolaStudente(int matricola, String nomeCorso) throws SQLException{
+		List<Corso> corsi = new ArrayList<Corso>();
+		
 		String query = "SELECT  idCorso, nomeCorso, annoCorso "
 				+ "		FROM corso, frequentazione "
 				+ "		WHERE corso.id = frequentazione.idCorso "
 				+ "     AND matricolaStudente = ? "
-				+ "		ORDER BY nomeCorso DESC";
+				+ "		AND nomeCorso = ?"
+				+ "		ORDER BY nomeCorso DESC, annoCorso DESC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, matricola);
+			pstatement.setString(2,nomeCorso);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (!result.isLast()) {
 					result.next();
@@ -51,15 +76,38 @@ public class CorsoDAO {
 	public List<Corso> getCorsiFromMatricolaProfessore(int matricola) throws SQLException {
 		List<Corso> corsi = new ArrayList<Corso>();
 		
-		String query = "SELECT  id, nomeCorso, annoCorso "
+		String query = "SELECT DISTINCT nomeCorso "
 				+ "		FROM corso "
 				+ "		WHERE matricolaProfessore = ? "
-				+ "		ORDER BY nomeCorso DESC";
+				+ "		ORDER BY nomeCorso DESC, annoCorso DESC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1,matricola);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (!result.isLast()) {
 					result.next();
+					Corso corso = new Corso();
+					corso.setNome(result.getString("nomeCorso"));
+					corsi.add(corso);
+				}
+			}
+		}
+		
+		return corsi;
+	}
+	
+	public List<Corso> getCorsiFromMatricolaProfessore(int matricola, String nomeCorso) throws SQLException {
+		List<Corso> corsi = new ArrayList<Corso>();
+		System.out.println(nomeCorso);
+		String query = "SELECT  id, nomeCorso, annoCorso "
+				+ "		FROM corso "
+				+ "		WHERE matricolaProfessore = ? "
+				+ "		AND nomeCorso = ?"
+				+ "		ORDER BY annoCorso DESC";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1,matricola);
+			pstatement.setString(2,nomeCorso);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (result.next()) {
 					Corso corso = new Corso();
 					corso.setId(result.getInt("id"));
 					corso.setNome(result.getString("nomeCorso"));

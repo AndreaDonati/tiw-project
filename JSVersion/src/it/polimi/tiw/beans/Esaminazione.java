@@ -68,4 +68,20 @@ public class Esaminazione {
 	public void setCorso(Corso corso) {
 		this.corso = corso;
 	}
+	
+	public boolean isRifiutabile() {
+		return ( voto != null 
+					&& !voto.equals("rimandato") 
+					&& !voto.equals("riprovato") 
+					&& !voto.equals("assente")
+					&& !stato.equals("verbalizzato")
+					&& !stato.equals("rifiutato")
+				);
+	}
+	
+	public boolean isVisualizzabileByStudente() {
+		return stato.equals("pubblicato") ||
+			   stato.equals("verbalizzato") ||
+			   stato.equals("rifiutato");
+	}
 }

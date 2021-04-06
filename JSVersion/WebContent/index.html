@@ -7,10 +7,10 @@
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" media="all"
-	href="./loginStyleJS.css" />
+	href="./css/loginStyleJS.css" />
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
 <script
-	src="./loginJS.js"></script>
+	src="./js/loginJS.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link
@@ -40,7 +40,6 @@
 						<input
 							type="submit" value="LOGIN" id="loginButton">
 						<p id="errorMessage" style="color:red"></p>
-						<a href="../pureHTML/indexHTML.html" class="switch-btn">Switch to HTML version</p>
 					</form>
 				</div>
 			</div>
@@ -48,51 +47,4 @@
 		</div>
 	</div>
 </body>
-<!--
-<script type="text/javascript">
-//Gestore dell'evento lato client
-
-var request;
-
-// rimpiazza la gestione del browser
-document.getElementById("loginButton").addEventListener('click', (event) => {
-  console.log("Evento avvenuto");
-  event.preventDefault(); // evita il submit
-  makePost(); // chiamata asincrona 
-});
-
-
-
-function makePost() {
-	
-	//richiesta asincrona non cambia la pagina
-
-	console.log("mando richiesta post");
-	request = new XMLHttpRequest();
-	var url = 'Login';
-	var formElement = document.querySelector("form");
-	var formData = new FormData(formElement);
-	//------------------------------------
-	for (var value of formData.values()) {
-	  console.log(value);
-	}
-	//------------------------------------
-	request.onreadystatechange = showResults;
-	request.open("POST", url);
-	request.send(formData);
-}
-
-
-// callback: presenta risultato nella pagina
-function showResults() {
-	console.log("faccio cose");
-	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) {
-	 	document.getElementById("errorMessage").textContent=JSON.parse(request.responseText)["errorMessage"];
-	}
-	if (request.readyState == 4 && request.status == 200 ) {
-		window.location = request.responseURL;
-	}
-
-}</script>
--->
 </html>

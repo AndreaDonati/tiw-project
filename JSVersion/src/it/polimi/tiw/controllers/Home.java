@@ -48,51 +48,10 @@ public class Home extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		HttpSession session = request.getSession();
-		User user = (User) session.getAttribute("user");
-		
-//		PROVA + temporaneo
-		session.setAttribute("mail", user.getMail());
-		session.setAttribute("lastAccessedTime", new java.util.Date());
-//		---------------
-		
-		/**
-		 * La homepage mostra, sia per Studente sia per Professore, gli stessi contenuti
-		 * cioè una lista di corsi e per ogni corso una lista di esami.
-		 */
-		
-		// recupero i corsi associati allo user
-		// se lo user è Studente: i corsi che frequenta
-		// se lo user è Profesore: i corsi che insegna
-		List<Corso> corsi;
-		try {
-			corsi = this.getCorsiContentByUserRole(user);
-		} catch (SQLException e) {
-			//e1.printStackTrace();
-			//TODO: modificare questo possibilmente
-			// l'eccezione indica un errore nella query al db
-			response.sendError(400);
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users "+e.toString());
-			return;
-		}
-		
-		// recupero gli esami dai ai corsi associati allo user
-		List<List<Esame>> corsiEsami;
-		try {
-			corsiEsami = this.getEsamiFromCorsi(corsi);
-		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users "+e.toString());
-			return;
-		}
 				
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
-		String path = "/Templates/Login/Home.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("allCorsi", corsi);
-		ctx.setVariable("allCorsiEsami", corsiEsami);
-		templateEngine.process(path, ctx, response.getWriter());
+		String path = getServletContext().getContextPath() + "/Home.html";
+		response.sendRedirect(path);
 	}
 
 	private List<List<Esame>> getEsamiFromCorsi(List<Corso> corsi) throws SQLException{
