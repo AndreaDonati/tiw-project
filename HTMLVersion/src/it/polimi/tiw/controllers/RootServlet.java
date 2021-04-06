@@ -27,17 +27,14 @@ public class RootServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Ti do la pagina principale");
 		// controllo se lo user è già loggato o deve ancora loggarsi
 		String homepath = request.getServletContext().getContextPath() + "/Home";
 		HttpSession session = request.getSession();
 		if (!(session.isNew() || session.getAttribute("user") == null)) {
-			System.out.println("Ti do la home");
 			response.sendRedirect(homepath);
 			return;
 		}
 		
-		System.out.println("Ti do l'index");
 		// default redirect
 		String path = request.getServletContext().getContextPath() + "/index.html";
 		response.sendRedirect(path);
