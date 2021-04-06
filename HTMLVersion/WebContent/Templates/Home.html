@@ -28,7 +28,7 @@
         <h3>Nome e Cognome</h3>
         <h4 th:text="${{session.user.nome + ' ' + session.user.cognome}}">Gregorio Galletti</h4>
         <h3>E-mail</h3>
-        <h4 th:utext="${#strings.substringBefore(session.user.mail,'@') + ' @' + #strings.substringAfter(session.user.mail,'@')}">gregorio.galletti<br/>&nbsp;&nbsp;&nbsp;&nbsp;@mail.polimi.it</h4>
+        <h4 th:utext="${#strings.substringBefore(session.user.mail,'@') + '<br/>' +'@' + #strings.substringAfter(session.user.mail,'@')}">gregorio.galletti<br/>&nbsp;&nbsp;&nbsp;&nbsp;@mail.polimi.it</h4>
         <h3>Matricola</h3>
         <h4 th:text="${{session.user.matricola}}">10494196</h4>
       </div>
