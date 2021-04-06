@@ -76,7 +76,7 @@ public class GetResults extends HttpServlet {
 		}
 		
 		// recupero la l'etichetta della colonna dalla sessione
-		String oldColonna = session.getAttribute("colonna");
+		String oldColonna = (String) session.getAttribute("colonna");
 
 		// recupero i parametri dalla richiesta
 		String ordine;
