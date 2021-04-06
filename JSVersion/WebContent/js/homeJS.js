@@ -69,7 +69,7 @@ function showCorsi() {
 		$("#content").append(
 		'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
 		'</div>');
-		for (i=0; i<corsi.length; i++){
+		for (i = 0; i < corsi.length; i++){
 			$("#accordion").append(
 				'<div class="panel panel-default">'+
                 '	<div class="panel-heading" role="tab" id="headingOne">'+
@@ -103,7 +103,14 @@ function showEsami() {
     // Se 200 (OK) append di tutti i corsi + esami ricevuti al div corrispondente
 	if (request.readyState == 4 && request.status == 200 ) {
 		esami = JSON.parse(request.responseText);
+
 		// accordion con corsi + esami
+
+		$("#content").append(
+			'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
+			'</div>'
+		);
+
 	}
 }
 
