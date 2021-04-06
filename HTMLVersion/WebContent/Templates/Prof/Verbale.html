@@ -42,7 +42,8 @@
           Verbale
          </span>
       </h3>
-      <h4 th:text="${verbale.risultati[0].corso.nome + ' - appello del ' +verbale.risultati[0].esame.dataAppello}"></h4>
+      <h3 th:text="${'Codice: ' + verbale.id + ' - Data: ' + verbale.dataVerbale}"></h3>
+      <h4 th:text="${verbale.risultati[0].corso.nome + ' - Appello del ' +verbale.risultati[0].esame.dataAppello}"></h4>
       </div>
       
       <!-- Dai del verbale -->
