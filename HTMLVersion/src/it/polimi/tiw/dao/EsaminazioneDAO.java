@@ -89,11 +89,22 @@ public class EsaminazioneDAO {
 			pstatement.execute();
 		}
 		
+		// cambio i voti rifiutati in "rimandato"
+		query = "UPDATE esaminazione"
+				+"		SET voto = 'rimandato'"
+				+"		WHERE idEsame = ?"
+				+"		AND stato = 'rifiutato'";
+		
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, idEsame);
+			pstatement.executeUpdate();
+		}
+		
 		// cambio stato di tutti i voti 'inseriti' in 'verbalizzati' e aggiungo la dipendenza al nuovo verbale
 		query = "UPDATE esaminazione"
 				+"		SET stato = 'verbalizzato', idVerbale = ?"
 				+"		WHERE idEsame = ?"
-				+"		AND stato = 'pubblicato'";
+				+"		AND stato = 'pubblicato' OR stato = 'rifiutato'";
 		
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, idVerbale);

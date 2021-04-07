@@ -84,4 +84,10 @@ public class Esaminazione {
 			   stato.equals("verbalizzato") ||
 			   stato.equals("rifiutato");
 	}
+	
+	public boolean isModificabile() {
+		return  !stato.equals("pubblicato") &&
+				!stato.equals("verbalizzato") &&
+				!stato.equals("rifiutato");
+	}
 }

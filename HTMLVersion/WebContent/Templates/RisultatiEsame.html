@@ -80,7 +80,7 @@
 												<td th:text="${risultati[i].studente.cdl}">Corso degli Studenti Bravi</td>
 												<td th:text="${risultati[i].voto}">30 e Lode</td>
 												<td th:text="${risultati[i].stato}">Verbalizzato</td>
-												<td th:if="${not #strings.equals(risultati[i].stato,'verbalizzato')}"><a class="modifica-btn" th:href="@{/modificaVoto(idEsame=${risultati[i].esame.id},matricolaStudente=${risultati[i].studente.matricola})}">Modifica</a></td>
+												<td th:if="${risultati[i].isModificabile()}"><a class="modifica-btn" th:href="@{/modificaVoto(idEsame=${risultati[i].esame.id},matricolaStudente=${risultati[i].studente.matricola})}">Modifica</a></td>
 											</tr>
 										</tbody>
 									</table>
