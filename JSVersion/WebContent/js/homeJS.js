@@ -27,6 +27,7 @@ var loaderDiv;
 
 function init() {
 	loaderDiv = document.getElementById("loader");
+
 // Rimpiazza la gestione del browser
 // chiamata a servlet che risponde con json dei corsi
 	console.log("Chiamo init");
@@ -88,6 +89,10 @@ function getEsami(nomeCorso) {
 	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
 	// QUI INIZIO LOADER
 	loaderDiv.style.display = "block";
+	
+	// aggiorno anche il titolo della pagina e il back button (torna a HOME)
+	$("#titleText").append('<a onclick="makeGet(`getCorsi`, showCorsi)"><i class="fas fa-chevron-left back-btn"></i></a>');
+	$("#titleText").text("I tuoi esami");
 
 	makeGet("ElencoEsami", showEsami); // Chiamata asincrona
 }
@@ -119,6 +124,10 @@ function getRisultati(idEsame) {
 	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
 	// QUI INIZIO LOADER
 	loaderDiv.style.display = "block";
+
+	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
+	$("#titleText").append('<a onclick="makeGet(`ElencoEsami`, showEsami)"><i class="fas fa-chevron-left back-btn"></i></a>');
+	$("#titleText").text("Esito");
 
 	makeGet("getResults", showRisultati); // Chiamata asincrona
 }
