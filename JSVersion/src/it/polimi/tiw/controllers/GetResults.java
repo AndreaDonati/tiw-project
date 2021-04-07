@@ -97,8 +97,7 @@ public class GetResults extends HttpServlet {
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(jsonObj);
-//		response.getWriter().write(risultati.toString());		
+		response.getWriter().write("{\"ruolo\":"+"\""+user.getRuolo()+"\""+", \"risultati\": "+jsonObj+"}");
 	}
 
 	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame) throws SQLException{

@@ -29,21 +29,12 @@ import it.polimi.tiw.utils.ConnectionHandler;
 @WebServlet("/Home")
 public class Home extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
-	private Connection connection = null;
 
 	public Home() {
 		super();
 	}
 
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -54,42 +45,12 @@ public class Home extends HttpServlet {
 		response.sendRedirect(path);
 	}
 
-	private List<List<Esame>> getEsamiFromCorsi(List<Corso> corsi) throws SQLException{
-		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
-		// QUESTA E' UNA PROVA KEKW
-		EsameDAO esameDao = new EsameDAO(connection);
-		for (Corso c : corsi) {
-			corsiEsami.add(esameDao.getEsamiFromCorso(c.getId()));
-		}
-
-		return corsiEsami;
-	}
-
-	private List<Corso> getCorsiContentByUserRole(User user) throws SQLException{
-		List<Corso> corsi = null;
-		// nelle righe seguenti viene fatta un'interrogazione al db che può
-		// lanciare una SQLException, la gestione dell'eccezione viene fatta
-		// dal chiamante di questo metodo
-		//TODO: decidere se implementarlo così opppure differenziare nel DAO
-		CorsoDAO corsoDao = new CorsoDAO(connection);
-		if(user.getRuolo().equals("teacher"))
-			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola());
-		else if(user.getRuolo().equals("student"))
-			corsi = corsoDao.getCorsiFromMatricolaStudente(user.getMatricola());
-		return corsi;
-	}
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
 
 	public void destroy() {
-		try {
-			ConnectionHandler.closeConnection(connection);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 }
