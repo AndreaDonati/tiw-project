@@ -37,12 +37,12 @@
       <div class="jumbotron">
       <h3>
       	<a th:href="@{/getResults(idEsame=${verbale.risultati[0].esame.id})}"><i class="fas fa-chevron-left back-btn"></i></a>
-        <span th:text="${'Verbale ' + verbale.id + ' del '+verbale.dataVerbale}"
+        <span th:text="${'Verbale n° ' + verbale.id}"
         	  th:remove="tag">
           Verbale
          </span>
       </h3>
-      <h3 th:text="${'Codice: ' + verbale.id + ' - Data: ' + verbale.dataVerbale}"></h3>
+      <h3 th:text="${'Data: ' + verbale.dataVerbale}"></h3>
       <h4 th:text="${verbale.risultati[0].corso.nome + ' - Appello del ' +verbale.risultati[0].esame.dataAppello}"></h4>
       </div>
       
