@@ -27,14 +27,23 @@ function makeGetParameters(servletUrl, callback, paramNameValue) {
 	// Richiesta asincrona non cambia la pagina
 	request = new XMLHttpRequest(); // Nuova richiesta
 	// var url = 'getCorsi'; // URL della Servlet
-
 	request.onreadystatechange = callback; // Chiamata al callback
-	request.open("GET", servletUrl+"?"+paramNameValue[0]+"="+paramNameValue[1]); 
+	
+	servletUrl += "?";
+	servletUrl += paramNameValue[0]+"="+paramNameValue[1];
+	for(i = 2; i < paramNameValue.length; i+2){
+			servletUrl += "&"+paramNameValue[i]+"="+paramNameValue[i+1];
+	}
+
+	request.open("GET", servletUrl); 
 	request.send();
 }
 
+
+/* VARIABILI GLOBALI */
 var request;
 var loaderDiv;
+var risultati;
 
 function init() {
 	loaderDiv = document.getElementById("loader");
@@ -147,7 +156,7 @@ function showEsami() {
 			);
 			for(j = 0; j < corsiEsami[1][i].length; j++){
 				$("#appelli"+i).append(
-						'	<button class="a-btn" onclick="getRisultati('+corsiEsami[0][i].id+',`'+corsiEsami[0][i].nome+'`)">Appello '+corsiEsami[1][i][j].dataAppello+'</button>'
+						'	<button class="a-btn" onclick="getRisultati('+corsiEsami[1][i][j].id+',`'+corsiEsami[0][i].nome+'`)">Appello '+corsiEsami[1][i][j].dataAppello+'</button>'
 				);
 			}
 		}
@@ -179,19 +188,19 @@ function showRisultati() {
     // Se 200 (OK) append di tutti i corsi + esami ricevuti al div corrispondente
 	if (request.readyState == 4 && request.status == 200 ) {
 		risposta = JSON.parse(request.responseText);
-		risultati = risposta.risultati
-		ruoloUtente = risposta.ruolo
+		risultati = risposta.risultati;
+		ruoloUtente = risposta.ruolo;
+
+		console.log(risultati);
+
 		if(ruoloUtente == "teacher"){
 			console.log("we prof");
 			// svuoto il div content
-			$("content").empty();
+			$("#content").empty();
 			// riempio il div content
 			$("#content").append(
 				'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
-				'</div>'
-			);
-			$("#accordion").append(
-                '    <div class="panel panel-default">																							'+		
+				'    <div class="panel panel-default">																							'+		
                 '        <div class="panel-heading" role="tab" id="headingOne">																	'+			
                 '            <h4 class="panel-title">																							'+			
                 '                <a data-parent="#accordion">Tecnologie Informatiche per il web 2021</a>										'+							
@@ -207,22 +216,13 @@ function showRisultati() {
 				'								<th><a style="white-space: nowrap;">Cognome</a></th>											'+									
 				'								<th><a style="white-space: nowrap;">Nome</a></th>												'+											
 				'								<th><a style="white-space: nowrap;">E-mail</a></th>												'+										
+				'								<th><a style="white-space: nowrap;">Corso di Laurea</a></th>												'+										
 				'								<th><a style="white-space: nowrap;">Voto</a></th>												'+									
 				'								<th><a style="white-space: nowrap;">Stato</a></th>												'+										
 				'								<th></th>																						'+								
 				'							</tr>																								'+
 				'						</thead>																								'+					
-				'						<tbody>																									'+											
-				'							<tr>																								'+														
-				'								<td>800001</td>																					'+												
-				'								<td>Bagarin</td>																				'+														
-				'								<td>Stefano</td>																				'+													
-				'								<td>stefano.bagarin<br>@mail.polimi.it</td>														'+														
-				'								<td>Ingegneria Informatica</td>																	'+																					
-				'								<td>28</td>																						'+																		
-				'								<td>verbalizzato</td>																			'+															
-				'																																'+														
-				'							</tr>																								'+														
+				'						<tbody id="tabellaVoti">	'+
 				'						</tbody>																								'+													
 				'					</table>																									'+															
 				'					<a class="a-btn" href="/tiw-project-html/pubblicaVoti?idEsame=2010">Pubblica</a>							'+																			
@@ -233,11 +233,123 @@ function showRisultati() {
 				'																																'+																								
                 '            </div>																												'+																								
                 '        </div>																													'+																	
-                '    </div>																														'														
-				);
+                '    </div>	'+
+				'</div>'
+			);
+
+			for(i = 0; i < risultati.length; i++){
+				if(risultati[i].voto == null){
+					risultati[i].voto = "";
+				}
+				if(risultati[i].modificabile == true){
+					risultati[i].modificabile = '<a class="modifica-btn" onclick="modificaVoti('+risultati[i].esame.id+','+risultati[i].studente.matricola+')">Modifica</a>';	
+				}
+				else{
+					risultati[i].modificabile = '';
+				}
+			}
+
+			for(i = 0; i < risultati.length; i++){
+				$("#tabellaVoti").append(											
+					'							<tr>																								'+														
+					'								<td>'+risultati[i].studente.matricola+'</td>																					'+												
+					'								<td>'+risultati[i].studente.cognome+'</td>																				'+														
+					'								<td>'+risultati[i].studente.nome+'</td>																				'+													
+					'								<td>'+risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1]+'</td>														'+														
+					'								<td>'+risultati[i].studente.cdl+'</td>																	'+																					
+					'								<td>'+risultati[i].voto+'</td>																						'+																		
+					'								<td>'+risultati[i].stato+'</td>																							'+
+					'								<td>'+risultati[i].modificabile+'</td>    '+	 									
+					'							</tr>																							'
+					);
+			}
+
 		} else {
 			console.log("we student");
 			// tabella con una sola riga
 		}
 	}
+}
+
+
+function modificaVoti(idEsame, matricola) {
+	console.log(idEsame);
+	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
+
+	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
+	$("#titleText").empty();
+	$("#titleText").append('<a onclick="makeGetParameters(`getResults`, showRisultati, [`idEsame`,`'+idEsame+'`])"><i class="fas fa-chevron-left back-btn"></i></a>');
+	$("#titleText").append("Modifica Voto");
+
+	var studente;
+	// cerco i dati dell'utente
+	risultati.forEach(e => {
+		console.log(e);
+		if(e.studente.matricola == matricola)
+			studente = e.studente;
+	});
+
+	// form per modificare il voto
+	$("#content").append(
+		'	<div class="col-xs-1"></div>'+
+		'	<div class="col-xs-10">'+
+		'		<form action="#" method="POST" id="loginForm">'+
+		'			<table class="table my-table">'+
+		'				<thead>'+
+		'					<tr>'+
+		'						<th>Matricola</th><th>Cognome</th><th>Nome</th><th>E-mail</th><th>Corso di Laurea</th><th>Voto</th><th></th>'+
+		'					</tr>'+
+		'				</thead>'+
+		'				<tbody id="tabellaVoti">'+
+		'					<tr>'+
+		'						<td>'+studente.matricola+'</td>																					'+												
+		'								<td>'+studente.cognome+'</td>																				'+														
+		'								<td>'+studente.nome+'</td>																				'+													
+		'								<td>'+studente.email.split("@")[0]+'<br/>@'+studente.email.split("@")[1]+'</td>														'+														
+		'								<td>'+studente.cdl+'</td>'+
+		'						<td >'+
+		'							<select name="voto" id="voto">'+
+		'								<option>assente</option>'+
+		'								<option>rimandato</option>'+
+		'								<option>riprovato</option>'+
+		'								<option>18</option>'+
+		'								<option>19</option>'+
+		'								<option>20</option>'+
+		'								<option>21</option>'+
+		'								<option>22</option>'+
+		'								<option>23</option>'+
+		'								<option>24</option>'+
+		'								<option>25</option>'+
+		'								<option>26</option>'+
+		'								<option>27</option>'+
+		'								<option>28</option>'+
+		'								<option>29</option>'+
+		'								<option>30</option>'+
+		'								<option>30 e Lode</option>'+
+		'							</select>'+
+		'						</td>'+
+		'						<td><input id="applicaButton" class="modifica-btn" value="Applica" onclick="inserisciVoti()"></td>'+
+		'					</tr>'+
+		'				</tbody>'+
+		'			</table>'+
+		'			<input type="hidden" value="'+idEsame+'" name="idEsame">'+
+		'			<input type="hidden" value="'+matricola+'" name="matricola">'+
+		'		</form>'+
+		'	</div>'+
+		'	<div class="col-xs-1"></div>'
+	);	
+}
+
+function inserisciVoti(){
+	// QUI INIZIO LOADER
+	loaderDiv.style.display = "block";
+
+	request = new XMLHttpRequest(); // Nuova richiesta
+	var url = 'inserisciVoti'; // URL della Servlet
+	var formElement = document.querySelector("form"); // Prendo parametri dal form
+	var formData = new FormData(formElement);
+
+	request.onreadystatechange = showRisultati; // Chiamata al callback
+	request.open("POST", url); // Richiesta POST all'URL
+	request.send(formData); // Mando dati del form
 }

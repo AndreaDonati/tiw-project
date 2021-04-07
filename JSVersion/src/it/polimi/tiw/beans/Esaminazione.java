@@ -8,6 +8,7 @@ public class Esaminazione {
 	private int idVerbale;
 	private String voto;
 	private String stato;
+	private boolean modificabile;
 	
 	public Esaminazione() {
 		// Default constructor
@@ -83,5 +84,15 @@ public class Esaminazione {
 		return stato.equals("pubblicato") ||
 			   stato.equals("verbalizzato") ||
 			   stato.equals("rifiutato");
+	}
+	
+	public void setModificabile() {
+		this.modificabile = isModificabile();
+	}
+	
+	public boolean isModificabile() {
+		return  !stato.equals("pubblicato") &&
+				!stato.equals("verbalizzato") &&
+				!stato.equals("rifiutato");
 	}
 }

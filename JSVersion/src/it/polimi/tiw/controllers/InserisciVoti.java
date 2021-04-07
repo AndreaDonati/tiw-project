@@ -3,8 +3,11 @@ package it.polimi.tiw.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +20,7 @@ import it.polimi.tiw.utils.ConnectionHandler;
 
 
 @WebServlet("/inserisciVoti")
+@MultipartConfig
 public class InserisciVoti extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
@@ -37,13 +41,12 @@ public class InserisciVoti extends HttpServlet {
 		try {
 			matricolaStudente = Integer.parseInt(request.getParameter("matricola"));
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
-			voto = request.getParameter("voto");
-
+			voto = request.getParameter("voto");			
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Campi vuoti o errati\"}");
+			response.getWriter().write(e.toString());
 			return;
 		}
 		
@@ -65,7 +68,6 @@ public class InserisciVoti extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

@@ -58,13 +58,11 @@ public class GetResults extends HttpServlet {
 				throw new Exception();
 			idEsame = Integer.parseInt(idEsameParam);
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Richiesta incompleta: parametri mancanti.\"}");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta incompleta. Parametri mancanti.");
 			return;
 		}
 		
+
 		// recupero i risultati dell'esame chiesto dallo user:
 		// user == teacher: recupero tutti i risultati dell'esame
 		// user == student: recupero il solo risultato dello studente
@@ -82,17 +80,21 @@ public class GetResults extends HttpServlet {
 		
 		//TODO: temporaneo
 		if(risultati == null) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Esami non trovati.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ao zi nun ce stanno esami.");
 			return;
 		}
 		
 		// uso json.encode per codificare l'oggetto complesso da mandare 
-		// al client come risultatos
+		// al client come risultato
 		
 		Gson gson = new Gson();
 		
+		// scorro per settare i "modificabile"
+		for (Esaminazione esaminazione : risultati) 
+			esaminazione.setModificabile();
+		
 		String jsonObj = gson.toJson(risultati);
-		System.out.println(jsonObj);
+		System.out.println("risultati: "+jsonObj);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
@@ -105,7 +107,7 @@ public class GetResults extends HttpServlet {
 		
 		EsameDAO esameDao = new EsameDAO(connection);
 		if(user.getRuolo().equals("teacher"))
-			risultati = esameDao.getRisultatiEsameProfessore(idEsame);
+			risultati = esameDao.getRisultatiEsameProfessore(idEsame,"ASC","matricola");
 		else if(user.getRuolo().equals("student"))
 			risultati = esameDao.getRisultatiEsameStudente(user.getMatricola(), idEsame);
 		return risultati;
