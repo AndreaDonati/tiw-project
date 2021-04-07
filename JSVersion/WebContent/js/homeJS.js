@@ -80,6 +80,12 @@ function showCorsi() {
 	// QUI FINE LOADER   
 	loaderDiv.style.display = "none";
 
+	// aggiungo classe per animazione "uscita" - CONTROLLARE SE FUNZIONA DAVVERO
+	$('content').addClass('animate__animated');
+	$('content').addClass('animate__backOutRight');
+
+	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
+
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
 	 	console.log(JSON.parse(request.responseText)["errorMessage"]);
@@ -101,6 +107,11 @@ function showCorsi() {
                 '</div>'
 				);
 		}
+
+		// aggiungo classe per animare "entrata", rimuovo quella gia esistente - CONTROLLARE SE FUNZIONA DAVVERO
+		$('content').removeClass('animate__backOutRight');		
+		$('content').addClass('animate__backInRight');
+
 	}
 }
 
