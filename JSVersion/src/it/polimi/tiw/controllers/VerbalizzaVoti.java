@@ -3,14 +3,27 @@ package it.polimi.tiw.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+import com.google.gson.Gson;
+
+import it.polimi.tiw.beans.Esaminazione;
+import it.polimi.tiw.beans.Verbale;
+import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.dao.EsaminazioneDAO;
+import it.polimi.tiw.dao.VerbaleDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
 @WebServlet("/verbalizzaVoti")
@@ -33,26 +46,54 @@ public class VerbalizzaVoti extends HttpServlet {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Identificativo dell'esame errato\"}");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame errato");
 			return;
 		}
 		
-		
+		// controllo se ci sono voti con stato "pubblicato"
+		// se non ci sono allora non ci sono voti da verbalizzare e reindirizzo
+		// il professore alla stessa pagina
+		EsameDAO esameDao = new EsameDAO(connection);
+		List<Esaminazione> risultati = null;
+		try {
+			risultati = esameDao.getRisultatiEsameProfessore(idEsame, "ASC", "matricola");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.toString());
+			return;
+		}
+
 		// cambio lo stato dei voti relativi all'esame specificato in 'verbalizzato'
 		// e creo un nuovo verbale relativo all'esame
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
-		
+		int idVerbale = 0;
 		try {
-			esaminazioneDAO.recordGrades(idEsame);
+			idVerbale = esaminazioneDAO.recordGrades(idEsame);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
 		}
+		
+		// recupero il verbale appena creato dal db
+		VerbaleDAO verbaleDao = new VerbaleDAO(connection);
+		Verbale verbale = null;
+		try {
+			verbale = verbaleDao.getVerbale(idVerbale);
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			return;
+		}
+		
+		Gson gson = new Gson();
+		
+		String jsonObj = gson.toJson(verbale);
+		System.out.println("verbale: "+jsonObj);
+		
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(jsonObj);
 
-		//TODO: REDIRECT A PAGINA VERBALE
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -89,9 +89,17 @@ public class GetResults extends HttpServlet {
 		
 		Gson gson = new Gson();
 		
-		// scorro per settare i "modificabile"
-		for (Esaminazione esaminazione : risultati) 
-			esaminazione.setModificabile();
+		if(user.getRuolo().equals("teacher")) {
+			// scorro per settare i "modificabile"
+			for (Esaminazione esaminazione : risultati) 
+				esaminazione.setModificabile();
+		} else {
+			Esaminazione es = risultati.get(0);
+			if(!es.isVisualizzabileByStudente())
+				risultati = null;
+			else
+				es.setRifiutabile();
+		}
 		
 		String jsonObj = gson.toJson(risultati);
 		System.out.println("risultati: "+jsonObj);
@@ -99,7 +107,26 @@ public class GetResults extends HttpServlet {
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write("{\"ruolo\":"+"\""+user.getRuolo()+"\""+", \"risultati\": "+jsonObj+"}");
+		response.getWriter().write("{\"ruolo\":"+"\""+user.getRuolo()+"\""+
+								  ", \"risultati\": "+jsonObj+
+								  ", \"pubblicabili\": "+arePubblicabili(risultati)+
+								  ", \"verbalizzabili\": "+areVerbalizzabili(risultati)+"}");
+	}
+
+	private boolean areVerbalizzabili(List<Esaminazione> risultati) {
+		for (Esaminazione esaminazione : risultati) {
+			if(esaminazione.isVerbalizzabile())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean arePubblicabili(List<Esaminazione> risultati) {
+		for (Esaminazione esaminazione : risultati) {
+			if(esaminazione.isPubblicabile())
+				return true;
+		}
+		return false;
 	}
 
 	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame) throws SQLException{

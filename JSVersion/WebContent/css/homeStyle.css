@@ -39,6 +39,7 @@
   font-size: 34px;
   font-weight: 600;
   color: white !important;
+  cursor: pointer;
 }
 
 .navbar-right{
@@ -133,6 +134,7 @@
   transition: all ease 0.4s;
   margin-left: 20%;
   margin-bottom: 10%;
+  background-color: #3498db73;
 }
 
 /* Accordion button */
@@ -157,6 +159,21 @@ color: #fff;
 border: 2px solid #ffffff;   
 width: 75%;
 transition: 0.4s;
+}
+
+.a-btn:disabled {
+display: block;
+width: 65%;
+text-align: center;
+padding: 8px 20px;
+border-radius: 24px;
+transition: 0.25s;
+font-weight: 600;
+background: white;
+color: black; 
+border: 2px solid #f1f1f1;   
+margin-top: 10px;
+opacity: 0.7;
 }
 
 /* Rifiuta button */

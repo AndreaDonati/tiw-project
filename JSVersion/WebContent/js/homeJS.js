@@ -14,10 +14,10 @@ $(window).scroll(function(){
 /* Funzione per mandare richieste GET */
 function makeGet(servletUrl, callback) {	
 	// Richiesta asincrona non cambia la pagina
-	request = new XMLHttpRequest(); // Nuova richiesta
+	var request = new XMLHttpRequest(); // Nuova richiesta
 	// var url = 'getCorsi'; // URL della Servlet
 
-	request.onreadystatechange = callback; // Chiamata al callback
+	request.onreadystatechange = function (req) {callback(req.target);}; // Chiamata al callback
 	request.open("GET", servletUrl); 
 	request.send();
 }
@@ -27,7 +27,7 @@ function makeGetParameters(servletUrl, callback, paramNameValue) {
 	// Richiesta asincrona non cambia la pagina
 	request = new XMLHttpRequest(); // Nuova richiesta
 	// var url = 'getCorsi'; // URL della Servlet
-	request.onreadystatechange = callback; // Chiamata al callback
+	request.onreadystatechange = function (req) {callback(req.target);};; // Chiamata al callback
 	
 	servletUrl += "?";
 	servletUrl += paramNameValue[0]+"="+paramNameValue[1];
@@ -41,7 +41,7 @@ function makeGetParameters(servletUrl, callback, paramNameValue) {
 
 
 /* VARIABILI GLOBALI */
-var request;
+//var request;
 var loaderDiv;
 var risultati;
 
@@ -60,8 +60,8 @@ function init() {
 //	makeGet(riempiSidebar);
 }
 
-function showInfo() {
-	console.log("Showo l'info");
+function showInfo(request) {
+	console.log(request);
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
 	 	console.log(JSON.parse(request.responseText)["errorMessage"]);
@@ -72,13 +72,15 @@ function showInfo() {
 		console.log(utente);
 		$("#immagine").attr("src", utente.image);
 		$("#nome").text(utente.nome+' '+utente.cognome); //nome e cognome
-		$("#mail").text(utente.email);
+		$("#mail").text(utente.email.split("@")[0]+'\n@'+utente.email.split("@")[1]);
 		$("#matricola").text(utente.matricola);
 		
 	}
 }
 
-function showCorsi() {
+function showCorsi(request) {
+	console.log(request);
+
 	// QUI FINE LOADER   
 	loaderDiv.style.display = "none";
 
@@ -129,7 +131,7 @@ function getEsami(nomeCorso) {
 	makeGetParameters("ElencoEsami", showEsami, ["nomeCorso",nomeCorso]); // Chiamata asincrona
 }
 
-function showEsami() {
+function showEsami(request) {
 	// QUI FINE LOADER  
 	loaderDiv.style.display = "none";
 
@@ -186,6 +188,7 @@ function getRisultati(idEsame, nomeCorso) {
 	loaderDiv.style.display = "block";
 
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
+	$("#sottotitolo").empty();
 	$("#titleText").empty();
 	$("#titleText").append('<a onclick="getEsami(`'+nomeCorso+'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
 	$("#titleText").append("Esito");
@@ -193,7 +196,7 @@ function getRisultati(idEsame, nomeCorso) {
 	makeGetParameters("getResults", showRisultati, ["idEsame",idEsame]); // Chiamata asincrona
 }
 
-function showRisultati() {
+function showRisultati(request) {
 	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
 
 	// QUI FINE LOADER  
@@ -208,6 +211,8 @@ function showRisultati() {
 		risposta = JSON.parse(request.responseText);
 		risultati = risposta.risultati;
 		ruoloUtente = risposta.ruolo;
+		arePubblicabili = risposta.pubblicabili;
+		areVerbalizzabili = risposta.verbalizzabili;
 
 		console.log(risultati);
 
@@ -234,17 +239,17 @@ function showRisultati() {
 				'								<th><a style="white-space: nowrap;">Cognome</a></th>											'+									
 				'								<th><a style="white-space: nowrap;">Nome</a></th>												'+											
 				'								<th><a style="white-space: nowrap;">E-mail</a></th>												'+										
-				'								<th><a style="white-space: nowrap;">Corso di Laurea</a></th>												'+										
+				'								<th><a style="white-space: nowrap;">Corso di Laurea</a></th>									'+										
 				'								<th><a style="white-space: nowrap;">Voto</a></th>												'+									
 				'								<th><a style="white-space: nowrap;">Stato</a></th>												'+										
 				'								<th></th>																						'+								
 				'							</tr>																								'+
 				'						</thead>																								'+					
-				'						<tbody id="tabellaVoti">	'+
+				'						<tbody id="tabellaVoti">																				'+
 				'						</tbody>																								'+													
 				'					</table>																									'+															
-				'					<a class="a-btn" href="/tiw-project-html/pubblicaVoti?idEsame=2010">Pubblica</a>							'+																			
-				'					<a class="a-btn" href="/tiw-project-html/verbalizzaVoti?idEsame=2010">Verbalizza</a>						'+																				
+				'					<button id="bottonePubblica" class="a-btn" onclick="pubblicaVoti('+risultati[0].esame.id+')">Pubblica</button>								'+																			
+				'					<button id="bottoneVerbalizza" class="a-btn" onclick="verbalizzaVoti('+risultati[0].esame.id+')">Verbalizza</button>							'+																				
 				'																																'+																		
 				'				</div>																											'+											
 				'																																'+																									
@@ -254,6 +259,10 @@ function showRisultati() {
                 '    </div>	'+
 				'</div>'
 			);
+			
+			// setto la class dei bottoni pubblica e verbalizza
+			arePubblicabili ? $("#bottonePubblica").removeAttr("disabled") : $("#bottonePubblica").attr("disabled", "disabled"); 
+			areVerbalizzabili ? $("#bottoneVerbalizza").removeAttr("disabled") : $("#bottoneVerbalizza").attr("disabled", "disabled"); 
 
 			for(i = 0; i < risultati.length; i++){
 				if(risultati[i].voto == null){
@@ -284,7 +293,83 @@ function showRisultati() {
 
 		} else {
 			console.log("we student");
-			// tabella con una sola riga
+			// svuoto il div content
+			$("#content").empty();
+
+			// controllo se il voto non è ancora definito
+			if(risultati == null){
+				$("#content").append('<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
+				'    <div class="panel panel-default">																							'+		
+                '        <div class="panel-heading" role="tab" id="headingOne">																	'+			
+                '            <h4 class="panel-title">																							'+			
+                '                <a data-parent="#accordion">Tecnologie Informatiche per il web 2021</a>										'+							
+                '            </h4>																												'+						
+                '        </div>																													'+							
+                '        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">					'+									
+                '            <div class="panel-body">																							'+							
+				'				<div>																											'+								
+				'					<p>Voto non ancora definito.</p>   																			'+
+				'				</div>																											'+																									
+                '            </div>																												'+																								
+                '        </div>																													'+																	
+                '    </div>	'+
+				'</div>')
+			}else{
+				// riempio il div content
+				$("#content").append(
+					'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
+					'    <div class="panel panel-default">																							'+		
+					'        <div class="panel-heading" role="tab" id="headingOne">																	'+			
+					'            <h4 class="panel-title">																							'+			
+					'                <a data-parent="#accordion">Tecnologie Informatiche per il web 2021</a>										'+							
+					'            </h4>																												'+						
+					'        </div>																													'+							
+					'        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">					'+									
+					'            <div class="panel-body">																							'+							
+					'				<div>																											'+								
+					'					<table class="table">																						'+									
+					'						<thead>																									'+											
+					'							<tr>																								'+															
+					'								<th>Matricola</th><th>Nome e Cognome</th><th>Data Appello</th><th>Voto</th><th></th>			'+							
+					'							</tr>																								'+
+					'						</thead>																								'+					
+					'						<tbody id="tabellaVoti">																				'+
+					'						</tbody>																								'+													
+					'					</table>																									'+																		
+					'				</div>																											'+																									
+					'            </div>																												'+																								
+					'        </div>																													'+																	
+					'    </div>	'+
+					'</div>'
+				);
+
+				for(i = 0; i < risultati.length; i++){
+					if(risultati[i].voto == null){
+						risultati[i].voto = "";
+					}
+					if(risultati[i].rifiutabile == true){
+						risultati[i].rifiutabile = '<a class="rifiuta-btn" onclick="rifiutaVoto('+risultati[i].esame.id+',`'+risultati[i].corso.nome+'`)">Rifiuta</a>';	
+					}
+					else{
+						if(risultati[i].stato == "verbalizzato")
+							risultati[i].rifiutabile = '';
+						else
+							risultati[i].rifiutabile = '<p>Il voto è stato rifiutato.</p>';
+					}
+				}
+
+				for(i = 0; i < risultati.length; i++){
+					$("#tabellaVoti").append(											
+						'							<tr>																								'+														
+						'								<td>'+risultati[i].studente.matricola+'</td>																					'+												
+						'								<td>'+risultati[i].studente.nome+' '+risultati[i].studente.cognome+'</td>																				'+													
+						'								<td>'+risultati[i].esame.dataAppello+'</td>																						'+																		
+						'								<td>'+risultati[i].voto+'</td>																						'+																		
+						'								<td>'+risultati[i].rifiutabile+'</td>    '+	 									
+						'							</tr>																							'
+						);
+				}
+			}
 		}
 	}
 }
@@ -346,7 +431,7 @@ function modificaVoti(idEsame, matricola) {
 		'								<option>30 e Lode</option>'+
 		'							</select>'+
 		'						</td>'+
-		'						<td><input id="applicaButton" class="modifica-btn" value="Applica" onclick="inserisciVoti('+idEsame+',`'+risultati[0].corso.nome+'`)"></td>'+
+		'						<td><input id="applicaButton" class="modifica-btn" value="Applica" onclick="inserisciVoti(`'+risultati[0].corso.nome+'`)"></td>'+
 		'					</tr>'+
 		'				</tbody>'+
 		'			</table>'+
@@ -358,7 +443,7 @@ function modificaVoti(idEsame, matricola) {
 	);	
 }
 
-function inserisciVoti(idEsame, nomeCorso){
+function inserisciVoti(nomeCorso){
 	// QUI INIZIO LOADER
 	loaderDiv.style.display = "block";
 
@@ -367,7 +452,7 @@ function inserisciVoti(idEsame, nomeCorso){
 	var formElement = document.querySelector("form"); // Prendo parametri dal form
 	var formData = new FormData(formElement);
 
-	request.onreadystatechange = showRisultati; // Chiamata al callback
+	request.onreadystatechange = function (req) {showRisultati(req.target);};; // Chiamata al callback
 	request.open("POST", url); // Richiesta POST all'URL
 	request.send(formData); // Mando dati del form
 
@@ -376,3 +461,76 @@ function inserisciVoti(idEsame, nomeCorso){
 	$("#titleText").append('<a onclick="getEsami(`'+nomeCorso+'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
 	$("#titleText").append("Esito");
 }
+
+function rifiutaVoto(idEsame, nomeCorso){
+	makeGetParameters("rifiutaVoti",showRisultati,["idEsame",idEsame]);
+}
+
+function pubblicaVoti(idEsame){
+	makeGetParameters("pubblicaVoti",showRisultati,["idEsame",idEsame]);
+}
+
+function verbalizzaVoti(idEsame){
+	makeGetParameters("verbalizzaVoti",showVerbale,["idEsame",idEsame]);
+}
+
+function showVerbale(request){
+	console.log(request);
+
+	// QUI FINE LOADER   
+	loaderDiv.style.display = "none";
+
+	// aggiungo classe per animazione "uscita" - CONTROLLARE SE FUNZIONA DAVVERO
+	//$("#content").addClass('animate__animated');
+
+	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
+
+	// aggiorno anche il titolo della pagina e tolgo il back button 
+	$("#titleText").empty();
+
+
+    // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
+	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
+	 	console.log(JSON.parse(request.responseText)["errorMessage"]);
+
+    // Se 200 (OK) append dei corsi ricevuti al div corrispondente
+	if (request.readyState == 4 && request.status == 200 ) {
+		verbale = JSON.parse(request.responseText);
+		console.log(JSON.parse(request.responseText));
+		
+		// setto il titolo con anche il bottone per tornare indietro (alla pagina Esito)
+		$("#titleText").append('<a onclick="getRisultati('+verbale.risultati[0].esame.id+',`'+verbale.risultati[0].corso.nome +'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
+		$("#titleText").append("Verbale n° "+verbale.id);
+		$("#sottotitolo").append("<h3>Data: "+verbale.dataVerbale+"</h3>");
+		$("#sottotitolo").append("<h4>"+verbale.risultati[0].corso.nome + " - Appello del " +verbale.risultati[0].esame.dataAppello+"</h4>");
+	
+		// creo la tabella del verbale
+		$("#content").append(
+		'	<div class="col-xs-1"></div>'+
+		'		<div class="col-xs-10">'+
+		'			<table class="table my-table">'+
+		'				<thead>'+
+		'					<tr>'+
+		'						<th>Matricola</th><th>Cognome</th><th>Nome</th><th>Voto</th>'+
+		'					</tr>'+
+		'				</thead>'+
+		'				<tbody id="tabellaVerbale">'+
+		'				</tbody>'+
+		'			</table>'+
+		'	</div>'+
+		'	<div class="col-xs-1"></div>'
+		);
+
+		for(i = 0; i < verbale.risultati.length; i++){
+			$("#tabellaVerbale").append(
+				'	<tr>'+
+				'		<td>'+verbale.risultati[i].studente.matricola+'</td>'+
+				'		<td>'+verbale.risultati[i].studente.cognome+'</td>'+
+				'		<td>'+verbale.risultati[i].studente.nome+'</td>'+
+				'		<td>'+verbale.risultati[i].voto+'</td>'+
+				'	</tr>'
+			);
+		}
+	}
+}
+

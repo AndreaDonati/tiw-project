@@ -38,10 +38,7 @@ public class RifiutaVoti extends HttpServlet {
 			matricola = user.getMatricola();
 			
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Identificativo dell'esame o dell'utente errato\"}");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame o dell'utente errato");
 			return;
 		}
 		
@@ -50,10 +47,15 @@ public class RifiutaVoti extends HttpServlet {
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
 		try {
 			esaminazioneDAO.rejectGrade(idEsame, matricola);
+			System.out.println("voto rifiutato");
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
 		}
+		
+		// redireziono lo user alla visualizzazione del suo voto per l'esame (che sarà cambiata)
+		String path = getServletContext().getContextPath() + "/getResults?idEsame="+idEsame;
+		response.sendRedirect(path);
 	}
 
 

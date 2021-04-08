@@ -54,7 +54,9 @@ public class PubblicaVoti extends HttpServlet {
 		}
 
 
-		//TODO: MESSAGGIO DI SUCCESSO?
+		// redireziono il professore alla pagina con i risultati dell'esame
+		String path = getServletContext().getContextPath() + "/getResults?idEsame=" + idEsame;
+		response.sendRedirect(path);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
