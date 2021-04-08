@@ -55,12 +55,13 @@ function init() {
 	loaderDiv.style.display = "block";
 
 	// QUI CHIAMATA PER PRENDERE DATI SESSION
-	//makeGet("getInfoUtente", showInfo);
+	makeGet("getInfoUtente", showInfo);
 	makeGet("getCorsi", showCorsi); 
 //	makeGet(riempiSidebar);
 }
 
 function showInfo() {
+	console.log("Showo l'info");
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
 	 	console.log(JSON.parse(request.responseText)["errorMessage"]);
@@ -68,9 +69,10 @@ function showInfo() {
     // Se 200 (OK) sostituisco informazioni utente nella navbar
 	if (request.readyState == 4 && request.status == 200 ) {
 		utente = JSON.parse(request.responseText);
-		$("#immagine").attr("src", utente.immagine);
-		$("#nome").text(utente.nome); //nome e cognome
-		$("#mail").text(utente.mail);
+		console.log(utente);
+		$("#immagine").attr("src", utente.image);
+		$("#nome").text(utente.nome+' '+utente.cognome); //nome e cognome
+		$("#mail").text(utente.email);
 		$("#matricola").text(utente.matricola);
 		
 	}
