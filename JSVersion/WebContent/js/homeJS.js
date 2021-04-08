@@ -220,7 +220,79 @@ function showRisultati(request) {
 			console.log("we prof");
 			// svuoto il div content
 			$("#content").empty();
-			// riempio il div content
+
+			// riempio il div content con il MODAL
+			$("#content").append(
+  			'<div class="modal fade" id="myModal" role="alert">'+
+  			'  <div class="modal-dialog modal-lg">'+
+  			'    <div class="modal-content">'+
+  			'      <div class="modal-header">'+
+  			'        <button type="button" class="close" style="color: #3498db;" data-dismiss="modal">&times;</button>'+
+  			'        <h4 class="modal-title">Inserimento Multiplo</h4>'+
+  			'      </div>'+
+  			'      <div class="modal-body">'+
+  			'        <h5>Puoi modificare i singoli voti, oppure selezionare le righe e inserire un solo voto per tutte.</h5>'+
+  			'        <table class="table">													'+																	
+  			'      	<thead>										'+																									
+  			'      		<tr>'+
+  			'               <th><input onclick="selezionaTutto()" class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>	'+																																			
+  			'      			<th><a style="white-space: nowrap;">Matricola<i class="fas fa-chevron-up sort-i"></i></a></th>						'+														
+  			'      			<th><a style="white-space: nowrap;">Cognome</a></th>					'+														
+  			'      			<th><a style="white-space: nowrap;">Nome</a></th>							'+															
+  			'      			<th><a style="white-space: nowrap;">E-mail</a></th>							'+														
+  			'      			<th><a style="white-space: nowrap;">Corso di Laurea</a></th>				'+														
+  			'      			<th><a style="white-space: nowrap;">Voto</a></th>							'+													
+  			'      			<th></th>																	'+												
+  			'      		</tr>																			'+				
+  			'      	</thead>																			'+									
+  			'      	<tbody id="tabellaModal">	'+																	
+  			'      	</tbody>			'+																																	
+  			'      </table>	'+
+  			'      </div>'+
+  			'      <div class="modal-footer">'+
+  			'        <button type="button" onclick="" class="btn btn-default modal-btn" data-dismiss="modal">Applica</button>'+
+  			'      </div>'+
+  			'    </div>'+
+  			'  </div>'+
+  			'</div>'
+			);
+			// QUI RIEMPIRE CON UN FOR LE RIGHE DELLA tabellaModal CON I RISULTATI SALVATI IN LOCALE (var globale)
+			// riempiModal(), che è questa sotto
+			for(i = 0; i < risultati.length; i++){
+				if(risultati[i].stato == "non inserito"){
+						$("#tabellaVoti").append(											
+							'<tr>	'+
+							' <th><input onclick="selezionaRiga()" class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>	'+																																															
+							'	<td>'+risultati[i].studente.matricola+'</td>																					'+												
+							'	<td>'+risultati[i].studente.cognome+'</td>																				'+														
+							'	<td>'+risultati[i].studente.nome+'</td>																				'+													
+							'	<td>'+risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1]+'</td>														'+														
+							'	<td>'+risultati[i].studente.cdl+'</td>																	'+																					
+							'	<td><select name="voto" id="voto">'+
+							'			<option>assente</option>'+
+							'			<option>rimandato</option>'+
+							'			<option>riprovato</option>'+
+							'			<option>18</option>'+
+							'			<option>19</option>'+
+							'			<option>20</option>'+
+							'			<option>21</option>'+
+							'			<option>22</option>'+
+							'			<option>23</option>'+
+							'			<option>24</option>'+
+							'			<option>25</option>'+
+							'			<option>26</option>'+
+							'			<option>27</option>'+
+							'			<option>28</option>'+
+							'			<option>29</option>'+
+							'			<option>30</option>'+
+							'			<option>30 e Lode</option>'+
+							'		</select></td>'+
+							'</tr>'
+						);
+				}
+			}
+
+			// riempio il div content con la pagina effettiva
 			$("#content").append(
 				'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
 				'    <div class="panel panel-default">																							'+		
@@ -247,7 +319,8 @@ function showRisultati(request) {
 				'						</thead>																								'+					
 				'						<tbody id="tabellaVoti">																				'+
 				'						</tbody>																								'+													
-				'					</table>																									'+															
+				'					</table>																									'+		
+				'					<button id="bottoneInserimento" class="a-btn" data-toggle="modal" data-target="#myModal"">Inserimento Multiplo</button>								'+																																
 				'					<button id="bottonePubblica" class="a-btn" onclick="pubblicaVoti('+risultati[0].esame.id+')">Pubblica</button>								'+																			
 				'					<button id="bottoneVerbalizza" class="a-btn" onclick="verbalizzaVoti('+risultati[0].esame.id+')">Verbalizza</button>							'+																				
 				'																																'+																		
@@ -372,6 +445,14 @@ function showRisultati(request) {
 			}
 		}
 	}
+}
+
+function selezionaTutto(){
+	// seleziona tutte le righe della tabella
+}
+
+function selezionaRiga(){
+	// seleziona le riga corrispondente della tabella
 }
 
 
