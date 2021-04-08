@@ -81,10 +81,13 @@ function showCorsi() {
 	loaderDiv.style.display = "none";
 
 	// aggiungo classe per animazione "uscita" - CONTROLLARE SE FUNZIONA DAVVERO
-	$('content').addClass('animate__animated');
-	$('content').addClass('animate__backOutRight');
+	//$("#content").addClass('animate__animated');
 
 	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
+
+	// aggiorno anche il titolo della pagina e tolgo il back button 
+	$("#titleText").empty();
+	$("#titleText").append("I tuoi corsi");
 
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
@@ -109,8 +112,8 @@ function showCorsi() {
 		}
 
 		// aggiungo classe per animare "entrata", rimuovo quella gia esistente - CONTROLLARE SE FUNZIONA DAVVERO
-		$('content').removeClass('animate__backOutRight');		
-		$('content').addClass('animate__backInRight');
+		$("#content").addClass('animate__animated');
+		$("#content").addClass('animate__backInRight');
 
 	}
 }
@@ -120,11 +123,6 @@ function getEsami(nomeCorso) {
 	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
 	// QUI INIZIO LOADER
 	loaderDiv.style.display = "block";
-	
-	// aggiorno anche il titolo della pagina e il back button (torna a HOME)
-	$("#titleText").empty();
-	$("#titleText").append('<a onclick="makeGet(`getCorsi`, showCorsi)"><i class="fas fa-chevron-left back-btn"></i></a>');
-	$("#titleText").append("I tuoi esami");
 
 	makeGetParameters("ElencoEsami", showEsami, ["nomeCorso",nomeCorso]); // Chiamata asincrona
 }
@@ -132,6 +130,11 @@ function getEsami(nomeCorso) {
 function showEsami() {
 	// QUI FINE LOADER  
 	loaderDiv.style.display = "none";
+
+	// aggiorno anche il titolo della pagina e il back button (torna a HOME)
+	$("#titleText").empty();
+	$("#titleText").append('<a onclick="makeGet(`getCorsi`, showCorsi)"><i class="fas fa-chevron-left back-btn"></i></a>');
+	$("#titleText").append("I tuoi esami");
 
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
@@ -182,13 +185,15 @@ function getRisultati(idEsame, nomeCorso) {
 
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
 	$("#titleText").empty();
-	$("#titleText").append('<a onclick="makeGetParameters(`ElencoEsami`, showEsami, [`nomeCorso`,`'+nomeCorso+'`])"><i class="fas fa-chevron-left back-btn"></i></a>');
+	$("#titleText").append('<a onclick="getEsami(`'+nomeCorso+'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
 	$("#titleText").append("Esito");
 
 	makeGetParameters("getResults", showRisultati, ["idEsame",idEsame]); // Chiamata asincrona
 }
 
 function showRisultati() {
+	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
+
 	// QUI FINE LOADER  
 	loaderDiv.style.display = "none";
 
@@ -289,7 +294,7 @@ function modificaVoti(idEsame, matricola) {
 
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
 	$("#titleText").empty();
-	$("#titleText").append('<a onclick="makeGetParameters(`getResults`, showRisultati, [`idEsame`,`'+idEsame+'`])"><i class="fas fa-chevron-left back-btn"></i></a>');
+	$("#titleText").append('<a onclick="getRisultati('+idEsame+',`'+risultati[0].corso.nome+'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
 	$("#titleText").append("Modifica Voto");
 
 	var studente;
@@ -339,7 +344,7 @@ function modificaVoti(idEsame, matricola) {
 		'								<option>30 e Lode</option>'+
 		'							</select>'+
 		'						</td>'+
-		'						<td><input id="applicaButton" class="modifica-btn" value="Applica" onclick="inserisciVoti()"></td>'+
+		'						<td><input id="applicaButton" class="modifica-btn" value="Applica" onclick="inserisciVoti('+idEsame+',`'+risultati[0].corso.nome+'`)"></td>'+
 		'					</tr>'+
 		'				</tbody>'+
 		'			</table>'+
@@ -351,7 +356,7 @@ function modificaVoti(idEsame, matricola) {
 	);	
 }
 
-function inserisciVoti(){
+function inserisciVoti(idEsame, nomeCorso){
 	// QUI INIZIO LOADER
 	loaderDiv.style.display = "block";
 
@@ -363,4 +368,9 @@ function inserisciVoti(){
 	request.onreadystatechange = showRisultati; // Chiamata al callback
 	request.open("POST", url); // Richiesta POST all'URL
 	request.send(formData); // Mando dati del form
+
+	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
+	$("#titleText").empty();
+	$("#titleText").append('<a onclick="getEsami(`'+nomeCorso+'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
+	$("#titleText").append("Esito");
 }
