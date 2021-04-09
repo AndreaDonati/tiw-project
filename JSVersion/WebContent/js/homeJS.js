@@ -232,7 +232,7 @@ function showRisultati(request) {
   			'      </div>'+
   			'      <div class="modal-body">'+
   			'        <h5>Puoi modificare i singoli voti, oppure selezionare le righe e inserire un solo voto per tutte.</h5>'+
-			'	<form>'+
+			'	<form id="modalForm">'+
   			'        <table class="table">													'+																	
   			'      	<thead>										'+																									
   			'      		<tr>'+
@@ -457,7 +457,7 @@ function inserimentoMultiplo(){
 
 	request = new XMLHttpRequest(); // Nuova richiesta
 	var url = 'inserimentoMultiplo'; // URL della Servlet
-	var formElement = document.querySelector("form"); // Prendo parametri dal form
+	var formElement = document.querySelector("#modalForm"); // Prendo parametri dal form
 	var formData = new FormData(formElement);
 
 	request.onreadystatechange = function (req) {showRisultati(req.target);};; // Chiamata al callback
@@ -495,7 +495,7 @@ function modificaVoti(idEsame, matricola) {
 	$("#content").append(
 		'	<div class="col-xs-1"></div>'+
 		'	<div class="col-xs-10">'+
-		'		<form action="#" method="POST" id="loginForm">'+
+		'		<form action="#" method="POST" id="modificaForm">'+
 		'			<table class="table my-table">'+
 		'				<thead>'+
 		'					<tr>'+
@@ -548,7 +548,7 @@ function inserisciVoti(nomeCorso){
 
 	request = new XMLHttpRequest(); // Nuova richiesta
 	var url = 'inserisciVoti'; // URL della Servlet
-	var formElement = document.querySelector("form"); // Prendo parametri dal form
+	var formElement = document.querySelector("#modificaForm"); // Prendo parametri dal form
 	var formData = new FormData(formElement);
 
 	request.onreadystatechange = function (req) {showRisultati(req.target);};; // Chiamata al callback
