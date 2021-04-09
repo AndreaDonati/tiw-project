@@ -114,6 +114,9 @@ public class GetResults extends HttpServlet {
 	}
 
 	private boolean areVerbalizzabili(List<Esaminazione> risultati) {
+		if(risultati == null)
+			return false;
+		
 		for (Esaminazione esaminazione : risultati) {
 			if(esaminazione.isVerbalizzabile())
 				return true;
@@ -122,6 +125,9 @@ public class GetResults extends HttpServlet {
 	}
 
 	private boolean arePubblicabili(List<Esaminazione> risultati) {
+		if(risultati == null)
+			return false;
+		
 		for (Esaminazione esaminazione : risultati) {
 			if(esaminazione.isPubblicabile())
 				return true;
