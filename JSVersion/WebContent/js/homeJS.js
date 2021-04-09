@@ -307,13 +307,13 @@ function showRisultati(request) {
 				'					<table class="table">																						'+									
 				'						<thead>																									'+											
 				'							<tr>																								'+															
-				'								<th><a style="white-space: nowrap;">Matricola<i class="fas fa-chevron-up sort-i"></i></a></th>	'+																				
-				'								<th><a style="white-space: nowrap;">Cognome</a></th>											'+									
-				'								<th><a style="white-space: nowrap;">Nome</a></th>												'+											
-				'								<th><a style="white-space: nowrap;">E-mail</a></th>												'+										
-				'								<th><a style="white-space: nowrap;">Corso di Laurea</a></th>									'+										
-				'								<th><a style="white-space: nowrap;">Voto</a></th>												'+									
-				'								<th><a style="white-space: nowrap;">Stato</a></th>												'+										
+				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(0)"">Matricola<i class="fas fa-chevron-up sort-i"></i></a></th>	'+																				
+				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(1)"">Cognome</a></th>											'+									
+				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(2)"">Nome</a></th>												'+											
+				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(3)"">E-mail</a></th>												'+										
+				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(4)"">Corso di Laurea</a></th>									'+										
+				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(5)"">Voto</a></th>												'+									
+				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(6)"">Stato</a></th>												'+										
 				'								<th></th>																						'+								
 				'							</tr>																								'+
 				'						</thead>																								'+					
@@ -611,6 +611,59 @@ function showVerbale(request){
 				'		<td>'+verbale.risultati[i].voto+'</td>'+
 				'	</tr>'
 			);
+		}
+	}
+}
+
+function sortTable(n) {
+	// bubble sort :P
+	var tabella, rows, switching, i, x, y, shouldSwitch, ordine, switchDone;
+	tabella = document.getElementById("tabellaModal");
+	switching = true;
+	switchDone = false;
+	ordine = "ASC";
+
+	while (switching) {
+		switching = false;
+		rows = tabella.rows;
+
+		for (i = 0; i < (rows.length - 1); i++) { // -1 perche faccio +1 nel ciclo
+			shouldSwitch = false;
+
+			x = rows[i].getElementsByTagName("td")[n]; // cella della riga corrente
+			y = rows[i + 1].getElementsByTagName("td")[n]; // cella della riga successiva
+
+			if(compareRows(x, y, ordine, n)) {
+				shouldSwitch = true;
+				break;
+			}
+	}
+	if (shouldSwitch) {
+		rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		switching = true;
+		switchDone = true;
+	} else {
+		if (!switchDone && ordine == "ASC") {   
+			// se arrivo qui significa che non ho scambiato nessuna cella, rifaccio tutto invertendo l'ordine
+			// in questo modo gestisco i due ordini senza usare altre variabili
+			ordine = "DESC";
+			switching = true;
+		}
+	}
+  }
+}
+
+function compareRows(x, y, ordine, n) {
+	// in base al tipo di colonna ho un ordinamento diverso
+	if (n == 5){
+		// questa è la colonna del voto, ordinamento personalizzato TODO
+	} else{
+		if (ordine == "ASC") {
+			if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())
+				return true;
+		} else {
+			if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())
+				return true;
 		}
 	}
 }
