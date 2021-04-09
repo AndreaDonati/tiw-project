@@ -178,6 +178,23 @@ width: 75%;
 transition: 0.4s;
 }
 
+.a-btn-disabled {
+display: block;
+width: 65%;
+text-align: center;
+padding: 8px 20px;
+border-radius: 24px;
+transition: 0.25s;
+font-weight: 600;
+background: white;
+color: black; 
+border: 2px solid #f1f1f1;   
+margin-top: 10px;
+opacity: 0.7;
+pointer-events:	none;
+}
+
+
 /* Rifiuta button */
 .rifiuta-btn {
 display: block;

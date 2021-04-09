@@ -84,8 +84,8 @@
 											</tr>
 										</tbody>
 									</table>
-									<a class="a-btn" th:href="@{/pubblicaVoti(idEsame=${risultati[0].esame.id})}">Pubblica</a>
-									<a class="a-btn" th:href="@{/verbalizzaVoti(idEsame=${risultati[0].esame.id})}">Verbalizza</a>
+									<a th:class="${arePubblicabili} ? 'a-btn' : 'a-btn-disabled' " th:href="@{/pubblicaVoti(idEsame=${risultati[0].esame.id})}">Pubblica</a>
+									<a th:class="${areVerbalizzabili} ? 'a-btn' : 'a-btn-disabled' " th:href="@{/verbalizzaVoti(idEsame=${risultati[0].esame.id})}">Verbalizza</a>
 									
 								</div>
 								<div th:if="${#strings.equals(session.user.ruolo,'student') and risultati[0].isVisualizzabileByStudente()}">

@@ -121,6 +121,8 @@ public class GetResults extends HttpServlet {
 		String path = "/Templates/RisultatiEsame.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("arePubblicabili",arePubblicabili(risultati));
+		ctx.setVariable("areVerbalizzabili",areVerbalizzabili(risultati));
 		ctx.setVariable("risultati", risultati);
 		ctx.setVariable("campo", campo);
 		ctx.setVariable("ordine", ordine.equals("ASC") ? "DESC" : "ASC");
@@ -144,6 +146,22 @@ public class GetResults extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+	}
+	
+	private boolean areVerbalizzabili(List<Esaminazione> risultati) {
+		for (Esaminazione esaminazione : risultati) {
+			if(esaminazione.isVerbalizzabile())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean arePubblicabili(List<Esaminazione> risultati) {
+		for (Esaminazione esaminazione : risultati) {
+			if(esaminazione.isPubblicabile())
+				return true;
+		}
+		return false;
 	}
 
 }
