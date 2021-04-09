@@ -328,3 +328,33 @@ background: #fafafa;
   color: #615f5f;
   line-height: 27px;
 }
+
+/* Modal per inserimento multiplo */
+.modal{
+  font-family: "Montserrat", sans-serif;
+}
+
+.modal-title{
+  color: #fafafa;
+  font-weight: 700;
+  color: #3498db;
+}
+
+.modal-btn {
+  text-align: center;
+  padding: 8px 20px;
+  border-radius: 24px;
+  transition: 0.25s;
+  cursor: pointer;
+  font-weight: 600;
+  background: white;
+  color: black; 
+  border: 2px solid #f1f1f1;   
+}
+
+.modal-btn:hover {
+  background: #2ecc70be;
+  color: #fff;
+  border: 2px solid #ffffff;   
+  transition: 0.4s;
+}
