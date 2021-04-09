@@ -167,7 +167,7 @@ function showEsami(request) {
 				'             </div>'+
 				'             <div id="collapse'+i+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+i+'">'+
 				'                 <div class="panel-body" id="appelli'+i+'">'+
-				'                     <p>Clicca sull\'appello per visualizzare gli iscritti: </p>'+ // SARA DA DIFFERENZIARE PER USER RUOLO
+				'                     <p>Clicca sull\'appello per visualizzare i dati: </p>'+
 				'                 </div>'+
 				'             </div>'+
 				' </div>'
@@ -253,7 +253,7 @@ function showRisultati(request) {
 			'	</form>'+
   			'      </div>'+
   			'      <div class="modal-footer">'+
-  			'        <button type="button" onclick="inserimentoMultiplo()" class="btn btn-default modal-btn" data-dismiss="modal">Applica</button>'+
+  			'        <button type="button" onclick="inserimentoMultiplo()" class="btn btn-default modal-btn" data-dismiss="modal">Invia</button>'+
   			'      </div>'+
   			'    </div>'+
   			'  </div>'+
