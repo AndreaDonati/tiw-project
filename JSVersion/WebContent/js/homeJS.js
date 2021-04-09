@@ -220,10 +220,10 @@ function showRisultati(request) {
 			console.log("we prof");
 			// svuoto il div content
 			$("#content").empty();
-
-			// riempio il div content con il MODAL
-			$("#content").append(
-  			'<div class="modal fade" id="myModal" role="alert">'+
+			
+			// mostro il modal
+			$("body").prepend(
+  			'<div class="modal fade" id="myModal" role="dialog">'+
   			'  <div class="modal-dialog modal-lg">'+
   			'    <div class="modal-content">'+
   			'      <div class="modal-header">'+
@@ -232,12 +232,13 @@ function showRisultati(request) {
   			'      </div>'+
   			'      <div class="modal-body">'+
   			'        <h5>Puoi modificare i singoli voti, oppure selezionare le righe e inserire un solo voto per tutte.</h5>'+
+			'	<form>'+
   			'        <table class="table">													'+																	
   			'      	<thead>										'+																									
   			'      		<tr>'+
   			'               <th><input onclick="selezionaTutto()" class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>	'+																																			
-  			'      			<th><a style="white-space: nowrap;">Matricola<i class="fas fa-chevron-up sort-i"></i></a></th>						'+														
-  			'      			<th><a style="white-space: nowrap;">Cognome</a></th>					'+														
+  			'      			<th><a style="white-space: nowrap;">Matricola</a></th>						'+														
+  			'      			<th><a style="white-space: nowrap;">Cognome</a></th>						'+														
   			'      			<th><a style="white-space: nowrap;">Nome</a></th>							'+															
   			'      			<th><a style="white-space: nowrap;">E-mail</a></th>							'+														
   			'      			<th><a style="white-space: nowrap;">Corso di Laurea</a></th>				'+														
@@ -248,9 +249,11 @@ function showRisultati(request) {
   			'      	<tbody id="tabellaModal">	'+																	
   			'      	</tbody>			'+																																	
   			'      </table>	'+
+			'			<input type="hidden" value="'+risultati[0].esame.id+'" name="idEsame">'+
+			'	</form>'+
   			'      </div>'+
   			'      <div class="modal-footer">'+
-  			'        <button type="button" onclick="" class="btn btn-default modal-btn" data-dismiss="modal">Applica</button>'+
+  			'        <button type="button" onclick="inserimentoMultiplo()" class="btn btn-default modal-btn" data-dismiss="modal">Applica</button>'+
   			'      </div>'+
   			'    </div>'+
   			'  </div>'+
@@ -260,15 +263,16 @@ function showRisultati(request) {
 			// riempiModal(), che è questa sotto
 			for(i = 0; i < risultati.length; i++){
 				if(risultati[i].stato == "non inserito"){
-						$("#tabellaVoti").append(											
+						$("#tabellaModal").append(											
 							'<tr>	'+
 							' <th><input onclick="selezionaRiga()" class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>	'+																																															
-							'	<td>'+risultati[i].studente.matricola+'</td>																					'+												
+							'	<td>'+risultati[i].studente.matricola+'<input type="hidden" name="matricola" value="'+risultati[i].studente.matricola+'"></td>																					'+												
 							'	<td>'+risultati[i].studente.cognome+'</td>																				'+														
 							'	<td>'+risultati[i].studente.nome+'</td>																				'+													
 							'	<td>'+risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1]+'</td>														'+														
 							'	<td>'+risultati[i].studente.cdl+'</td>																	'+																					
 							'	<td><select name="voto" id="voto">'+
+							'			<option></option>'+
 							'			<option>assente</option>'+
 							'			<option>rimandato</option>'+
 							'			<option>riprovato</option>'+
@@ -307,20 +311,20 @@ function showRisultati(request) {
 				'					<table class="table">																						'+									
 				'						<thead>																									'+											
 				'							<tr>																								'+															
-				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(0)"">Matricola<i class="fas fa-chevron-up sort-i"></i></a></th>	'+																				
-				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(1)"">Cognome</a></th>											'+									
-				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(2)"">Nome</a></th>												'+											
-				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(3)"">E-mail</a></th>												'+										
-				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(4)"">Corso di Laurea</a></th>									'+										
-				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(5)"">Voto</a></th>												'+									
-				'								<th><a style="white-space: nowrap; onclick="ordinaTabella(6)"">Stato</a></th>												'+										
+				'								<th><a style="white-space: nowrap;" onclick="ordinaTabella(0)">Matricola<i id="freccia0" class="fas fa-chevron-up sort-i"></i></a></th>	'+																				
+				'								<th><a style="white-space: nowrap;" onclick="ordinaTabella(1)">Cognome<i id="freccia1"></a></th>											'+									
+				'								<th><a style="white-space: nowrap;" onclick="ordinaTabella(2)">Nome<i id="freccia2"></a></th>												'+											
+				'								<th><a style="white-space: nowrap;" onclick="ordinaTabella(3)">E-mail<i id="freccia3"></a></th>												'+										
+				'								<th><a style="white-space: nowrap;" onclick="ordinaTabella(4)">Corso di Laurea<i id="freccia4"></a></th>									'+										
+				'								<th><a style="white-space: nowrap;" onclick="ordinaTabella(5)">Voto<i id="freccia5"></a></th>												'+									
+				'								<th><a style="white-space: nowrap;" onclick="ordinaTabella(6)">Stato<i id="freccia6"></a></th>												'+										
 				'								<th></th>																						'+								
 				'							</tr>																								'+
 				'						</thead>																								'+					
 				'						<tbody id="tabellaVoti">																				'+
 				'						</tbody>																								'+													
 				'					</table>																									'+		
-				'					<button id="bottoneInserimento" class="a-btn" data-toggle="modal" data-target="#myModal"">Inserimento Multiplo</button>								'+																																
+				'					<button id="bottoneInserimento" class="a-btn" data-toggle="modal" data-target="#myModal">Inserimento Multiplo</button>								'+																																
 				'					<button id="bottonePubblica" class="a-btn" onclick="pubblicaVoti('+risultati[0].esame.id+')">Pubblica</button>								'+																			
 				'					<button id="bottoneVerbalizza" class="a-btn" onclick="verbalizzaVoti('+risultati[0].esame.id+')">Verbalizza</button>							'+																				
 				'																																'+																		
@@ -445,6 +449,20 @@ function showRisultati(request) {
 			}
 		}
 	}
+}
+
+function inserimentoMultiplo(){
+	// QUI INIZIO LOADER
+	loaderDiv.style.display = "block";
+
+	request = new XMLHttpRequest(); // Nuova richiesta
+	var url = 'inserimentoMultiplo'; // URL della Servlet
+	var formElement = document.querySelector("form"); // Prendo parametri dal form
+	var formData = new FormData(formElement);
+
+	request.onreadystatechange = function (req) {showRisultati(req.target);};; // Chiamata al callback
+	request.open("POST", url); // Richiesta POST all'URL
+	request.send(formData); // Mando dati del form);
 }
 
 function selezionaTutto(){
@@ -615,10 +633,20 @@ function showVerbale(request){
 	}
 }
 
-function sortTable(n) {
+function ordinaTabella(n) {
+	// aggiorno le frecce
+	for(i = 0; i < 7; i++){
+		if(i != n){
+			$("#freccia"+i).removeClass('fas fa-chevron-up sort-i');
+			$("#freccia"+i).removeClass('fas fa-chevron-down sort-i');
+		}
+	}
+	$("#freccia"+n).removeClass('fas fa-chevron-down sort-i');
+	$("#freccia"+n).addClass('fas fa-chevron-up sort-i');
+
 	// bubble sort :P
 	var tabella, rows, switching, i, x, y, shouldSwitch, ordine, switchDone;
-	tabella = document.getElementById("tabellaModal");
+	tabella = document.getElementById("tabellaVoti");
 	switching = true;
 	switchDone = false;
 	ordine = "ASC";
@@ -647,24 +675,44 @@ function sortTable(n) {
 			// se arrivo qui significa che non ho scambiato nessuna cella, rifaccio tutto invertendo l'ordine
 			// in questo modo gestisco i due ordini senza usare altre variabili
 			ordine = "DESC";
+			$("#freccia"+n).removeClass('fas fa-chevron-up sort-i');
+			$("#freccia"+n).addClass('fas fa-chevron-down sort-i');
 			switching = true;
 		}
 	}
   }
 }
 
+function comparaVoti(voto1, voto2, ordine){
+	// definisco l'ordinamento personalizzato (ASC)
+	var ordinamentoVoti = ["","assente","rimandato","riprovato","18","19","20","21","22","23","24","25","26","27","28","29","30","30 e Lode"];
+	if (ordine == "ASC") 
+		return ordinamentoVoti.indexOf(voto1) > ordinamentoVoti.indexOf(voto2);
+	else 
+		return ordinamentoVoti.indexOf(voto1) < ordinamentoVoti.indexOf(voto2);
+}
+
 function compareRows(x, y, ordine, n) {
+	console.log("ordino "+ordine);
+	// ORDINE ASC : <vuoto>, assente, rimandato, riprovato, 18, 19, ... 30 e Lode
+	// ORDINE DESC: 30 e Lode, ..., 19, 18, riprovato, rimandato, assente, <vuoto>
+	// ORDINE ATTUALE ASC: <vuoto>, 18, 19, ... , assente, rimandato, riprovato 
+	// ORDINE ATTUALE DESC: riprovato, rimandato, assente, ..., 19, 18, <vuoto>
 	// in base al tipo di colonna ho un ordinamento diverso
 	if (n == 5){
-		// questa è la colonna del voto, ordinamento personalizzato TODO
+		if (ordine == "ASC") 
+			// ASC
+			return comparaVoti(x.innerHTML.toLowerCase(),y.innerHTML.toLowerCase(), ordine);
+		else 
+			// DESC
+			return comparaVoti(x.innerHTML.toLowerCase(),y.innerHTML.toLowerCase(), ordine);
 	} else{
-		if (ordine == "ASC") {
-			if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())
-				return true;
-		} else {
-			if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())
-				return true;
-		}
+		if (ordine == "ASC")
+			// ASC
+			return x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase();
+		else
+			// DESC
+			return x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase();
 	}
 }
 
