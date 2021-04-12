@@ -236,7 +236,7 @@ function showRisultati(request) {
   			'        <table class="table">													'+																	
   			'      	<thead>										'+																									
   			'      		<tr>'+
-  			'               <th><input onclick="selezionaTutto()" class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>	'+																																			
+  			'               <th><input onclick="selezionaTutto()" class="form-check-input" type="checkbox" value="" id="checkAll"></th>	'+																																			
   			'      			<th><a style="white-space: nowrap;">Matricola</a></th>						'+														
   			'      			<th><a style="white-space: nowrap;">Cognome</a></th>						'+														
   			'      			<th><a style="white-space: nowrap;">Nome</a></th>							'+															
@@ -261,17 +261,19 @@ function showRisultati(request) {
 			);
 			// QUI RIEMPIRE CON UN FOR LE RIGHE DELLA tabellaModal CON I RISULTATI SALVATI IN LOCALE (var globale)
 			// riempiModal(), che è questa sotto
+			visibili = false;
 			for(i = 0; i < risultati.length; i++){
 				if(risultati[i].stato == "non inserito"){
+					visibili = true;
 						$("#tabellaModal").append(											
 							'<tr>	'+
-							' <th><input onclick="selezionaRiga()" class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>	'+																																															
+							' <th><input onclick="selezionaRiga()" class="form-check-input" type="checkbox" value="" id="check'+i+'" onchange=selezionaRiga(this.id)></th>	'+																																															
 							'	<td>'+risultati[i].studente.matricola+'<input type="hidden" name="matricola" value="'+risultati[i].studente.matricola+'"></td>																					'+												
 							'	<td>'+risultati[i].studente.cognome+'</td>																				'+														
 							'	<td>'+risultati[i].studente.nome+'</td>																				'+													
 							'	<td>'+risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1]+'</td>														'+														
 							'	<td>'+risultati[i].studente.cdl+'</td>																	'+																					
-							'	<td><select name="voto" id="voto">'+
+							'	<td><select name="voto" id="sel'+i+'" onchange=handleSelection(this)>'+
 							'			<option></option>'+
 							'			<option>assente</option>'+
 							'			<option>rimandato</option>'+
@@ -294,6 +296,9 @@ function showRisultati(request) {
 							'</tr>'
 						);
 				}
+			}
+			if(!visibili){
+				$("#modalForm").append('<p>Non ci sono voti da inserire.</p>');
 			}
 
 			// riempio il div content con la pagina effettiva
@@ -463,14 +468,6 @@ function inserimentoMultiplo(){
 	request.onreadystatechange = function (req) {showRisultati(req.target);};; // Chiamata al callback
 	request.open("POST", url); // Richiesta POST all'URL
 	request.send(formData); // Mando dati del form);
-}
-
-function selezionaTutto(){
-	// seleziona tutte le righe della tabella
-}
-
-function selezionaRiga(){
-	// seleziona le riga corrispondente della tabella
 }
 
 
@@ -716,3 +713,72 @@ function compareRows(x, y, ordine, n) {
 	}
 }
 
+
+var linkedBox = [];
+var selectedPos = 0;
+
+function selezionaTutto(){
+	// seleziona tutte le righe della tabella
+    rows = document.getElementById("tabellaModal").rows;
+    linkedBox = [];
+
+    for (i = 0; i < rows.length; i++){
+		if($("#checkAll").prop("checked")){
+            // selezionate tutte, pusho tutto nella lista e aggiorno anche i voti
+            $("#check"+i).prop("checked", true);
+            linkedBox.push(i);
+            $("#sel"+i).prop('selectedIndex', selectedPos);
+        } else{
+            // deselezionate tutte
+            $("#check"+i).prop("checked", false);
+            linkedBox.splice(linkedBox.indexOf(i), 1);
+        }
+    }
+}
+
+function selezionaRiga(id){
+    index = parseInt(id.charAt(id.length-1));
+
+    if($("#check"+index).prop("checked")) {// se non è gia nella lista
+        linkedBox.push(index);
+        $("#sel"+index).prop('selectedIndex', selectedPos);
+
+        // ora controllo se METTERE il check a "checkAll" oppure no
+        if(areAllSelected()){
+            $("#checkAll").prop("checked", true);
+        }
+
+    } else{
+        linkedBox.splice(linkedBox.indexOf(index), 1);
+        // ora controllo se TOGLIERE il check a "checkAll" oppure no
+        if(!areAllSelected())
+            $("#checkAll").prop("checked", false);
+
+    }   
+}
+
+function areAllSelected(){
+    rows = document.getElementById("tabellaModal").rows;
+
+    for (i = 0; i < rows.length; i++){
+		if(!$("#check"+i).prop("checked"))
+            return false;
+    }
+    return true;
+}
+
+function handleSelection(sel){
+    // prendo la riga del select
+    index = parseInt((sel.id).charAt((sel.id).length-1));
+
+    if(linkedBox.indexOf(index) != -1){
+        // prendo la posizione dell'option selezionata
+        selectedPos = $("#"+sel.id).prop('selectedIndex');
+
+        // se la riga del select è in linkedBox allora devo aggiornare tutte le select collegate, altrimenti nulla
+        linkedBox.forEach(i => {
+            $("#sel"+i).prop('selectedIndex', selectedPos);
+        });
+        selectedPos = 0;
+    }
+}
