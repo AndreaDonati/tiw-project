@@ -74,9 +74,7 @@ public class GetResults extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta incompleta. Parametri mancanti.");
 			return;
 		}
-		
-		// recupero la l'etichetta della colonna dalla sessione
-		String oldColonna = (String) session.getAttribute("colonna");
+
 
 		// recupero i parametri dalla richiesta
 		String ordine;
@@ -89,11 +87,9 @@ public class GetResults extends HttpServlet {
 		// i dati arrivano dal db ordinati per matricola in modo ASC  
 		if(campo == null)
 			campo = "matricola";
-		if(ordine == null || !oldColonna.equals(campo))
+		if(ordine == null)
 			ordine = "ASC";
-
-		// aggiorno la colonna selezionata
-		session.setAttribute("colonna", campo);
+		
 
 
 		// recupero i risultati dell'esame chiesto dallo user:
