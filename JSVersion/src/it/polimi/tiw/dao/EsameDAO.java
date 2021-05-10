@@ -188,9 +188,8 @@ public class EsameDAO {
 		
 		campo = escaping.get(campo);
 		
-		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, utente.image, "
-				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato, "
-				+ "		corso.nomeCorso, corso.annoCorso, corso.id"
+		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, "
+				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato "
 				+ "		FROM esaminazione, utente, esame, corso "
 				+ "		WHERE esame.id = ? " // cosi' o con questa dopo le altre condizioni
 				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
@@ -214,9 +213,7 @@ public class EsameDAO {
 					studente.setNome(result.getString("utente.nome"));
 					studente.setCognome(result.getString("utente.cognome"));
 					studente.setMail(result.getString("utente.email"));
-					studente.setRuolo("student");
 					studente.setCdl(result.getString("utente.cdl"));
-					studente.setImage(result.getString("utente.image"));
 					risultato.setStudente(studente);
 					// voto
 					risultato.setVoto(result.getString("esaminazione.voto"));
@@ -224,18 +221,12 @@ public class EsameDAO {
 					risultato.setStato(result.getString("esaminazione.stato"));
 					// idVerbale
 					risultato.setIdVerbale(result.getInt("esaminazione.idverbale"));
-					// corso
-					Corso corso = new Corso();
-					corso.setId(result.getInt("corso.id"));
-					corso.setNome(result.getString("corso.nomeCorso"));
-					corso.setAnno(result.getInt("corso.annoCorso"));
-					risultato.setCorso(corso);
 					
 					risultati.add(risultato);					
 				}
 			}
 		}
-		// se il campo su cui ordinare è "voto", allora devo usare un ordinamento personalizzato
+		// se il campo su cui ordinare ï¿½ "voto", allora devo usare un ordinamento personalizzato
 		// ORDINE ASC : <vuoto>, assente, rimandato, riprovato, 18, 19, ... 30 e Lode
 		// ORDINE DESC: 30 e Lode, ..., 19, 18, riprovato, rimandato, assente, <vuoto>
 		// ORDINE ATTUALE ASC: <vuoto>, 18, 19, ... , assente, rimandato, riprovato 
