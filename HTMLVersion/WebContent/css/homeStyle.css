@@ -52,6 +52,24 @@
   transition: all ease 0.4s;
 }
 
+/* No results message */
+
+#no-results-msg{
+  text-align: center !important;
+  width: 100% !important;
+  font-family: "Montserrat", sans-serif;
+  margin-top: 2vh;
+  padding: 25px 15px 10px 10px;
+  transition: all ease 0.4s;
+}
+
+#no-results-msg h4{
+  text-align: center;
+  margin-top: 0px;
+  font-weight: 700;
+}
+
+
 /* Jumbotron */
 .jumbotron{
   margin-left: 20px;

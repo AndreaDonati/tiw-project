@@ -19,7 +19,7 @@ public class CorsoDAO {
 	
 	/**
 	 * Ritorna una lista di corsi corrispondenti ai corsi degli esami a cui lo studente con matricola specificata
-	 * è iscritto.
+	 * ï¿½ iscritto.
 	 * @param matricola
 	 * @return
 	 */
@@ -94,6 +94,8 @@ public class CorsoDAO {
 		
 		return corsi;
 	}
+	
+	//TODO: cambiare tutti i !result.isLast() in result.next()  --> non butta eccezioni su empty result set
 	
 	public List<Corso> getCorsiFromMatricolaProfessore(int matricola, String nomeCorso) throws SQLException {
 		List<Corso> corsi = new ArrayList<Corso>();

@@ -39,46 +39,59 @@
       </div>
       
       <!-- Static Accordion -->
-
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" th:remove="all-but-first">
-                    <div class="panel panel-default" th:each="i : ${#numbers.sequence( 0, allCorsi.size-1)}">
-                        <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                                <a data-parent="#accordion" th:href="@{/ElencoEsami(nomeCorso=${allCorsi[i].nome})}" th:text="${allCorsi[i].nome}">
+				<div th:if="${allCorsi != null}">
+                	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" th:remove="all-but-first">
+                    	<div class="panel panel-default" th:each="i : ${#numbers.sequence( 0, allCorsi.size-1)}">
+                        	<div class="panel-heading" role="tab" id="headingOne">
+                            	<h4 class="panel-title">
+                                	<a data-parent="#accordion" th:href="@{/ElencoEsami(nomeCorso=${allCorsi[i].nome})}" th:text="${allCorsi[i].nome}">
                                     Tecnologie Informatiche per il Web
-                                </a>
-                            </h4>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingTwo">
-                            <h4 class="panel-title">
-                                <a data-parent="#accordion">
-                                    DataBases 2
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
-                            <div class="panel-body">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nisl lorem, dictum id pellentesque at, vestibulum ut arcu. Curabitur erat libero, egestas eu tincidunt ac, rutrum ac justo. Vivamus condimentum laoreet lectus, blandit posuere tortor aliquam vitae. Curabitur molestie eros. </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingThree">
-                            <h4 class="panel-title">
-                                <a data-parent="#accordion">
-                                    Computer Security
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nisl lorem, dictum id pellentesque at, vestibulum ut arcu. Curabitur erat libero, egestas eu tincidunt ac, rutrum ac justo. Vivamus condimentum laoreet lectus, blandit posuere tortor aliquam vitae. Curabitur molestie eros. </p>
-                            </div>
-                        </div>
-                    </div>
+                                	</a>
+                            	</h4>
+                        	</div>
+                    	</div>
+	                    <div class="panel panel-default">
+	                        <div class="panel-heading" role="tab" id="headingTwo">
+	                            <h4 class="panel-title">
+	                                <a data-parent="#accordion">
+	                                    DataBases 2
+	                                </a>
+	                            </h4>
+	                        </div>
+	                        <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+	                            <div class="panel-body">
+	                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nisl lorem, dictum id pellentesque at, vestibulum ut arcu. Curabitur erat libero, egestas eu tincidunt ac, rutrum ac justo. Vivamus condimentum laoreet lectus, blandit posuere tortor aliquam vitae. Curabitur molestie eros. </p>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="panel panel-default">
+	                        <div class="panel-heading" role="tab" id="headingThree">
+	                            <h4 class="panel-title">
+	                                <a data-parent="#accordion">
+	                                    Computer Security
+	                                </a>
+	                            </h4>
+	                        </div>
+	                        <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
+	                            <div class="panel-body">
+	                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nisl lorem, dictum id pellentesque at, vestibulum ut arcu. Curabitur erat libero, egestas eu tincidunt ac, rutrum ac justo. Vivamus condimentum laoreet lectus, blandit posuere tortor aliquam vitae. Curabitur molestie eros. </p>
+	                            </div>
+	                        </div>
+	                    </div>
+	            	</div>
                 </div>
+                <div  th:unless="${allCorsi != null}">
+                	<div th:if="${#strings.equals(session.user.ruolo,'teacher')}"> 
+                  		<div id="no-results-msg" class="jumbotron">
+        					<h4>Non sei il docente di nessun corso al momento</h4>
+      					</div>    	
+                	</div>
+                	<div th:unless="${#strings.equals(session.user.ruolo,'teacher')}"> 
+                  		<div id="no-results-msg" class="jumbotron">
+        					<h4>Non sei iscritto a nessun corso al momento</h4>
+      					</div>    	
+                	</div>
+	           	</div>
     </div>
   </div>
 </div>  

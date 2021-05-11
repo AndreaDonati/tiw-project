@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 
 import it.polimi.tiw.beans.Corso;
+import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsameDAO;
@@ -89,10 +90,15 @@ public class GetResults extends HttpServlet {
 		
 		Gson gson = new Gson();
 		
+		Esame esame = risultati.get(0).getEsame();
+		
 		if(user.getRuolo().equals("teacher")) {
 			// scorro per settare i "modificabile"
-			for (Esaminazione esaminazione : risultati) 
+			for (Esaminazione esaminazione : risultati) {
 				esaminazione.setModificabile();
+				esaminazione.setEsame(null);
+			}
+
 		} else {
 			Esaminazione es = risultati.get(0);
 			if(!es.isVisualizzabileByStudente())
@@ -102,6 +108,7 @@ public class GetResults extends HttpServlet {
 		}
 		
 		String jsonObj = gson.toJson(risultati);
+		String jsonEsame = gson.toJson(esame);
 		System.out.println("risultati: "+jsonObj);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
@@ -110,7 +117,8 @@ public class GetResults extends HttpServlet {
 		response.getWriter().write("{\"ruolo\":"+"\""+user.getRuolo()+"\""+
 								  ", \"risultati\": "+jsonObj+
 								  ", \"pubblicabili\": "+arePubblicabili(risultati)+
-								  ", \"verbalizzabili\": "+areVerbalizzabili(risultati)+"}");
+								  ", \"verbalizzabili\": "+areVerbalizzabili(risultati)+
+								  ", \"esame\": "+ jsonEsame+"}");
 	}
 
 	private boolean areVerbalizzabili(List<Esaminazione> risultati) {

@@ -64,7 +64,7 @@ public class ElencoEsami extends HttpServlet {
 		}
 		/**
 		 * La homepage mostra, sia per Studente sia per Professore, gli stessi contenuti
-		 * cioè una lista di corsi e per ogni corso una lista di esami.
+		 * cioï¿½ una lista di corsi e per ogni corso una lista di esami.
 		 */
 		
 		// recupero i diversi corsi con il nome specificato
@@ -118,10 +118,10 @@ public class ElencoEsami extends HttpServlet {
 
 	private List<Corso> getCorsoContentByUserRole(User user, String nome) throws SQLException{
 		List<Corso> corsi = null;
-		// nelle righe seguenti viene fatta un'interrogazione al db che può
+		// nelle righe seguenti viene fatta un'interrogazione al db che puï¿½
 		// lanciare una SQLException, la gestione dell'eccezione viene fatta
 		// dal chiamante di questo metodo
-		//TODO: decidere se implementarlo così opppure differenziare nel DAO
+		//TODO: decidere se implementarlo cosï¿½ opppure differenziare nel DAO
 		CorsoDAO corsoDao = new CorsoDAO(connection);
 		if(user.getRuolo().equals("teacher"))
 			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola(), nome);

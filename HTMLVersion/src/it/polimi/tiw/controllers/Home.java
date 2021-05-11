@@ -59,21 +59,22 @@ public class Home extends HttpServlet {
 		
 		/**
 		 * La homepage mostra, sia per Studente sia per Professore, gli stessi contenuti
-		 * cioè una lista di corsi e per ogni corso una lista di esami.
+		 * cioï¿½ una lista di corsi e per ogni corso una lista di esami.
 		 */
 		
 		// recupero i corsi associati allo user
-		// se lo user è Studente: i corsi che frequenta
-		// se lo user è Profesore: i corsi che insegna
-		List<Corso> corsi;
+		// se lo user ï¿½ Studente: i corsi che frequenta
+		// se lo user ï¿½ Profesore: i corsi che insegna
+		List<Corso> corsi = null;
 		try {
 			corsi = this.getCorsiContentByUserRole(user);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			//TODO: modificare questo possibilmente
-			// l'eccezione indica un errore nella query al db
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-			return;
+			// se l'eccezione non Ã¨ data da un set vuoto di risultati
+			if(e.getSQLState() != "S1000") {
+				e.printStackTrace();
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				return;
+			}
 		}
 				
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
@@ -104,10 +105,10 @@ public class Home extends HttpServlet {
 
 	private List<Corso> getCorsiContentByUserRole(User user) throws SQLException{
 		List<Corso> corsi = null;
-		// nelle righe seguenti viene fatta un'interrogazione al db che può
+		// nelle righe seguenti viene fatta un'interrogazione al db che puï¿½
 		// lanciare una SQLException, la gestione dell'eccezione viene fatta
 		// dal chiamante di questo metodo
-		//TODO: decidere se implementarlo così opppure differenziare nel DAO
+		//TODO: decidere se implementarlo cosï¿½ opppure differenziare nel DAO
 		CorsoDAO corsoDao = new CorsoDAO(connection);
 		if(user.getRuolo().equals("teacher"))
 			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola());
