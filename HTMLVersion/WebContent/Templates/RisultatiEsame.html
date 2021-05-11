@@ -44,7 +44,7 @@
       </div>
       
       <!-- Static Accordion element -->
-
+			<div th:if="${risultati[0].id != -1}">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
@@ -112,6 +112,13 @@
                         </div>
                     </div>
                 </div>
+          	</div>
+          	<div  th:unless="${risultati[0].id != -1}">
+                <div id="no-results-msg" class="jumbotron">
+        			<h4>Non ci sono studenti iscritti a questo esame al momento</h4>
+      			</div>    	
+	       	</div>
+                
     </div>
   </div>
 </div>  

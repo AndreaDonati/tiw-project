@@ -235,7 +235,7 @@ public class EsameDAO {
 				}
 			}
 		}
-		// se il campo su cui ordinare è "voto", allora devo usare un ordinamento personalizzato
+		// se il campo su cui ordinare ï¿½ "voto", allora devo usare un ordinamento personalizzato
 		// ORDINE ASC : <vuoto>, assente, rimandato, riprovato, 18, 19, ... 30 e Lode
 		// ORDINE DESC: 30 e Lode, ..., 19, 18, riprovato, rimandato, assente, <vuoto>
 		// ORDINE ATTUALE ASC: <vuoto>, 18, 19, ... , assente, rimandato, riprovato 
@@ -268,6 +268,27 @@ public class EsameDAO {
 				Collections.reverse(risultatiOrdinati);
 				risultatiOrdinati.addAll(risultati);
 				risultati = risultatiOrdinati;	
+			}
+		}
+		
+		// se non esistono risultati per l'esame ritorno un'esaminazione fittizia con i dati dell'esame
+		if(risultati.isEmpty()) {
+			query = "SELECT nomeCorso"
+					+ "			 FROM esame, corso"
+					+ "			 WHERE esame.idCorso = corso.id"
+					+ "			 AND esame.id = ?";
+
+			try (PreparedStatement pstatement = con.prepareStatement(query);) {
+				pstatement.setInt(1, idEsame);
+				try (ResultSet result = pstatement.executeQuery();) {
+					result.next();
+					Esaminazione risultato = new Esaminazione();
+					risultato.setId(-1);
+					Corso corso = new Corso();
+					corso.setNome(result.getString("corso.nomeCorso"));
+					risultato.setCorso(corso);
+					risultati.add(risultato);
+				}
 			}
 		}
 		return risultati;

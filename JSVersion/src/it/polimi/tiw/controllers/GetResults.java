@@ -90,10 +90,9 @@ public class GetResults extends HttpServlet {
 		
 		Gson gson = new Gson();
 		
-		Esame esame = risultati.get(0).getEsame();
-		
 		if(user.getRuolo().equals("teacher")) {
-			// scorro per settare i "modificabile"
+			// scorro per settare i "modificabile" e togliere le ripetizioni di "esame"
+			Esame esame = risultati.get(0).getEsame();
 			for (Esaminazione esaminazione : risultati) {
 				esaminazione.setModificabile();
 				esaminazione.setEsame(null);
@@ -109,7 +108,6 @@ public class GetResults extends HttpServlet {
 		
 		String jsonObj = gson.toJson(risultati);
 		String jsonEsame = gson.toJson(esame);
-		System.out.println("risultati: "+jsonObj);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");

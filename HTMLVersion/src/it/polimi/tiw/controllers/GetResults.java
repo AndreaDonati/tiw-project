@@ -107,18 +107,16 @@ public class GetResults extends HttpServlet {
 			return;
 		}
 		
-		//TODO: temporaneo
-		if(risultati == null) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ao zi nun ce stanno esami.");
-			return;
-		}
-		
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
 		String path = "/Templates/RisultatiEsame.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("arePubblicabili",arePubblicabili(risultati));
-		ctx.setVariable("areVerbalizzabili",areVerbalizzabili(risultati));
+		
+		// setto queste variabili solo se ci sono risultati per l'esame
+		if(risultati.get(0).getId() != -1) {
+			ctx.setVariable("arePubblicabili",arePubblicabili(risultati));
+			ctx.setVariable("areVerbalizzabili",areVerbalizzabili(risultati));
+		}
 		ctx.setVariable("risultati", risultati);
 		ctx.setVariable("campo", campo);
 		ctx.setVariable("ordine", ordine.equals("ASC") ? "DESC" : "ASC");
