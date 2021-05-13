@@ -11,12 +11,10 @@ $(window).scroll(function(){
     }
   });
 
-/* Funzione per mandare richieste GET */
+/* Funzione per mandare richieste GET senza parametri */
 function makeGet(servletUrl, callback) {	
-	// Richiesta asincrona non cambia la pagina
+	// Richiesta asincrona
 	var request = new XMLHttpRequest(); // Nuova richiesta
-	// var url = 'getCorsi'; // URL della Servlet
-
 	request.onreadystatechange = function (req) {callback(req.target);}; // Chiamata al callback
 	request.open("GET", servletUrl); 
 	request.send();
@@ -24,11 +22,11 @@ function makeGet(servletUrl, callback) {
 
 /* Funzione per mandare richieste GET con parametri */
 function makeGetParameters(servletUrl, callback, paramNameValue) {	
-	// Richiesta asincrona non cambia la pagina
+	// Richiesta asincrona
 	request = new XMLHttpRequest(); // Nuova richiesta
-	// var url = 'getCorsi'; // URL della Servlet
-	request.onreadystatechange = function (req) {callback(req.target);};; // Chiamata al callback
+	request.onreadystatechange = function (req) {callback(req.target);}; // Chiamata al callback
 	
+	// Composizione URL per una GET in base ai parametri passati
 	servletUrl += "?";
 	servletUrl += paramNameValue[0]+"="+paramNameValue[1];
 	for(i = 2; i < paramNameValue.length; i+2){
@@ -41,27 +39,23 @@ function makeGetParameters(servletUrl, callback, paramNameValue) {
 
 
 /* VARIABILI GLOBALI */
-//var request;
 var loaderDiv;
-var risultati;
+var risultati; // cambiare con sessionStorage
 
 function init() {
-	loaderDiv = document.getElementById("loader");
+	// Prendo l'elemento del loader
+	resetTable();
+	resetStorage();
+	loaderDiv = document.getElementById("loader");	
 
-// Rimpiazza la gestione del browser
-// chiamata a servlet che risponde con json dei corsi
-	console.log("Chiamo init");
-	// QUI INIZIO LOADER
+	// Start del loader 
 	loaderDiv.style.display = "block";
 
-	// QUI CHIAMATA PER PRENDERE DATI SESSION
-	makeGet("getInfoUtente", showInfo);
-	makeGet("getCorsi", showCorsi); 
-//	makeGet(riempiSidebar);
+	makeGet("getInfoUtente", showInfo); // Chiamata alla servlet che restituisce i dati della sessione
+	makeGet("getCorsi", showCorsi); // Dati dei corsi disponibili
 }
 
 function showInfo(request) {
-	console.log(request);
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
 	 	console.log(JSON.parse(request.responseText)["errorMessage"]);
@@ -69,29 +63,20 @@ function showInfo(request) {
     // Se 200 (OK) sostituisco informazioni utente nella navbar
 	if (request.readyState == 4 && request.status == 200 ) {
 		utente = JSON.parse(request.responseText);
-		console.log(utente);
-		$("#immagine").attr("src", utente.image);
-		$("#nome").text(utente.nome+' '+utente.cognome); //nome e cognome
-		$("#mail").text(utente.email.split("@")[0]+'\n@'+utente.email.split("@")[1]);
-		$("#matricola").text(utente.matricola);
-		
+
+		document.getElementById("immagine").src = utente.image;
+		document.getElementById("nome").innerHTML = utente.nome + ' ' + utente.cognome;
+		document.getElementById("mail").innerHTML = utente.email.split("@")[0]+'\n@'+utente.email.split("@")[1];
+		document.getElementById("matricola").innerHTML = utente.matricola;
 	}
 }
 
 function showCorsi(request) {
-	console.log(request);
 
-	// QUI FINE LOADER   
 	loaderDiv.style.display = "none";
 
-	// aggiungo classe per animazione "uscita" - CONTROLLARE SE FUNZIONA DAVVERO
-	//$("#content").addClass('animate__animated');
-
-	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
-
-	// aggiorno anche il titolo della pagina e tolgo il back button 
-	$("#titleText").empty();
-	$("#titleText").append("I tuoi corsi");
+	document.getElementById("content").innerHTML = ""; // reset della pagina
+	document.getElementById("titleText").innerHTML = "I tuoi corsi"; // aggiorno jumbotron
 
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
@@ -100,6 +85,35 @@ function showCorsi(request) {
     // Se 200 (OK) append dei corsi ricevuti al div corrispondente
 	if (request.readyState == 4 && request.status == 200 ) {
 		corsi = JSON.parse(request.responseText);
+
+		var accordionDiv = createDiv("panel-group", "accordion", "tablist"); // div accordion
+
+		for (i = 0; i < corsi.length; i++){
+			
+			txt = createText("h4", "panel-title", "pTitle"+i); // testo con nome del corso
+			btn = createBtn("a", "menu", corsi[i].nome); // bottone per selezionare corso
+			btn.setAttribute("data-parent", "#accordion");
+			btn.setAttribute("nome", corsi[i].nome);
+			btn.addEventListener('click', (event) => {
+				sessionStorage.setItem('nomeCorso', event.target.getAttribute("nome"));
+				document.getElementById("accordion").innerHTML = "";
+
+				//document.getElementById("content").className = "";
+				//document.getElementById("content").classList.add('animate__animated', 'animate__fadeIn');
+
+				getEsami(); // richiesta alla servlet per il corso selezionato
+
+			});
+    		txt.appendChild(btn);
+
+			var div = createDiv("panel panel-default", "pDefault"+i, ""); // div per elemento accordion
+			div.appendChild(createDiv("panel-heading", "pHead"+i, "tab").appendChild(txt)); // div per titolo
+			accordionDiv.appendChild(div);
+
+
+		}
+		document.getElementById("content").appendChild(accordionDiv);
+		/*
 		$("#content").append(
 		'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
 		'</div>');
@@ -114,31 +128,31 @@ function showCorsi(request) {
                 '</div>'
 				);
 		}
-
-		// aggiungo classe per animare "entrata", rimuovo quella gia esistente - CONTROLLARE SE FUNZIONA DAVVERO
-		$("#content").addClass('animate__animated');
-		$("#content").addClass('animate__backInRight');
+		*/
 
 	}
 }
 
-function getEsami(nomeCorso) {
-	console.log(nomeCorso);
-	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
-	// QUI INIZIO LOADER
+function getEsami() {
+
 	loaderDiv.style.display = "block";
 
-	makeGetParameters("ElencoEsami", showEsami, ["nomeCorso",nomeCorso]); // Chiamata asincrona
+	document.getElementById("content").innerHTML = ""; // reset della pagina
+
+	document.getElementById("titleText").innerHTML = "I tuoi esami"; // aggiorno jumbotron e back button (torna a HOME)	
+	btn = createBtn("a", "", ""); // creo back button
+	btn.addEventListener('click', () => {
+		makeGet("getCorsi", showCorsi); // richiesta alla servlet per tutti i corsi, callback per re-render
+	});
+	btn.appendChild(createIcon("fas fa-chevron-left back-btn")); // append dell'icona al bottone
+	document.getElementById("titleText").prepend(btn); // prepend del bottone al testo
+
+	makeGetParameters("ElencoEsami", showEsami, ["nomeCorso", sessionStorage.getItem('nomeCorso')]); // Chiamata asincrona
 }
 
 function showEsami(request) {
-	// QUI FINE LOADER  
-	loaderDiv.style.display = "none";
 
-	// aggiorno anche il titolo della pagina e il back button (torna a HOME)
-	$("#titleText").empty();
-	$("#titleText").append('<a onclick="makeGet(`getCorsi`, showCorsi)"><i class="fas fa-chevron-left back-btn"></i></a>');
-	$("#titleText").append("I tuoi esami");
+	loaderDiv.style.display = "none";
 
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
@@ -146,16 +160,50 @@ function showEsami(request) {
 
     // Se 200 (OK) append di tutti i corsi + esami ricevuti al div corrispondente
 	if (request.readyState == 4 && request.status == 200 ) {
-		corsiEsami = JSON.parse(request.responseText);
-		console.log(corsiEsami);
-		// accordion con corsi + esami
-
-		$("#content").append(
-			'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
-			'</div>'
-		);
 		
+		corsiEsami = JSON.parse(request.responseText);
+
+		var accordionDiv = createDiv("panel-group", "accordion", "tablist"); // div accordion
+
+		//createDiv("panel-group", "accordion", "tablist", "content", ""); // div accordion
+
+
 		for(i = 0; i < corsiEsami[0].length; i++){
+
+			txt = createText("h4", "panel-title", "pTitle"+i); // testo con nome del corso
+
+			btn = createAccordionBtn(corsiEsami[0][i].nome+' '+corsiEsami[0][i].anno, i);
+    		txt.appendChild(btn); // bottone per corso-anno 
+
+			var txt2 = createAccordionText("p");
+
+			for(j = 0; j < corsiEsami[1][i].length; j++){			
+				var btn2 = createBtn("button", "a-btn", "Appello "+corsiEsami[1][i][j].dataAppello); // bottone per specifico esame
+				btn2.setAttribute("idEsame", corsiEsami[1][i][j].id);
+				btn2.addEventListener('click', (event) => {
+					sessionStorage.setItem('idEsame', event.target.getAttribute("idEsame"));
+					document.getElementById("accordion").innerHTML = "";
+
+					getRisultati(); // richiesta alla servlet per il corso selezionato
+				});
+				txt2.appendChild(btn2);
+				
+			}
+
+			var div = createDiv("panel panel-default", "pDefault"+i, ""); // div per elemento accordion
+			var headDiv = createDiv("panel-heading", "pHead"+i, "tab"); // div per head accordion
+			headDiv.append(txt) // aggiungo corso-anno
+			div.appendChild(headDiv); // aggiungo head a elemento
+
+			var collapseDiv = createLabelledDiv("panel-collapse collapse", "collapse"+i, "tabpanel", "pHead"+i); // div per parte nascosta
+			x = createDiv("panel-body", "appelli"+i, ""); // div per elenco appelli
+			x.append(txt2); // aggiungo testo e bottoni appelli
+			collapseDiv.appendChild(x); // aggiungo al div
+			div.appendChild(collapseDiv); // aggiungo all'elemento
+
+			accordionDiv.appendChild(div); // aggiungo elemento all'accordion
+
+			/*
 			$("#accordion").append(
 				'<div class="panel panel-default">'+
 				'             <div class="panel-heading" role="tab" id="heading'+i+'">'+
@@ -172,32 +220,42 @@ function showEsami(request) {
 				'             </div>'+
 				' </div>'
 			);
+			
 			for(j = 0; j < corsiEsami[1][i].length; j++){
 				$("#appelli"+i).append(
 						'	<button class="a-btn" onclick="getRisultati('+corsiEsami[1][i][j].id+',`'+corsiEsami[0][i].nome+'`)">Appello '+corsiEsami[1][i][j].dataAppello+'</button>'
 				);
 			}
+			*/
 		}
+		document.getElementById("content").appendChild(accordionDiv); // aggiungo accordion al DOM
+
 	}
 }
 
-function getRisultati(idEsame, nomeCorso) {
-	console.log(idEsame);
-	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
+function getRisultati() {
+
+	document.getElementById("content").innerHTML = "";
 	// QUI INIZIO LOADER
 	loaderDiv.style.display = "block";
 
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
-	$("#sottotitolo").empty();
-	$("#titleText").empty();
-	$("#titleText").append('<a onclick="getEsami(`'+nomeCorso+'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
-	$("#titleText").append("Esito");
+	document.getElementById("sottotitolo").innerHTML = ""; // aggiorno jumbotron e back button (torna a HOME)	
+	
+	document.getElementById("titleText").innerHTML = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
+	btn = createBtn("a", "", ""); // creo back button
+	btn.addEventListener('click', () => {
+		resetTable();
+		getEsami(); // richiesta alla servlet per tutti i corsi, callback per re-render
+	});
+	btn.appendChild(createIcon("fas fa-chevron-left back-btn")); // append dell'icona al bottone
+	document.getElementById("titleText").prepend(btn); // prepend del bottone al testo
 
-	makeGetParameters("getResults", showRisultati, ["idEsame",idEsame]); // Chiamata asincrona
+	makeGetParameters("getResults", showRisultati, ["idEsame", sessionStorage.getItem('idEsame')]); // Chiamata asincrona
 }
 
 function showRisultati(request) {
-	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
+	document.getElementById("content").innerHTML = "";
 
 	// QUI FINE LOADER  
 	loaderDiv.style.display = "none";
@@ -209,65 +267,81 @@ function showRisultati(request) {
     // Se 200 (OK) append di tutti i corsi + esami ricevuti al div corrispondente
 	if (request.readyState == 4 && request.status == 200 ) {
 		risposta = JSON.parse(request.responseText);
+
 		risultati = risposta.risultati;
+
 		ruoloUtente = risposta.ruolo;
 		arePubblicabili = risposta.pubblicabili;
 		areVerbalizzabili = risposta.verbalizzabili;
 
-		console.log(risultati);
-
 		if(ruoloUtente == "teacher"){
-			console.log("we prof");
+			// prendo la lista degli studenti e la salvo in sessionStorage (servirà dopo)
+			var studenti = [];
+			risultati.forEach(e => {
+				studenti.push(e.studente);
+			});
+
+			sessionStorage.setItem('studenti', JSON.stringify(studenti));
+
+			// prendo la lista dei risultati con voto non inserito
+			var risultatiModal = [];
+			risultati.forEach(e => {
+				if(e.stato == "non inserito") // per ogni voto non inserito aggiungo una riga di modifica nel modal
+					risultatiModal.push(e);
+			});
 			// svuoto il div content
-			$("#content").empty();
-			
-			// mostro il modal
-			$("body").prepend(
-  			'<div class="modal fade" id="myModal" role="dialog">'+
-  			'  <div class="modal-dialog modal-lg">'+
-  			'    <div class="modal-content">'+
-  			'      <div class="modal-header">'+
-  			'        <button type="button" class="close" style="color: #3498db;" data-dismiss="modal">&times;</button>'+
-  			'        <h4 class="modal-title">Inserimento Multiplo</h4>'+
-  			'      </div>'+
-  			'      <div class="modal-body">'+
-  			'        <h5>Puoi modificare i singoli voti, oppure selezionare le righe e inserire un solo voto per tutte.</h5>'+
-			'	<form id="modalForm">'+
-  			'        <table class="table">													'+																	
-  			'      	<thead>										'+																									
-  			'      		<tr>'+
-  			'               <th><input onclick="selezionaTutto()" class="form-check-input" type="checkbox" value="" id="checkAll"></th>	'+																																			
-  			'      			<th><a style="white-space: nowrap;">Matricola</a></th>						'+														
-  			'      			<th><a style="white-space: nowrap;">Cognome</a></th>						'+														
-  			'      			<th><a style="white-space: nowrap;">Nome</a></th>							'+															
-  			'      			<th><a style="white-space: nowrap;">E-mail</a></th>							'+														
-  			'      			<th><a style="white-space: nowrap;">Corso di Laurea</a></th>				'+														
-  			'      			<th><a style="white-space: nowrap;">Voto</a></th>							'+													
-  			'      			<th></th>																	'+												
-  			'      		</tr>																			'+				
-  			'      	</thead>																			'+									
-  			'      	<tbody id="tabellaModal">	'+																	
-  			'      	</tbody>			'+																																	
-  			'      </table>	'+
-			'			<input type="hidden" value="'+risultati[0].esame.id+'" name="idEsame">'+
-			'	</form>'+
-  			'      </div>'+
-  			'      <div class="modal-footer">'+
-  			'        <button type="button" onclick="inserimentoMultiplo()" class="btn btn-default modal-btn" data-dismiss="modal">Invia</button>'+
-  			'      </div>'+
-  			'    </div>'+
-  			'  </div>'+
-  			'</div>'
-			);
-			// QUI RIEMPIRE CON UN FOR LE RIGHE DELLA tabellaModal CON I RISULTATI SALVATI IN LOCALE (var globale)
-			// riempiModal(), che è questa sotto
-			visibili = false;
-			for(i = 0; i < risultati.length; i++){
-				if(risultati[i].stato == "non inserito"){
-					visibili = true;
+			//$("#content").empty();
+			if(risultatiModal.length == 0){ // se non ci sono voti da modificare
+				document.getElementById("headTabellaModal").style.display = "none";
+
+				document.getElementById("tabellaModal").innerHTML = "<br>Non ci sono voti da inserire.";
+				$("#bottoneInvia").attr("disabled", "disabled"); // disabilito bottone
+				// nascondere tabella
+			}
+			else {
+			document.getElementById("headTabellaModal").style.display = "";
+			document.getElementById("tabellaModal").innerHTML = "";
+
+			// riempio il modal con i dati appena ricevuti, sono sempre quelli più aggiornati
+			for(i = 0; i < risultatiModal.length; i++){
+
+				var row = document.createElement("tr"); // riga della tabella
+
+				var checkbox = createCheckbox("check"+i); // creazione checkbox
+				checkbox.addEventListener('change', (event) => {
+					selezionaRiga(event.target.id); //gestione selezione della checkbox
+				});
+				var cell = document.createElement("td"); 
+				cell.append(checkbox);
+				row.appendChild(cell); //cella checkbox
+
+				var hiddenInput = createHidden();
+				hiddenInput.setAttribute("value", risultatiModal[i].studente.matricola);
+				hiddenInput.setAttribute("name", "matricola");
+
+				cell = createCell(risultatiModal[i].studente.matricola);
+					
+				cell.append(hiddenInput);
+				row.appendChild(cell); //cella matricola
+
+				row.appendChild(createCell(risultatiModal[i].studente.cognome)); // cella cognome
+				row.appendChild(createCell(risultatiModal[i].studente.nome)); // cella nome
+				row.appendChild(createCell(risultatiModal[i].studente.email.split("@")[0]+'<br/>@'+risultatiModal[i].studente.email.split("@")[1])); // cella mail
+				row.appendChild(createCell(risultatiModal[i].studente.cdl)); // cella cdl
+
+				var select = createSelect("sel"+i, true); // creazione select
+				select.addEventListener('change', (event) => {
+					handleSelection(event.target); //gestione selezione della option
+				});	
+				cell = document.createElement("td"); 
+				cell.append(select);
+				row.appendChild(cell); //cella select
+
+				document.getElementById("tabellaModal").append(row);
+					/*
 						$("#tabellaModal").append(											
 							'<tr>	'+
-							' <th><input onclick="selezionaRiga()" class="form-check-input" type="checkbox" value="" id="check'+i+'" onchange=selezionaRiga(this.id)></th>	'+																																															
+							' <td><input class="form-check-input" type="checkbox" value="" id="check'+i+'" onchange=selezionaRiga(this.id)></td>	'+																																															
 							'	<td>'+risultati[i].studente.matricola+'<input type="hidden" name="matricola" value="'+risultati[i].studente.matricola+'"></td>																					'+												
 							'	<td>'+risultati[i].studente.cognome+'</td>																				'+														
 							'	<td>'+risultati[i].studente.nome+'</td>																				'+													
@@ -295,19 +369,23 @@ function showRisultati(request) {
 							'		</select></td>'+
 							'</tr>'
 						);
-				}
+						*/
 			}
-			if(!visibili){
-				$("#modalForm").append('<p>Non ci sono voti da inserire.</p>');
-			}
+			// aggiorno il campo hidden del form
+			document.getElementById("hiddenId").setAttribute("value", sessionStorage.getItem('idEsame'));
 
-			// riempio il div content con la pagina effettiva
+			// abilito il bottone per inviare le modifiche
+			$("#bottoneInvia").removeAttr("disabled");
+			}
+			// riempio il div content con la pagina effettiva (tabella + bottoni)
+			
+			/*
 			$("#content").append(
 				'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
 				'    <div class="panel panel-default">																							'+		
                 '        <div class="panel-heading" role="tab" id="headingOne">																	'+			
                 '            <h4 class="panel-title">																							'+			
-                '                <a data-parent="#accordion">Tecnologie Informatiche per il web 2021</a>										'+							
+                '                <a data-parent="#accordion" class="head">'+sessionStorage.getItem('nomeCorso')+'</a>										'+							
                 '            </h4>																												'+						
                 '        </div>																													'+							
                 '        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">					'+									
@@ -330,8 +408,8 @@ function showRisultati(request) {
 				'						</tbody>																								'+													
 				'					</table>																									'+		
 				'					<button id="bottoneInserimento" class="a-btn" data-toggle="modal" data-target="#myModal">Inserimento Multiplo</button>								'+																																
-				'					<button id="bottonePubblica" class="a-btn" onclick="pubblicaVoti('+risultati[0].esame.id+')">Pubblica</button>								'+																			
-				'					<button id="bottoneVerbalizza" class="a-btn" onclick="verbalizzaVoti('+risultati[0].esame.id+')">Verbalizza</button>							'+																				
+				'					<button id="bottonePubblica" class="a-btn" onclick="pubblicaVoti()">Pubblica</button>								'+																			
+				'					<button id="bottoneVerbalizza" class="a-btn" onclick="verbalizzaVoti()">Verbalizza</button>							'+																				
 				'																																'+																		
 				'				</div>																											'+											
 				'																																'+																									
@@ -341,24 +419,83 @@ function showRisultati(request) {
                 '    </div>	'+
 				'</div>'
 			);
-			
+			*/
+
+			// rendo visibile il div principale
+			document.getElementById("accordion2").style.display = "block";
+
+			// rendo visibile il div della tabella prof e nascondo quella studente
+			document.getElementById("divTabellaProf").style.display = "block";
+			document.getElementById("divTabellaStud").style.display = "none";
+
+			// aggiorno titolo e data dell'appello 
+			//document.getElementById("titoloCorso").innerHTML = sessionStorage.getItem('nomeCorso') + " - " + formatDate(risultati[0].esame.dataAppello);
+			document.getElementById("titoloCorso").innerHTML = sessionStorage.getItem('nomeCorso');
+
+				
+
 			// setto la class dei bottoni pubblica e verbalizza
 			arePubblicabili ? $("#bottonePubblica").removeAttr("disabled") : $("#bottonePubblica").attr("disabled", "disabled"); 
 			areVerbalizzabili ? $("#bottoneVerbalizza").removeAttr("disabled") : $("#bottoneVerbalizza").attr("disabled", "disabled"); 
 
+			/*
 			for(i = 0; i < risultati.length; i++){
 				if(risultati[i].voto == null){
 					risultati[i].voto = "";
 				}
 				if(risultati[i].modificabile == true){
-					risultati[i].modificabile = '<a class="modifica-btn" onclick="modificaVoti('+risultati[i].esame.id+','+risultati[i].studente.matricola+')">Modifica</a>';	
+					risultati[i].modificabile = '<a class="modifica-btn" onclick="modificaVoti('+risultati[i].studente.matricola+')">Modifica</a>';	
 				}
 				else{
 					risultati[i].modificabile = '';
 				}
 			}
+			*/
+			if(risultati.length != 0){
+				document.getElementById("headTabellaProf").style.display = "";
+				document.getElementById("tabellaVotiProf").innerHTML ="";
+
+				// mostro i bottoni pubblica e verbalizza e ins multiplo
+				document.getElementById("bottonePubblica").style.display = "";
+				document.getElementById("bottoneVerbalizza").style.display = "";
+				document.getElementById("bottoneInserimento").style.display = "";
 
 			for(i = 0; i < risultati.length; i++){
+				var row = document.createElement("tr"); // riga della tabella
+
+				row.appendChild(createCell(risultati[i].studente.matricola)); // cella matricola
+				row.appendChild(createCell(risultati[i].studente.cognome)); // cella cognome
+				row.appendChild(createCell(risultati[i].studente.nome)); // cella nome
+				row.appendChild(createCell(risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1])); // cella mail
+				row.appendChild(createCell(risultati[i].studente.cdl)); // cella cdl
+
+				if(risultati[i].voto == null)
+					row.appendChild(createCell("")); // cella voto (vuota)
+				else
+					row.appendChild(createCell(risultati[i].voto)); // cella voto 
+
+				row.appendChild(createCell(risultati[i].stato)); // cella stato
+
+				if(risultati[i].modificabile){
+
+					var modButton = createBtn("a", "modifica-btn", "Modifica"); // creazione bottone modifica
+					modButton.setAttribute("matricola", risultati[i].studente.matricola);
+					modButton.setAttribute("currentVoto", risultati[i].voto);
+					modButton.addEventListener('click', (event) => {
+						resetTable();
+						//document.getElementById("content").className = "";
+						//document.getElementById("content").classList.add('animate__animated', 'animate__fadeInDown');
+
+						modificaVoti(parseInt(event.target.getAttribute("matricola")), event.target.getAttribute("currentVoto"));
+					});	
+					cell = document.createElement("td"); 
+					cell.append(modButton);
+					row.appendChild(cell); //cella modifica
+				}
+
+				document.getElementById("tabellaVotiProf").append(row);
+
+				/*
 				$("#tabellaVoti").append(											
 					'							<tr>																								'+														
 					'								<td>'+risultati[i].studente.matricola+'</td>																					'+												
@@ -371,15 +508,40 @@ function showRisultati(request) {
 					'								<td>'+risultati[i].modificabile+'</td>    '+	 									
 					'							</tr>																							'
 					);
+					*/
 			}
+		}
+		else{
+			document.getElementById("headTabellaProf").style.display = "none";
+			document.getElementById("tabellaVotiProf").innerHTML ="Nessuno studente iscritto all'appello."; 
+			
+			// nascondo i bottoni pubblica e verbalizza e ins multiplo
+			document.getElementById("bottonePubblica").style.display = "none";
+			document.getElementById("bottoneVerbalizza").style.display = "none";
+			document.getElementById("bottoneInserimento").style.display = "none";
 
+
+		}
 		} else {
-			console.log("we student");
 			// svuoto il div content
-			$("#content").empty();
+			//$("#content").empty();
+
+			// rendo visibile il div principale
+			document.getElementById("accordion2").style.display = "block";
+
+			// rendo visibile il div della tabella studente e nascondo quella del prof
+			document.getElementById("divTabellaStud").style.display = "block";
+			document.getElementById("divTabellaProf").style.display = "none";
+
+			// aggiorno titolo
+			document.getElementById("titoloCorso").innerHTML = sessionStorage.getItem('nomeCorso');
 
 			// controllo se il voto non è ancora definito
 			if(risultati == null){
+				document.getElementById("headTabellaStud").style.display = "none";
+				document.getElementById("tabellaVotiStud").innerHTML = "Voto non ancora definito.";
+
+				/*
 				$("#content").append('<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
 				'    <div class="panel panel-default">																							'+		
                 '        <div class="panel-heading" role="tab" id="headingOne">																	'+			
@@ -396,8 +558,14 @@ function showRisultati(request) {
                 '        </div>																													'+																	
                 '    </div>	'+
 				'</div>')
-			}else{
+				*/
+			}
+			else{
+				document.getElementById("headTabellaStud").style.display = "";
+				document.getElementById("tabellaVotiStud").innerHTML = "";
+
 				// riempio il div content
+				/*
 				$("#content").append(
 					'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
 					'    <div class="panel panel-default">																							'+		
@@ -430,7 +598,7 @@ function showRisultati(request) {
 						risultati[i].voto = "";
 					}
 					if(risultati[i].rifiutabile == true){
-						risultati[i].rifiutabile = '<a class="rifiuta-btn" onclick="rifiutaVoto('+risultati[i].esame.id+',`'+risultati[i].corso.nome+'`)">Rifiuta</a>';	
+						risultati[i].rifiutabile = '<a class="rifiuta-btn" onclick="rifiutaVoto()">Rifiuta</a>';	
 					}
 					else{
 						if(risultati[i].stato == "verbalizzato")
@@ -451,9 +619,64 @@ function showRisultati(request) {
 						'							</tr>																							'
 						);
 				}
+*/
+
+				for(i = 0; i < risultati.length; i++){
+					var row = document.createElement("tr"); // riga della tabella
+	
+					row.appendChild(createCell(risultati[i].studente.matricola)); // cella matricola
+					row.appendChild(createCell(risultati[i].studente.nome + risultati[i].studente.cognome)); // cella nome e cognome
+					row.appendChild(createCell(formatDate(risultati[0].esame.dataAppello))); // cella data
+	
+					if(risultati[i].voto == null)
+						row.appendChild(createCell("")); // cella voto (vuota)
+					else
+						row.appendChild(createCell(risultati[i].voto)); // cella voto 
+	
+					row.appendChild(createCell(risultati[i].stato)); // cella stato
+	
+					var rifButton;
+					if(risultati[i].rifiutabile){
+	
+						rifButton = createBtn("a", "rifiuta-btn", "Rifiuta"); // creazione bottone rifiuta
+						rifButton.addEventListener('click', (event) => {
+							//resetTable();
+	
+							rifiutaVoto();
+						});	
+						cell = document.createElement("td"); 
+						cell.append(rifButton);
+						row.appendChild(cell); //cella rifiuta
+					}
+					else{
+						if(risultati[i].stato == "verbalizzato")
+							row.appendChild(createCell("")); // cella rifiuta (vuota)
+						else
+						row.appendChild(createCell("Il voto è stato rifiutato.")); // cella rifiuta (rifiutato)
+					}
+	
+					document.getElementById("tabellaVotiStud").append(row);
+				}
+
 			}
 		}
 	}
+}
+
+function resetTable(){
+	document.getElementById("tabellaVotiProf").innerHTML = "";
+	document.getElementById("tabellaVotiStud").innerHTML = "";
+	document.getElementById("accordion2").style.display = "none";
+}
+
+function resetStorage(){
+	sessionStorage.removeItem("nomeCorso");
+	sessionStorage.removeItem("idEsame");
+	sessionStorage.removeItem("studenti");
+}
+
+function formatDate(date){
+	return new Date(date).toLocaleDateString();
 }
 
 function inserimentoMultiplo(){
@@ -471,23 +694,48 @@ function inserimentoMultiplo(){
 }
 
 
-function modificaVoti(idEsame, matricola) {
-	console.log(idEsame);
-	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
+function modificaVoti(matricola, voto) {
 
-	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
-	$("#titleText").empty();
-	$("#titleText").append('<a onclick="getRisultati('+idEsame+',`'+risultati[0].corso.nome+'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
-	$("#titleText").append("Modifica Voto");
+	document.getElementById("titleText").innerHTML = "Modifica Voto"; // aggiorno jumbotron e back button (torna a RISULTATI)	
+	btn = createBtn("a", "", ""); // creo back button
+	btn.addEventListener('click', () => {
+		//resetTable();
+		getRisultati(); // richiesta alla servlet per tutti i corsi, callback per re-render
+	});
+	btn.appendChild(createIcon("fas fa-chevron-left back-btn")); // append dell'icona al bottone
+	document.getElementById("titleText").prepend(btn); // prepend del bottone al testo
 
 	var studente;
 	// cerco i dati dell'utente
-	risultati.forEach(e => {
-		console.log(e);
-		if(e.studente.matricola == matricola)
-			studente = e.studente;
+	JSON.parse(sessionStorage.getItem('studenti')).forEach(e => {
+		if(e.matricola == matricola)
+			studente = e;
 	});
 
+
+	tabella = createTabella(studente, voto);
+	form = createForm();
+
+	hiddenId = createHidden();
+	hiddenId.setAttribute("name", "idEsame");
+	hiddenId.setAttribute("value", sessionStorage.getItem('idEsame'));
+
+	hiddenMatr = createHidden();
+	hiddenMatr.setAttribute("name", "matricola");
+	hiddenMatr.setAttribute("value", matricola);
+
+	form.appendChild(tabella);
+	form.appendChild(hiddenId);
+	form.appendChild(hiddenMatr);
+
+	var modificaDiv = createDiv("col-xs-10", "", "");
+	modificaDiv.appendChild(form);
+
+	document.getElementById("content").appendChild(createDiv("col-xs-1", "", "")); // layout
+	document.getElementById("content").appendChild(modificaDiv); // aggiungo form al DOM
+	document.getElementById("content").appendChild(createDiv("col-xs-1", "", "")); // layout
+
+/*
 	// form per modificare il voto
 	$("#content").append(
 		'	<div class="col-xs-1"></div>'+
@@ -527,19 +775,20 @@ function modificaVoti(idEsame, matricola) {
 		'								<option>30 e Lode</option>'+
 		'							</select>'+
 		'						</td>'+
-		'						<td><input id="applicaButton" class="modifica-btn" value="Applica" onclick="inserisciVoti(`'+risultati[0].corso.nome+'`)"></td>'+
+		'						<td><input id="applicaButton" class="modifica-btn" value="Applica" onclick="inserisciVoti()"></td>'+
 		'					</tr>'+
 		'				</tbody>'+
 		'			</table>'+
-		'			<input type="hidden" value="'+idEsame+'" name="idEsame">'+
+		'			<input type="hidden" value="'+sessionStorage.getItem('idEsame')+'" name="idEsame">'+
 		'			<input type="hidden" value="'+matricola+'" name="matricola">'+
 		'		</form>'+
 		'	</div>'+
 		'	<div class="col-xs-1"></div>'
 	);	
+	*/
 }
 
-function inserisciVoti(nomeCorso){
+function inserisciVoti(){
 	// QUI INIZIO LOADER
 	loaderDiv.style.display = "block";
 
@@ -553,37 +802,43 @@ function inserisciVoti(nomeCorso){
 	request.send(formData); // Mando dati del form
 
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
+	document.getElementById("titleText").innerHTML = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
+	btn = createBtn("a", "", ""); // creo back button
+	btn.addEventListener('click', () => {
+		resetTable();
+		getEsami(); // richiesta alla servlet per tutti i corsi, callback per re-render
+	});
+	btn.appendChild(createIcon("fas fa-chevron-left back-btn")); // append dell'icona al bottone
+	document.getElementById("titleText").prepend(btn); // prepend del bottone al testo
+	/*
 	$("#titleText").empty();
-	$("#titleText").append('<a onclick="getEsami(`'+nomeCorso+'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
+	$("#titleText").append('<a onclick="getEsami()"><i class="fas fa-chevron-left back-btn"></i></a>');
 	$("#titleText").append("Esito");
+	*/
 }
 
-function rifiutaVoto(idEsame, nomeCorso){
-	makeGetParameters("rifiutaVoti",showRisultati,["idEsame",idEsame]);
+function rifiutaVoto(){
+	makeGetParameters("rifiutaVoti",showRisultati,["idEsame", sessionStorage.getItem('idEsame')]);
 }
 
-function pubblicaVoti(idEsame){
-	makeGetParameters("pubblicaVoti",showRisultati,["idEsame",idEsame]);
+function pubblicaVoti(){
+	makeGetParameters("pubblicaVoti",showRisultati,["idEsame", sessionStorage.getItem('idEsame')]);
 }
 
-function verbalizzaVoti(idEsame){
-	makeGetParameters("verbalizzaVoti",showVerbale,["idEsame",idEsame]);
+function verbalizzaVoti(){
+	makeGetParameters("verbalizzaVoti",showVerbale,["idEsame", sessionStorage.getItem('idEsame')]);
 }
 
 function showVerbale(request){
-	console.log(request);
 
+	resetTable();
 	// QUI FINE LOADER   
 	loaderDiv.style.display = "none";
 
 	// aggiungo classe per animazione "uscita" - CONTROLLARE SE FUNZIONA DAVVERO
 	//$("#content").addClass('animate__animated');
 
-	$("#content").empty(); // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
-
-	// aggiorno anche il titolo della pagina e tolgo il back button 
-	$("#titleText").empty();
-
+	document.getElementById("content").innerHTML = ""; // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
 
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
@@ -592,15 +847,34 @@ function showVerbale(request){
     // Se 200 (OK) append dei corsi ricevuti al div corrispondente
 	if (request.readyState == 4 && request.status == 200 ) {
 		verbale = JSON.parse(request.responseText);
-		console.log(JSON.parse(request.responseText));
 		
 		// setto il titolo con anche il bottone per tornare indietro (alla pagina Esito)
-		$("#titleText").append('<a onclick="getRisultati('+verbale.risultati[0].esame.id+',`'+verbale.risultati[0].corso.nome +'`)"><i class="fas fa-chevron-left back-btn"></i></a>');
+		document.getElementById("titleText").innerHTML = "Verbale n° " + verbale.id; // aggiorno jumbotron e back button (torna a HOME)	
+		btn = createBtn("a", "", ""); // creo back button
+		btn.addEventListener('click', () => {
+			getRisultati(); // richiesta alla servlet per tutti i corsi, callback per re-render
+		});
+		btn.appendChild(createIcon("fas fa-chevron-left back-btn")); // append dell'icona al bottone
+		document.getElementById("titleText").prepend(btn); // prepend del bottone al testo
+
+		text1 = createText("h3","","");
+		text1.innerHTML = "Data: "+verbale.dataVerbale;
+		text2 = createText("h4","","");
+		text2.innerHTML = verbale.risultati[0].corso.nome + " - Appello del " +verbale.risultati[0].esame.dataAppello;
+		document.getElementById("sottotitolo").appendChild(text1); // append h3
+		document.getElementById("sottotitolo").appendChild(text2); // append h4
+/*
+		$("#titleText").append('<a onclick="getRisultati()"><i class="fas fa-chevron-left back-btn"></i></a>');
 		$("#titleText").append("Verbale n° "+verbale.id);
 		$("#sottotitolo").append("<h3>Data: "+verbale.dataVerbale+"</h3>");
 		$("#sottotitolo").append("<h4>"+verbale.risultati[0].corso.nome + " - Appello del " +verbale.risultati[0].esame.dataAppello+"</h4>");
-	
+	*/
 		// creo la tabella del verbale
+
+		tabella = createTabellaVerbale();
+		var tbody = document.createElement("tbody");
+
+/*
 		$("#content").append(
 		'	<div class="col-xs-1"></div>'+
 		'		<div class="col-xs-10">'+
@@ -616,8 +890,17 @@ function showVerbale(request){
 		'	</div>'+
 		'	<div class="col-xs-1"></div>'
 		);
-
+*/
 		for(i = 0; i < verbale.risultati.length; i++){
+			var row = document.createElement("tr"); // riga della tabella
+
+			row.appendChild(createCell(verbale.risultati[i].studente.matricola));
+			row.appendChild(createCell(verbale.risultati[i].studente.cognome));
+			row.appendChild(createCell(verbale.risultati[i].studente.nome));
+			row.appendChild(createCell(verbale.risultati[i].voto));
+
+			tbody.appendChild(row);
+/*
 			$("#tabellaVerbale").append(
 				'	<tr>'+
 				'		<td>'+verbale.risultati[i].studente.matricola+'</td>'+
@@ -626,159 +909,16 @@ function showVerbale(request){
 				'		<td>'+verbale.risultati[i].voto+'</td>'+
 				'	</tr>'
 			);
-		}
+			*/
+		}		
+		
+		tabella.appendChild(tbody);
+
+		var verbaleDiv = createDiv("col-xs-10", "", "");
+		verbaleDiv.appendChild(tabella);
+
+		document.getElementById("content").appendChild(createDiv("col-xs-1", "", "")); // layout
+		document.getElementById("content").appendChild(verbaleDiv); // aggiungo form al DOM
+		document.getElementById("content").appendChild(createDiv("col-xs-1", "", "")); // layout
 	}
-}
-
-function ordinaTabella(n) {
-	// aggiorno le frecce
-	for(i = 0; i < 7; i++){
-		if(i != n){
-			$("#freccia"+i).removeClass('fas fa-chevron-up sort-i');
-			$("#freccia"+i).removeClass('fas fa-chevron-down sort-i');
-		}
-	}
-	$("#freccia"+n).removeClass('fas fa-chevron-down sort-i');
-	$("#freccia"+n).addClass('fas fa-chevron-up sort-i');
-
-	// bubble sort :P
-	var tabella, rows, switching, i, x, y, shouldSwitch, ordine, switchDone;
-	tabella = document.getElementById("tabellaVoti");
-	switching = true;
-	switchDone = false;
-	ordine = "ASC";
-
-	while (switching) {
-		switching = false;
-		rows = tabella.rows;
-
-		for (i = 0; i < (rows.length - 1); i++) { // -1 perche faccio +1 nel ciclo
-			shouldSwitch = false;
-
-			x = rows[i].getElementsByTagName("td")[n]; // cella della riga corrente
-			y = rows[i + 1].getElementsByTagName("td")[n]; // cella della riga successiva
-
-			if(compareRows(x, y, ordine, n)) {
-				shouldSwitch = true;
-				break;
-			}
-	}
-	if (shouldSwitch) {
-		rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-		switching = true;
-		switchDone = true;
-	} else {
-		if (!switchDone && ordine == "ASC") {   
-			// se arrivo qui significa che non ho scambiato nessuna cella, rifaccio tutto invertendo l'ordine
-			// in questo modo gestisco i due ordini senza usare altre variabili
-			ordine = "DESC";
-			$("#freccia"+n).removeClass('fas fa-chevron-up sort-i');
-			$("#freccia"+n).addClass('fas fa-chevron-down sort-i');
-			switching = true;
-		}
-	}
-  }
-}
-
-function comparaVoti(voto1, voto2, ordine){
-	// definisco l'ordinamento personalizzato (ASC)
-	var ordinamentoVoti = ["","assente","rimandato","riprovato","18","19","20","21","22","23","24","25","26","27","28","29","30","30 e Lode"];
-	if (ordine == "ASC") 
-		return ordinamentoVoti.indexOf(voto1) > ordinamentoVoti.indexOf(voto2);
-	else 
-		return ordinamentoVoti.indexOf(voto1) < ordinamentoVoti.indexOf(voto2);
-}
-
-function compareRows(x, y, ordine, n) {
-	console.log("ordino "+ordine);
-	// ORDINE ASC : <vuoto>, assente, rimandato, riprovato, 18, 19, ... 30 e Lode
-	// ORDINE DESC: 30 e Lode, ..., 19, 18, riprovato, rimandato, assente, <vuoto>
-	// ORDINE ATTUALE ASC: <vuoto>, 18, 19, ... , assente, rimandato, riprovato 
-	// ORDINE ATTUALE DESC: riprovato, rimandato, assente, ..., 19, 18, <vuoto>
-	// in base al tipo di colonna ho un ordinamento diverso
-	if (n == 5){
-		if (ordine == "ASC") 
-			// ASC
-			return comparaVoti(x.innerHTML.toLowerCase(),y.innerHTML.toLowerCase(), ordine);
-		else 
-			// DESC
-			return comparaVoti(x.innerHTML.toLowerCase(),y.innerHTML.toLowerCase(), ordine);
-	} else{
-		if (ordine == "ASC")
-			// ASC
-			return x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase();
-		else
-			// DESC
-			return x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase();
-	}
-}
-
-
-var linkedBox = [];
-var selectedPos = 0;
-
-function selezionaTutto(){
-	// seleziona tutte le righe della tabella
-    rows = document.getElementById("tabellaModal").rows;
-    linkedBox = [];
-
-    for (i = 0; i < rows.length; i++){
-		if($("#checkAll").prop("checked")){
-            // selezionate tutte, pusho tutto nella lista e aggiorno anche i voti
-            $("#check"+i).prop("checked", true);
-            linkedBox.push(i);
-            $("#sel"+i).prop('selectedIndex', selectedPos);
-        } else{
-            // deselezionate tutte
-            $("#check"+i).prop("checked", false);
-            linkedBox.splice(linkedBox.indexOf(i), 1);
-        }
-    }
-}
-
-function selezionaRiga(id){
-    index = parseInt(id.charAt(id.length-1));
-
-    if($("#check"+index).prop("checked")) {// se non è gia nella lista
-        linkedBox.push(index);
-        $("#sel"+index).prop('selectedIndex', selectedPos);
-
-        // ora controllo se METTERE il check a "checkAll" oppure no
-        if(areAllSelected()){
-            $("#checkAll").prop("checked", true);
-        }
-
-    } else{
-        linkedBox.splice(linkedBox.indexOf(index), 1);
-        // ora controllo se TOGLIERE il check a "checkAll" oppure no
-        if(!areAllSelected())
-            $("#checkAll").prop("checked", false);
-
-    }   
-}
-
-function areAllSelected(){
-    rows = document.getElementById("tabellaModal").rows;
-
-    for (i = 0; i < rows.length; i++){
-		if(!$("#check"+i).prop("checked"))
-            return false;
-    }
-    return true;
-}
-
-function handleSelection(sel){
-    // prendo la riga del select
-    index = parseInt((sel.id).charAt((sel.id).length-1));
-
-    if(linkedBox.indexOf(index) != -1){
-        // prendo la posizione dell'option selezionata
-        selectedPos = $("#"+sel.id).prop('selectedIndex');
-
-        // se la riga del select è in linkedBox allora devo aggiornare tutte le select collegate, altrimenti nulla
-        linkedBox.forEach(i => {
-            $("#sel"+i).prop('selectedIndex', selectedPos);
-        });
-        selectedPos = 0;
-    }
 }

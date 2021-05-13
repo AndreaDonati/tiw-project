@@ -11,13 +11,53 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="./js/utils.js"></script> 
+  <script src="./js/order.js"></script>   
+  <script src="./js/insert.js"></script> 
   <script src="./js/homeJS.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
+
 <body onload="init()">
 
-  
-<nav class="navbar navbar-default navbar-fixed-top animate__animated animate__fadeIn animate__slow">
+<!-- Modal (nascosto) -->
+<div class="modal fade" id="myModal" role="dialog">
+ <div class="modal-dialog modal-lg">
+   <div class="modal-content">
+     <div class="modal-header">
+        <button type="button" class="close modal-close" style="color: #000000; font-size: 30px;" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title">Inserimento Multiplo</h3>
+      </div>
+      <div class="modal-body">
+        <h4>Puoi modificare i singoli voti, oppure selezionare le righe e inserire un solo voto per tutte.</h4>
+	      <form id="modalForm">
+          <table class="table">																											
+      	    <thead id="headTabellaModal">																																		
+      		    <tr>
+                <th><input onclick="selezionaTutto()" class="form-check-input" type="checkbox" value="" id="checkAll"></th>																																			
+      		    	<th><a style="white-space: nowrap;">Matricola</a></th>																			
+      		    	<th><a style="white-space: nowrap;">Cognome</a></th>																		
+   			        <th><a style="white-space: nowrap;">Nome</a></th>																						
+      		    	<th><a style="white-space: nowrap;">E-mail</a></th>																				
+      		    	<th><a style="white-space: nowrap;">Corso di Laurea</a></th>																	
+      		    	<th><a style="white-space: nowrap;">Voto</a></th>																			
+      		    </tr>																						
+      	    </thead>																										
+      	    <tbody id="tabellaModal">																
+        	  </tbody>																															
+          </table>	
+  			  <input id="hiddenId" type="hidden" name="idEsame">
+  	    </form>
+      </div>
+      <div class="modal-footer">
+        <button id="bottoneInvia" disabled type="button" onclick="inserimentoMultiplo()" class="btn btn-default modal-btn" data-dismiss="modal">Invia</button>'
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default navbar-fixed-top animate__animated animate__fadeIn">
   <div class="navbar-header">
     <a class="navbar-brand" onclick="init()">Verbalizer</a>
   </div>
@@ -27,8 +67,8 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-2">
-      <div class="sidenav animate__animated animate__fadeIn animate__slow">
-        <!-- immagine profilo -->
+      <!-- Sidebar -->
+      <div class="sidenav animate__animated animate__fadeIn">
         <img  id="immagine" class="profile-img" alt="">
         <h3>Nome e Cognome</h3>
         <h4 id="nome">Gregorio Galletti</h4>
@@ -38,61 +78,77 @@
         <h4 id="matricola">10494196</h4>
       </div>
     </div>
+    <!-- Pagina principale -->
     <div class="col-xs-10">
-      <div id="jumbotron" class="jumbotron animate__animated animate__backInRight animate__fast">
+      <div id="jumbotron" class="jumbotron animate__animated animate__backInRight">
         <h3 id="titleText">I tuoi corsi</h3>
         <div id="sottotitolo">
         </div>
       </div>
 
+      <!-- Elemento loader (nascosto) -->
       <div class="loader" id="loader" style="display: none;"></div>
-      
-      <div id="content">
+
+      <!-- Contenuto della pagina -->
+      <div id="content" class="animate__animated animate__backInRight">
+      </div>
+      <!-- Contenuto della pagina Risultati (vuoto) -->
+      <div id="content2" class="animate__animated animate__backInRight">
+
+        <div class="panel-group" id="accordion2" role="tablist" aria-multiselectable="true" style="display: none;">
+          <div class="panel panel-default">																						
+            <div class="panel-heading" role="tab" id="headingOne">																		
+                <h4 class="panel-title">																									
+                    <a data-parent="#accordion2" class="head" id="titoloCorso"></a>															
+                </h4>																																	
+            </div>																																		
+            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">													
+              <div class="panel-body">																														
+                <div id="divTabellaProf">
+                	<table class="table">																															
+                		<thead id="headTabellaProf">																																				
+                			<tr>																																							
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(0)">Matricola<i id="freccia0" class="fas fa-chevron-up sort-i"></i></a></th>																					
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(1)">Cognome<i id="freccia1"></a></th>																				
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(2)">Nome<i id="freccia2"></a></th>																							
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(3)">E-mail<i id="freccia3"></a></th>																						
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(4)">Corso di Laurea<i id="freccia4"></a></th>																			
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(5)">Voto<i id="freccia5"></a></th>																					
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(6)">Stato<i id="freccia6"></a></th>																						
+                				<th></th>																														
+                			</tr>																								
+                		</thead>																													
+                		<tbody id="tabellaVotiProf">																				
+                		</tbody>																																					
+                	</table>																											
+                	<button id="bottoneInserimento" class="a-btn" data-toggle="modal" data-target="#myModal">Inserimento Multiplo</button>																																								
+                	<button id="bottonePubblica" class="a-btn" onclick="pubblicaVoti()">Pubblica</button>																											
+                	<button id="bottoneVerbalizza" class="a-btn" onclick="verbalizzaVoti()">Verbalizza</button>																				
+                </div>	
+                <div id="divTabellaStud">
+                	<table class="table">																															
+                		<thead id="headTabellaStud">																																				
+                			<tr>																																							
+                				<th>Matricola</th>																					
+                				<th>Nome e Cognome</th>																							
+                				<th>Data Appello</th>																			
+                				<th>Voto</th>																					
+                				<th></th>																														
+                			</tr>																								
+                		</thead>																													
+                		<tbody id="tabellaVotiStud">
+                		</tbody>																																					
+                	</table>																											
+                </div>																																					
+              </div>																								
+            </div>																					
+          </div>	
+        </div>
       </div>
       
-      <!-- Static Accordion
-
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" th:remove="all-but-first">
-                    <div class="panel panel-default" th:each="i : ${#numbers.sequence( 0, allCorsi.size-1)}">
-                        <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                                <a data-parent="#accordion" th:href="@{/ElencoEsami(nomeCorso=${allCorsi[i].nome})}" th:text="${allCorsi[i].nome}">
-                                    Tecnologie Informatiche per il Web
-                                </a>
-                            </h4>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingTwo">
-                            <h4 class="panel-title">
-                                <a data-parent="#accordion">
-                                    DataBases 2
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
-                            <div class="panel-body">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nisl lorem, dictum id pellentesque at, vestibulum ut arcu. Curabitur erat libero, egestas eu tincidunt ac, rutrum ac justo. Vivamus condimentum laoreet lectus, blandit posuere tortor aliquam vitae. Curabitur molestie eros. </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingThree">
-                            <h4 class="panel-title">
-                                <a data-parent="#accordion">
-                                    Computer Security
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nisl lorem, dictum id pellentesque at, vestibulum ut arcu. Curabitur erat libero, egestas eu tincidunt ac, rutrum ac justo. Vivamus condimentum laoreet lectus, blandit posuere tortor aliquam vitae. Curabitur molestie eros. </p>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
     </div>
   </div>
-</div>    
+</div> 
+   
 </body>
 </html>
