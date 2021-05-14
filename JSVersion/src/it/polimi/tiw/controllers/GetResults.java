@@ -89,10 +89,10 @@ public class GetResults extends HttpServlet {
 		// al client come risultato
 		
 		Gson gson = new Gson();
-		
+		Esame esame = null;
 		if(user.getRuolo().equals("teacher")) {
 			// scorro per settare i "modificabile" e togliere le ripetizioni di "esame"
-			Esame esame = risultati.get(0).getEsame();
+			esame = risultati.get(0).getEsame();
 			for (Esaminazione esaminazione : risultati) {
 				esaminazione.setModificabile();
 				esaminazione.setEsame(null);

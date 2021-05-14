@@ -178,7 +178,7 @@ function showEsami(request) {
 			var txt2 = createAccordionText("p");
 
 			for(j = 0; j < corsiEsami[1][i].length; j++){			
-				var btn2 = createBtn("button", "a-btn", "Appello "+corsiEsami[1][i][j].dataAppello); // bottone per specifico esame
+				var btn2 = createBtn("button", "a-btn", "Appello "+ formatDate(corsiEsami[1][i][j].dataAppello)); // bottone per specifico esame
 				btn2.setAttribute("idEsame", corsiEsami[1][i][j].id);
 				btn2.addEventListener('click', (event) => {
 					sessionStorage.setItem('idEsame', event.target.getAttribute("idEsame"));
@@ -293,12 +293,14 @@ function showRisultati(request) {
 			//$("#content").empty();
 			if(risultatiModal.length == 0){ // se non ci sono voti da modificare
 				document.getElementById("headTabellaModal").style.display = "none";
+				$("#bottoneInserimento").attr("disabled", "disabled"); 
 
 				document.getElementById("tabellaModal").innerHTML = "<br>Non ci sono voti da inserire.";
 				$("#bottoneInvia").attr("disabled", "disabled"); // disabilito bottone
 				// nascondere tabella
 			}
 			else {
+			$("#bottoneInserimento").removeAttr("disabled");
 			document.getElementById("headTabellaModal").style.display = "";
 			document.getElementById("tabellaModal").innerHTML = "";
 
@@ -429,8 +431,8 @@ function showRisultati(request) {
 			document.getElementById("divTabellaStud").style.display = "none";
 
 			// aggiorno titolo e data dell'appello 
-			//document.getElementById("titoloCorso").innerHTML = sessionStorage.getItem('nomeCorso') + " - " + formatDate(risultati[0].esame.dataAppello);
-			document.getElementById("titoloCorso").innerHTML = sessionStorage.getItem('nomeCorso');
+			document.getElementById("titoloCorso").innerHTML = sessionStorage.getItem('nomeCorso') + " - " + formatDate(risposta.esame.dataAppello);
+			//document.getElementById("titoloCorso").innerHTML = sessionStorage.getItem('nomeCorso');
 
 				
 
@@ -679,6 +681,10 @@ function formatDate(date){
 	return new Date(date).toLocaleDateString();
 }
 
+function formatDateAndTime(date){
+	return new Date(date).toLocaleString();
+}
+
 function inserimentoMultiplo(){
 	// QUI INIZIO LOADER
 	loaderDiv.style.display = "block";
@@ -818,14 +824,26 @@ function inserisciVoti(){
 }
 
 function rifiutaVoto(){
+	myFadeIn("rifiutaToast");
+	setTimeout(() => {
+		myFadeOut("rifiutaToast");
+	}, 1000);
 	makeGetParameters("rifiutaVoti",showRisultati,["idEsame", sessionStorage.getItem('idEsame')]);
 }
 
 function pubblicaVoti(){
+	myFadeIn("pubblicaToast");
+	setTimeout(() => {
+		myFadeOut("pubblicaToast");
+	}, 1000);
 	makeGetParameters("pubblicaVoti",showRisultati,["idEsame", sessionStorage.getItem('idEsame')]);
 }
 
 function verbalizzaVoti(){
+	myFadeIn("verbalizzaToast");
+	setTimeout(() => {
+		myFadeOut("verbalizzaToast");
+	}, 1000);
 	makeGetParameters("verbalizzaVoti",showVerbale,["idEsame", sessionStorage.getItem('idEsame')]);
 }
 
@@ -858,9 +876,9 @@ function showVerbale(request){
 		document.getElementById("titleText").prepend(btn); // prepend del bottone al testo
 
 		text1 = createText("h3","","");
-		text1.innerHTML = "Data: "+verbale.dataVerbale;
+		text1.innerHTML = "Data: " + formatDateAndTime(verbale.dataVerbale);
 		text2 = createText("h4","","");
-		text2.innerHTML = verbale.risultati[0].corso.nome + " - Appello del " +verbale.risultati[0].esame.dataAppello;
+		text2.innerHTML = verbale.risultati[0].corso.nome + " - Appello del " + formatDate(verbale.risultati[0].esame.dataAppello);
 		document.getElementById("sottotitolo").appendChild(text1); // append h3
 		document.getElementById("sottotitolo").appendChild(text2); // append h4
 /*
@@ -911,7 +929,7 @@ function showVerbale(request){
 			);
 			*/
 		}		
-		
+
 		tabella.appendChild(tbody);
 
 		var verbaleDiv = createDiv("col-xs-10", "", "");
@@ -922,3 +940,30 @@ function showVerbale(request){
 		document.getElementById("content").appendChild(createDiv("col-xs-1", "", "")); // layout
 	}
 }
+
+var opacity = 0;
+var offset = 40;
+
+function myFadeIn(element){
+
+	if (opacity < 1 && offset > 30) {
+		offset -= 0.8;
+      	opacity += .1;
+      	setTimeout(function(){myFadeIn(element)},40);
+   	}
+   	document.getElementById(element).style.opacity = opacity;
+	document.getElementById(element).style.bottom = offset+"px";
+
+}
+
+function myFadeOut(element){
+
+	if (opacity > 0 && offset < 40) {
+		offset += 0.8;
+		opacity -= .1;
+	   	setTimeout(function(){myFadeOut(element)},40);
+	}
+	document.getElementById(element).style.opacity = opacity;
+	document.getElementById(element).style.bottom = offset+"px";
+
+ }
