@@ -86,33 +86,52 @@ function showCorsi(request) {
 	if (request.readyState == 4 && request.status == 200 ) {
 		corsi = JSON.parse(request.responseText);
 
-		var accordionDiv = createDiv("panel-group", "accordion", "tablist"); // div accordion
+		if(corsi != null){
+			var accordionDiv = createDiv("panel-group", "accordion", "tablist"); // div accordion
 
-		for (i = 0; i < corsi.length; i++){
-			
-			txt = createText("h4", "panel-title", "pTitle"+i); // testo con nome del corso
-			btn = createBtn("a", "menu", corsi[i].nome); // bottone per selezionare corso
-			btn.setAttribute("data-parent", "#accordion");
-			btn.setAttribute("nome", corsi[i].nome);
-			btn.addEventListener('click', (event) => {
-				sessionStorage.setItem('nomeCorso', event.target.getAttribute("nome"));
-				document.getElementById("accordion").innerHTML = "";
+			for (i = 0; i < corsi.length; i++){
+				
+				txt = createText("h4", "panel-title", "pTitle"+i); // testo con nome del corso
+				btn = createBtn("a", "menu", corsi[i].nome); // bottone per selezionare corso
+				btn.setAttribute("data-parent", "#accordion");
+				btn.setAttribute("nome", corsi[i].nome);
+				btn.addEventListener('click', (event) => {
+					sessionStorage.setItem('nomeCorso', event.target.getAttribute("nome"));
+					document.getElementById("accordion").innerHTML = "";
 
-				//document.getElementById("content").className = "";
-				//document.getElementById("content").classList.add('animate__animated', 'animate__fadeIn');
+					//document.getElementById("content").className = "";
+					//document.getElementById("content").classList.add('animate__animated', 'animate__fadeIn');
 
-				getEsami(); // richiesta alla servlet per il corso selezionato
+					getEsami(); // richiesta alla servlet per il corso selezionato
 
-			});
-    		txt.appendChild(btn);
+				});
+				txt.appendChild(btn);
 
-			var div = createDiv("panel panel-default", "pDefault"+i, ""); // div per elemento accordion
-			div.appendChild(createDiv("panel-heading", "pHead"+i, "tab").appendChild(txt)); // div per titolo
-			accordionDiv.appendChild(div);
+				var div = createDiv("panel panel-default", "pDefault"+i, ""); // div per elemento accordion
+				div.appendChild(createDiv("panel-heading", "pHead"+i, "tab").appendChild(txt)); // div per titolo
+				accordionDiv.appendChild(div);
+			}
 
-
+			document.getElementById("content").appendChild(accordionDiv);
+		} else{
+			//TODO
+			if(utente.ruolo == "teacher"){
+				$("#content").append(
+					'<div id="no-results-msg" class="jumbotron animate__animated animate__backInRight animate__fast">'+
+					'	<h4>Non sei il docente di nessun corso al momento</h4>'+
+					'</div>'
+				);
+				} else{
+					$("#content").append(
+					'<div id="no-results-msg" class="jumbotron animate__animated animate__backInRight animate__fast">'+
+					'	<h4>Non sei iscritto a nessun corso al momento</h4>'+
+					'</div>'
+					);
+				}
+				
+				$("#content").addClass('animate__animated');
+				$("#content").addClass('animate__backInRight');
 		}
-		document.getElementById("content").appendChild(accordionDiv);
 		/*
 		$("#content").append(
 		'<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'+
@@ -175,19 +194,30 @@ function showEsami(request) {
 			btn = createAccordionBtn(corsiEsami[0][i].nome+' '+corsiEsami[0][i].anno, i);
     		txt.appendChild(btn); // bottone per corso-anno 
 
-			var txt2 = createAccordionText("p");
+			var txt2;
 
-			for(j = 0; j < corsiEsami[1][i].length; j++){			
-				var btn2 = createBtn("button", "a-btn", "Appello "+ formatDate(corsiEsami[1][i][j].dataAppello)); // bottone per specifico esame
-				btn2.setAttribute("idEsame", corsiEsami[1][i][j].id);
-				btn2.addEventListener('click', (event) => {
-					sessionStorage.setItem('idEsame', event.target.getAttribute("idEsame"));
-					document.getElementById("accordion").innerHTML = "";
-
-					getRisultati(); // richiesta alla servlet per il corso selezionato
-				});
-				txt2.appendChild(btn2);
+			if(corsiEsami[1] != null && corsiEsami[1][i].length > 0){
+				txt2 = createAccordionText("p");
 				
+				for(j = 0; j < corsiEsami[1][i].length; j++){			
+					var btn2 = createBtn("button", "a-btn", "Appello "+  formatDate(corsiEsami[1][i][j].dataAppello)); // bottone per specifico esame
+					btn2.setAttribute("idEsame", corsiEsami[1][i][j].id);
+					btn2.addEventListener('click', (event) => {
+						sessionStorage.setItem('idEsame', event.target.getAttribute("idEsame"));
+						document.getElementById("accordion").innerHTML = "";
+
+						getRisultati(); // richiesta alla servlet per il corso selezionato
+					});
+					txt2.appendChild(btn2);
+				}
+		 	} else{
+				 //TODO
+				txt2 = document.createElement("p");
+				if(utente.ruolo == "teacher"){
+					txt2.innerHTML = "Non sono presenti appelli per questo corso";
+				} else{
+					txt2.innerHTML = "Non sei iscritto/a a nessun appello di questo corso";
+				}
 			}
 
 			var div = createDiv("panel panel-default", "pDefault"+i, ""); // div per elemento accordion
@@ -453,7 +483,7 @@ function showRisultati(request) {
 				}
 			}
 			*/
-			if(risultati.length != 0){
+			if(risultati.length >= 1 && risultati[0].id != -1){
 				document.getElementById("headTabellaProf").style.display = "";
 				document.getElementById("tabellaVotiProf").innerHTML ="";
 
@@ -462,68 +492,68 @@ function showRisultati(request) {
 				document.getElementById("bottoneVerbalizza").style.display = "";
 				document.getElementById("bottoneInserimento").style.display = "";
 
-			for(i = 0; i < risultati.length; i++){
-				var row = document.createElement("tr"); // riga della tabella
+				for(i = 0; i < risultati.length; i++){
+					var row = document.createElement("tr"); // riga della tabella
 
-				row.appendChild(createCell(risultati[i].studente.matricola)); // cella matricola
-				row.appendChild(createCell(risultati[i].studente.cognome)); // cella cognome
-				row.appendChild(createCell(risultati[i].studente.nome)); // cella nome
-				row.appendChild(createCell(risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1])); // cella mail
-				row.appendChild(createCell(risultati[i].studente.cdl)); // cella cdl
+					row.appendChild(createCell(risultati[i].studente.matricola)); // cella matricola
+					row.appendChild(createCell(risultati[i].studente.cognome)); // cella cognome
+					row.appendChild(createCell(risultati[i].studente.nome)); // cella nome
+					row.appendChild(createCell(risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1])); // cella mail
+					row.appendChild(createCell(risultati[i].studente.cdl)); // cella cdl
 
-				if(risultati[i].voto == null)
-					row.appendChild(createCell("")); // cella voto (vuota)
-				else
-					row.appendChild(createCell(risultati[i].voto)); // cella voto 
+					if(risultati[i].voto == null)
+						row.appendChild(createCell("")); // cella voto (vuota)
+					else
+						row.appendChild(createCell(risultati[i].voto)); // cella voto 
 
-				row.appendChild(createCell(risultati[i].stato)); // cella stato
+					row.appendChild(createCell(risultati[i].stato)); // cella stato
 
-				if(risultati[i].modificabile){
+					if(risultati[i].modificabile){
 
-					var modButton = createBtn("a", "modifica-btn", "Modifica"); // creazione bottone modifica
-					modButton.setAttribute("matricola", risultati[i].studente.matricola);
-					modButton.setAttribute("currentVoto", risultati[i].voto);
-					modButton.addEventListener('click', (event) => {
-						resetTable();
-						//document.getElementById("content").className = "";
-						//document.getElementById("content").classList.add('animate__animated', 'animate__fadeInDown');
+						var modButton = createBtn("a", "modifica-btn", "Modifica"); // creazione bottone modifica
+						modButton.setAttribute("matricola", risultati[i].studente.matricola);
+						modButton.setAttribute("currentVoto", risultati[i].voto);
+						modButton.addEventListener('click', (event) => {
+							resetTable();
+							//document.getElementById("content").className = "";
+							//document.getElementById("content").classList.add('animate__animated', 'animate__fadeInDown');
 
-						modificaVoti(parseInt(event.target.getAttribute("matricola")), event.target.getAttribute("currentVoto"));
-					});	
-					cell = document.createElement("td"); 
-					cell.append(modButton);
-					row.appendChild(cell); //cella modifica
+							modificaVoti(parseInt(event.target.getAttribute("matricola")), event.target.getAttribute("currentVoto"));
+						});	
+						cell = document.createElement("td"); 
+						cell.append(modButton);
+						row.appendChild(cell); //cella modifica
+					}
+
+					document.getElementById("tabellaVotiProf").append(row);
+
+					/*
+					$("#tabellaVoti").append(											
+						'							<tr>																								'+														
+						'								<td>'+risultati[i].studente.matricola+'</td>																					'+												
+						'								<td>'+risultati[i].studente.cognome+'</td>																				'+														
+						'								<td>'+risultati[i].studente.nome+'</td>																				'+													
+						'								<td>'+risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1]+'</td>														'+														
+						'								<td>'+risultati[i].studente.cdl+'</td>																	'+																					
+						'								<td>'+risultati[i].voto+'</td>																						'+																		
+						'								<td>'+risultati[i].stato+'</td>																							'+
+						'								<td>'+risultati[i].modificabile+'</td>    '+	 									
+						'							</tr>																							'
+						);
+						*/
 				}
-
-				document.getElementById("tabellaVotiProf").append(row);
-
-				/*
-				$("#tabellaVoti").append(											
-					'							<tr>																								'+														
-					'								<td>'+risultati[i].studente.matricola+'</td>																					'+												
-					'								<td>'+risultati[i].studente.cognome+'</td>																				'+														
-					'								<td>'+risultati[i].studente.nome+'</td>																				'+													
-					'								<td>'+risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1]+'</td>														'+														
-					'								<td>'+risultati[i].studente.cdl+'</td>																	'+																					
-					'								<td>'+risultati[i].voto+'</td>																						'+																		
-					'								<td>'+risultati[i].stato+'</td>																							'+
-					'								<td>'+risultati[i].modificabile+'</td>    '+	 									
-					'							</tr>																							'
-					);
-					*/
 			}
-		}
-		else{
-			document.getElementById("headTabellaProf").style.display = "none";
-			document.getElementById("tabellaVotiProf").innerHTML ="Nessuno studente iscritto all'appello."; 
-			
-			// nascondo i bottoni pubblica e verbalizza e ins multiplo
-			document.getElementById("bottonePubblica").style.display = "none";
-			document.getElementById("bottoneVerbalizza").style.display = "none";
-			document.getElementById("bottoneInserimento").style.display = "none";
+			else{
+				document.getElementById("headTabellaProf").style.display = "none";
+				document.getElementById("tabellaVotiProf").innerHTML ="Nessuno studente iscritto all'appello."; 
+				
+				// nascondo i bottoni pubblica e verbalizza e ins multiplo
+				document.getElementById("bottonePubblica").style.display = "none";
+				document.getElementById("bottoneVerbalizza").style.display = "none";
+				document.getElementById("bottoneInserimento").style.display = "none";
 
 
-		}
+			}
 		} else {
 			// svuoto il div content
 			//$("#content").empty();
@@ -929,7 +959,7 @@ function showVerbale(request){
 			);
 			*/
 		}		
-
+		
 		tabella.appendChild(tbody);
 
 		var verbaleDiv = createDiv("col-xs-10", "", "");

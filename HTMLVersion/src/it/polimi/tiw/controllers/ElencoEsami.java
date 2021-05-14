@@ -80,13 +80,21 @@ public class ElencoEsami extends HttpServlet {
 		}
 
 		// recupero gli esami dal corso specificato
-		List<List<Esame>> corsiEsami;
+		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
 		try {
 			corsiEsami = this.getEsamiFromCorsoByUserRole(corsi,user);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-			return;
+			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
+			// mostrata una pagina di errore, altrimenti viene gestita internamente
+			if(e.getSQLState() != "S1000") {
+				e.printStackTrace();
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				return;
+			} else {
+				for(Corso corso: corsi) {
+					corsiEsami.add(new ArrayList<Esame>());
+				}
+			}
 		}
 				
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri

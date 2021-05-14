@@ -261,6 +261,30 @@ public class EsameDAO {
 				risultati = risultatiOrdinati;	
 			}
 		}
+		
+		// se non esistono risultati per l'esame ritorno un'esaminazione fittizia con i dati dell'esame
+		if(risultati.isEmpty()) {
+			query = "SELECT nomeCorso, dataAppello"
+					+ "			 FROM esame, corso"
+					+ "			 WHERE esame.idCorso = corso.id"
+					+ "			 AND esame.id = ?";
+
+			try (PreparedStatement pstatement = con.prepareStatement(query);) {
+				pstatement.setInt(1, idEsame);
+				try (ResultSet result = pstatement.executeQuery();) {
+					result.next();
+					Esaminazione risultato = new Esaminazione();
+					risultato.setId(-1);
+					Corso corso = new Corso();
+					corso.setNome(result.getString("corso.nomeCorso"));
+					risultato.setCorso(corso);
+					Esame esame = new Esame();
+					esame.setDataAppello(result.getString("esame.dataAppello"));
+					risultato.setEsame(esame);
+					risultati.add(risultato);
+				}
+			}
+		}
 		return risultati;
 	}
 		

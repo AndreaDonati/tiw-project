@@ -52,14 +52,14 @@ public class Home extends HttpServlet {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		
-//		PROVA + temporaneo
+//		TODO: PROVA + temporaneo
 		session.setAttribute("mail", user.getMail());
 		session.setAttribute("lastAccessedTime", new java.util.Date());
 //		---------------
 		
 		/**
 		 * La homepage mostra, sia per Studente sia per Professore, gli stessi contenuti
-		 * cio� una lista di corsi e per ogni corso una lista di esami.
+		 * cioè una lista di corsi e per ogni corso una lista di esami.
 		 */
 		
 		// recupero i corsi associati allo user
@@ -69,7 +69,8 @@ public class Home extends HttpServlet {
 		try {
 			corsi = this.getCorsiContentByUserRole(user);
 		} catch (SQLException e) {
-			// se l'eccezione non è data da un set vuoto di risultati
+			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
+			// mostrata una pagina di errore, altrimenti viene gestita internamente
 			if(e.getSQLState() != "S1000") {
 				e.printStackTrace();
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
@@ -85,30 +86,10 @@ public class Home extends HttpServlet {
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
-	private List<List<Esame>> getEsamiFromCorsiByUserRole(List<Corso> corsi, User user) throws SQLException{
-		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
-		EsameDAO esameDao = new EsameDAO(connection);
-		if(user.getRuolo().equals("teacher")) {
-			for (Corso c : corsi) {
-				corsiEsami.add(esameDao.getEsamiFromCorso(c.getId()));
-			}
-		}else if(user.getRuolo().equals("student")) {
-			for (Corso c : corsi) {
-				corsiEsami.add(esameDao.getEsamiFromStudenteCorso(user.getMatricola(),c.getId()));
-			}
-		}
-
-
-
-		return corsiEsami;
-	}
-
+	// interroga il db per ottenere la lista di corsi insegnati o frequentati dall'utente
 	private List<Corso> getCorsiContentByUserRole(User user) throws SQLException{
 		List<Corso> corsi = null;
-		// nelle righe seguenti viene fatta un'interrogazione al db che pu�
-		// lanciare una SQLException, la gestione dell'eccezione viene fatta
-		// dal chiamante di questo metodo
-		//TODO: decidere se implementarlo cos� opppure differenziare nel DAO
+
 		CorsoDAO corsoDao = new CorsoDAO(connection);
 		if(user.getRuolo().equals("teacher"))
 			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola());

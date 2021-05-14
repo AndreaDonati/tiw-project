@@ -41,11 +41,11 @@ public class Login extends HttpServlet {
 		String usrn = null;
 		String pwd = null;
 		try {
+			//TODO esape
 //			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
 //			pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
 			usrn = request.getParameter("username");
 			pwd = request.getParameter("pwd");
-			System.out.println(usrn+" - "+pwd);
 			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
 				throw new Exception("Credenziali vuote o mancanti.");
 			}
@@ -70,11 +70,11 @@ public class Login extends HttpServlet {
 			return;
 		}
 
-		// If the user exists, add info to the session and go to home page, otherwise
-		// show login page with error message
+		// Se l'utente esiste aggiungo info alla session e reindirizzo alla home page, altrimenti
+		// mostro la pagina di login con un messaggio di errore
 		
-		// Controllo se lo user che si è loggato è uno studente o un professore e lo reindirizzo 
-		// alla home corrispondende allo studente o al professore
+		// Controllo se lo user che si Ã¨ loggato Ã¨ uno studente o un professore e lo reindirizzo 
+		// alla home page corrispondende
 		String path="";
 		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -84,7 +84,8 @@ public class Login extends HttpServlet {
 			return;
 		} else {
 			request.getSession().setAttribute("user", user);
-			// redireziono lo user alla home
+			
+			// seleziono il path corretto della home in base al ruolo dello user
 			path = getServletContext().getContextPath() + "/Home";
 			response.sendRedirect(path);
 		} 

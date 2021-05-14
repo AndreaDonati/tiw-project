@@ -79,12 +79,6 @@ public class GetResults extends HttpServlet {
 			return;
 		}
 		
-		//TODO: temporaneo
-		if(risultati == null) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ao zi nun ce stanno esami.");
-			return;
-		}
-		
 		// uso json.encode per codificare l'oggetto complesso da mandare 
 		// al client come risultato
 		
@@ -93,10 +87,11 @@ public class GetResults extends HttpServlet {
 		if(user.getRuolo().equals("teacher")) {
 			// scorro per settare i "modificabile" e togliere le ripetizioni di "esame"
 			esame = risultati.get(0).getEsame();
-			for (Esaminazione esaminazione : risultati) {
-				esaminazione.setModificabile();
-				esaminazione.setEsame(null);
-			}
+			if(risultati.get(0).getId() != -1)
+				for (Esaminazione esaminazione : risultati) {
+					esaminazione.setModificabile();
+					esaminazione.setEsame(null);
+				}
 
 		} else {
 			Esaminazione es = risultati.get(0);
@@ -120,7 +115,7 @@ public class GetResults extends HttpServlet {
 	}
 
 	private boolean areVerbalizzabili(List<Esaminazione> risultati) {
-		if(risultati == null)
+		if(risultati == null || risultati.get(0).getId() == -1)
 			return false;
 		
 		for (Esaminazione esaminazione : risultati) {
@@ -131,7 +126,7 @@ public class GetResults extends HttpServlet {
 	}
 
 	private boolean arePubblicabili(List<Esaminazione> risultati) {
-		if(risultati == null)
+		if(risultati == null || risultati.get(0).getId() == -1)
 			return false;
 		
 		for (Esaminazione esaminazione : risultati) {

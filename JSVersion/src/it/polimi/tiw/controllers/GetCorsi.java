@@ -56,15 +56,19 @@ public class GetCorsi extends HttpServlet {
 		// recupero i corsi associati allo user
 		// se lo user � Studente: i corsi che frequenta
 		// se lo user � Profesore: i corsi che insegna
-		List<Corso> corsi;
+		List<Corso> corsi = null;
 		try {
 			corsi = this.getCorsiContentByUserRole(user);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			//TODO: modificare questo possibilmente
-			// l'eccezione indica un errore nella query al db
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-			return;
+			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
+			// mostrata una pagina di errore, altrimenti viene gestita internamente
+			if(e.getSQLState() != "S1000") {
+				e.printStackTrace();
+				//TODO: modificare questo possibilmente
+				// l'eccezione indica un errore nella query al db
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				return;
+			}
 		}
 		
 		Gson gson = new Gson();

@@ -44,7 +44,7 @@
       </div>
       
       <!-- Static Accordion element -->
-			<div th:if="${risultati[0].id != -1}">
+			
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
@@ -54,70 +54,66 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                            <div class="panel-body">
-								<!-- Formattazione condizionale: controllo se ci sono esami da mostrare o meno -->
-								<div th:if="${#strings.equals(session.user.ruolo,'teacher')}">
-									<table class="table">
-										<thead>
-											<tr>
-												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='matricola',ordine=${#strings.equals(campo,'matricola') ? ordine : 'ASC' })}+'#title'">Matricola<i th:if="${#strings.equals(campo,'matricola')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
-												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='cognome',ordine=${#strings.equals(campo,'cognome') ? ordine : 'ASC' })}+'#title'">Cognome<i th:if="${#strings.equals(campo,'cognome')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
-												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='nome',ordine=${#strings.equals(campo,'nome') ? ordine : 'ASC' })}+'#title'">Nome<i th:if="${#strings.equals(campo,'nome')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
-												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='email',ordine=${#strings.equals(campo,'email') ? ordine : 'ASC' })}+'#title'">E-mail<i th:if="${#strings.equals(campo,'email')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
-												<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='cdl',ordine=${#strings.equals(campo,'cdl') ? ordine : 'ASC' })}+'#title'">Corso di Laurea<i th:if="${#strings.equals(campo,'cdl')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
-												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='voto',ordine=${#strings.equals(campo,'voto') ? ordine : 'ASC' })}+'#title'">Voto<i th:if="${#strings.equals(campo,'voto')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
-												<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='stato',ordine=${#strings.equals(campo,'stato') ? ordine : 'ASC' })}+'#title'">Stato<i th:if="${#strings.equals(campo,'stato')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
-												<th></th>
-											</tr>
-										</thead>
-										<tbody th:remove="all-but-first">
-											<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
-												<td th:text="${risultati[i].studente.matricola}">000000</td>
-												<td th:text="${risultati[i].studente.cognome}">Bravo</td>
-												<td th:text="${risultati[i].studente.nome}">Studente</td>
-												<td th:utext="${#strings.substringBefore(risultati[i].studente.mail,'@') + '<br/>'+'@'+#strings.substringAfter(risultati[i].studente.mail,'@') }">studente.bravo@mail.polimi.it</td>
-												<td th:text="${risultati[i].studente.cdl}">Corso degli Studenti Bravi</td>
-												<td th:text="${risultati[i].voto}">30 e Lode</td>
-												<td th:text="${risultati[i].stato}">Verbalizzato</td>
-												<td th:if="${risultati[i].isModificabile()}"><a class="modifica-btn" th:href="@{/modificaVoto(idEsame=${risultati[i].esame.id},matricolaStudente=${risultati[i].studente.matricola})}">Modifica</a></td>
-											</tr>
-										</tbody>
-									</table>
-									<a th:class="${arePubblicabili} ? 'a-btn' : 'a-btn-disabled' " th:href="@{/pubblicaVoti(idEsame=${risultati[0].esame.id})}">Pubblica</a>
-									<a th:class="${areVerbalizzabili} ? 'a-btn' : 'a-btn-disabled' " th:href="@{/verbalizzaVoti(idEsame=${risultati[0].esame.id})}">Verbalizza</a>
-									
-								</div>
-								<div th:if="${#strings.equals(session.user.ruolo,'student') and risultati[0].isVisualizzabileByStudente()}">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Matricola</th><th>Nome e Cognome</th><th>Data Appello</th><th>Voto</th><th></th>
-											</tr>
-										</thead>
-										<tbody th:remove="all-but-first">
-											<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
-												<td class="my-td" th:text="${risultati[i].studente.matricola}">Studente Bravo</td>
-												<td class="my-td" th:text="${risultati[i].studente.nome + ' ' + risultati[i].studente.cognome}">Studente Bravo</td>
-												<td class="my-td" th:text="${risultati[i].esame.dataAppello}">09-06-1996</td>
-												<td class="my-td" th:text="${risultati[i].voto}">30 e Lode</td>
-												<td class="my-td" th:if="${#strings.equals(risultati[i].stato,'rifiutato')}">Il voto è stato rifiutato.</td>
-												<td th:if="${risultati[i].voto != null and risultati[i].isRifiutabile()}"><a class="rifiuta-btn" th:href="@{/rifiutaVoti(idEsame=${risultati[i].esame.id})}">Rifiuta</a></td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-								<div th:if="${#strings.equals(session.user.ruolo,'student') and (not risultati[0].isVisualizzabileByStudente())}"><p>Voto non ancora definito.</p></div>
-                            </div>
-                        </div>
-                    </div>
+        
+	                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+	                            <div class="panel-body">
+									<!-- Formattazione condizionale: controllo se ci sono esami da mostrare o meno -->
+									<div th:if="${#strings.equals(session.user.ruolo,'teacher') and risultati[0].id != -1}">
+										<table class="table">
+											<thead>
+												<tr>
+													<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='matricola',ordine=${#strings.equals(campo,'matricola') ? ordine : 'ASC' })}+'#title'">Matricola<i th:if="${#strings.equals(campo,'matricola')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+													<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='cognome',ordine=${#strings.equals(campo,'cognome') ? ordine : 'ASC' })}+'#title'">Cognome<i th:if="${#strings.equals(campo,'cognome')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+													<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='nome',ordine=${#strings.equals(campo,'nome') ? ordine : 'ASC' })}+'#title'">Nome<i th:if="${#strings.equals(campo,'nome')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+													<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='email',ordine=${#strings.equals(campo,'email') ? ordine : 'ASC' })}+'#title'">E-mail<i th:if="${#strings.equals(campo,'email')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+													<th><a th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='cdl',ordine=${#strings.equals(campo,'cdl') ? ordine : 'ASC' })}+'#title'">Corso di Laurea<i th:if="${#strings.equals(campo,'cdl')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+													<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='voto',ordine=${#strings.equals(campo,'voto') ? ordine : 'ASC' })}+'#title'">Voto<i th:if="${#strings.equals(campo,'voto')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+													<th><a style="white-space: nowrap;" th:href="@{/getResults(idEsame=${risultati[0].esame.id},campo='stato',ordine=${#strings.equals(campo,'stato') ? ordine : 'ASC' })}+'#title'">Stato<i th:if="${#strings.equals(campo,'stato')}" th:class="${#strings.equals(ordine,'ASC') ? 'fas fa-chevron-down sort-i' : 'fas fa-chevron-up sort-i'}"></i></a></th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody th:remove="all-but-first">
+												<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
+													<td th:text="${risultati[i].studente.matricola}">000000</td>
+													<td th:text="${risultati[i].studente.cognome}">Bravo</td>
+													<td th:text="${risultati[i].studente.nome}">Studente</td>
+													<td th:utext="${#strings.substringBefore(risultati[i].studente.mail,'@') + '<br/>'+'@'+#strings.substringAfter(risultati[i].studente.mail,'@') }">studente.bravo@mail.polimi.it</td>
+													<td th:text="${risultati[i].studente.cdl}">Corso degli Studenti Bravi</td>
+													<td th:text="${risultati[i].voto}">30 e Lode</td>
+													<td th:text="${risultati[i].stato}">Verbalizzato</td>
+													<td th:if="${risultati[i].isModificabile()}"><a class="modifica-btn" th:href="@{/modificaVoto(idEsame=${risultati[i].esame.id},matricolaStudente=${risultati[i].studente.matricola})}">Modifica</a></td>
+												</tr>
+											</tbody>
+										</table>
+										<a th:class="${arePubblicabili} ? 'a-btn' : 'a-btn-disabled' " th:href="@{/pubblicaVoti(idEsame=${risultati[0].esame.id})}">Pubblica</a>
+										<a th:class="${areVerbalizzabili} ? 'a-btn' : 'a-btn-disabled' " th:href="@{/verbalizzaVoti(idEsame=${risultati[0].esame.id})}">Verbalizza</a>
+										
+									</div>
+									<div th:if="${#strings.equals(session.user.ruolo,'student') and risultati[0].isVisualizzabileByStudente()}">
+										<table class="table">
+											<thead>
+												<tr>
+													<th>Matricola</th><th>Nome e Cognome</th><th>Data Appello</th><th>Voto</th><th></th>
+												</tr>
+											</thead>
+											<tbody th:remove="all-but-first">
+												<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
+													<td class="my-td" th:text="${risultati[i].studente.matricola}">Studente Bravo</td>
+													<td class="my-td" th:text="${risultati[i].studente.nome + ' ' + risultati[i].studente.cognome}">Studente Bravo</td>
+													<td class="my-td" th:text="${risultati[i].esame.dataAppello}">09-06-1996</td>
+													<td class="my-td" th:text="${risultati[i].voto}">30 e Lode</td>
+													<td class="my-td" th:if="${#strings.equals(risultati[i].stato,'rifiutato')}">Il voto è stato rifiutato.</td>
+													<td th:if="${risultati[i].voto != null and risultati[i].isRifiutabile()}"><a class="rifiuta-btn" th:href="@{/rifiutaVoti(idEsame=${risultati[i].esame.id})}">Rifiuta</a></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div th:if="${#strings.equals(session.user.ruolo,'student') and (not risultati[0].isVisualizzabileByStudente())}"><p>Voto non ancora definito.</p></div>
+									<div th:if="${#strings.equals(session.user.ruolo,'teacher') and risultati[0].id == -1}"><p>Nessuno studente iscritto all'appello.</p></div>
+	                            </div>
+	                        </div>
                 </div>
           	</div>
-          	<div  th:unless="${risultati[0].id != -1}">
-                <div id="no-results-msg" class="jumbotron">
-        			<h4>Non ci sono studenti iscritti a questo esame al momento</h4>
-      			</div>    	
-	       	</div>
                 
     </div>
   </div>

@@ -36,7 +36,6 @@ public class GetInfoUtente extends HttpServlet {
 		Gson gson = new Gson();
 		
 		String jsonObj = gson.toJson(utente);
-		System.out.println(jsonObj);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");

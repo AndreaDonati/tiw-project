@@ -273,7 +273,7 @@ public class EsameDAO {
 		
 		// se non esistono risultati per l'esame ritorno un'esaminazione fittizia con i dati dell'esame
 		if(risultati.isEmpty()) {
-			query = "SELECT nomeCorso"
+			query = "SELECT nomeCorso, annoCorso"
 					+ "			 FROM esame, corso"
 					+ "			 WHERE esame.idCorso = corso.id"
 					+ "			 AND esame.id = ?";
@@ -286,6 +286,7 @@ public class EsameDAO {
 					risultato.setId(-1);
 					Corso corso = new Corso();
 					corso.setNome(result.getString("corso.nomeCorso"));
+					corso.setAnno(result.getInt("corso.annoCorso"));
 					risultato.setCorso(corso);
 					risultati.add(risultato);
 				}
