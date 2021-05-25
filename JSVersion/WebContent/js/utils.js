@@ -113,6 +113,7 @@ function createCheckbox(id){
     input.setAttribute("type", "checkbox");
     input.setAttribute("value", "");
     input.setAttribute("id", id);
+    input.style.cursor = "pointer";
 
     return input;
 }
@@ -127,7 +128,6 @@ function createHidden(){
 
 /* Funzione per creare form di modifica voto */
 function createForm(){
-    //'		<form action="#" method="POST" id="modificaForm">'+
     var form = document.createElement("form");
     form.setAttribute("action", "#");
     form.setAttribute("method", "POST");
