@@ -1,7 +1,7 @@
 /* Gestione dell'ordinamento della tabella, principalmente JQuery per comodità */
-
 function ordinaTabella(n) {
 	// aggiorno le frecce
+	let i;
 	for(i = 0; i < 7; i++){
 		if(i != n){
 			$("#freccia"+i).removeClass('fas fa-chevron-up sort-i');
@@ -12,7 +12,7 @@ function ordinaTabella(n) {
 	$("#freccia"+n).addClass('fas fa-chevron-up sort-i');
 
 	// bubble sort :P
-	var tabella, rows, switching, i, x, y, shouldSwitch, ordine, switchDone;
+	let tabella, rows, switching, x, y, shouldSwitch, ordine, switchDone;
 	tabella = document.getElementById("tabellaVotiProf");
 	switching = true;
 	switchDone = false;
@@ -32,27 +32,27 @@ function ordinaTabella(n) {
 				shouldSwitch = true;
 				break;
 			}
-	}
-	if (shouldSwitch) {
-		rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-		switching = true;
-		switchDone = true;
-	} else {
-		if (!switchDone && ordine == "ASC") {   
-			// se arrivo qui significa che non ho scambiato nessuna cella, rifaccio tutto invertendo l'ordine
-			// in questo modo gestisco i due ordini senza usare altre variabili
-			ordine = "DESC";
-			$("#freccia"+n).removeClass('fas fa-chevron-up sort-i');
-			$("#freccia"+n).addClass('fas fa-chevron-down sort-i');
-			switching = true;
 		}
-	}
-  }
+		if (shouldSwitch) {
+			rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+			switching = true;
+			switchDone = true;
+		} else {
+			if (!switchDone && ordine == "ASC") {   
+				// se arrivo qui significa che non ho scambiato nessuna cella, rifaccio tutto invertendo l'ordine
+				// in questo modo gestisco i due ordini senza usare altre variabili
+				ordine = "DESC";
+				$("#freccia"+n).removeClass('fas fa-chevron-up sort-i');
+				$("#freccia"+n).addClass('fas fa-chevron-down sort-i');
+				switching = true;
+			}
+		}
+  	}
 }
 
 function comparaVoti(voto1, voto2, ordine){
 	// definisco l'ordinamento personalizzato (ASC)
-	var ordinamentoVoti = ["","assente","rimandato","riprovato","18","19","20","21","22","23","24","25","26","27","28","29","30","30 e Lode"];
+	let ordinamentoVoti = ["","assente","rimandato","riprovato","18","19","20","21","22","23","24","25","26","27","28","29","30","30 e Lode"];
 	if (ordine == "ASC") 
 		return ordinamentoVoti.indexOf(voto1) > ordinamentoVoti.indexOf(voto2);
 	else 
