@@ -26,28 +26,14 @@ import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-/**
- * Servlet implementation class Logout
- */
 @WebServlet("/Logout")
 public class Logout extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public Logout() {
         super();
     }
-    
-	public void init() throws ServletException {
-		//TODO serve?
-	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		// Cancella i dati della sessione
@@ -61,9 +47,6 @@ public class Logout extends HttpServlet {
 		
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}

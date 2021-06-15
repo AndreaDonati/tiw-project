@@ -5,7 +5,7 @@ import java.util.Date;
 public class Esame {
 
 	private int id;
-	private Corso corso;	// temporaneo, poterbbe non servire
+	private Corso corso;
 	private String dataAppello;
 	
 	public Esame() {

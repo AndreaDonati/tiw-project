@@ -33,10 +33,6 @@ public class EsameDAO {
 		this.escaping.put("stato", "esaminazione.stato");
 	}
 	
-//	-----------------------------------------------------------------------------------
-//	NOTA: CAMBIARE I TIPI DI RITORNO DELLE FUNZIONI CON I TIPI CORRISPONDENTI NECESSARI
-//	-----------------------------------------------------------------------------------
-	
 	/**
 	 * Ritorna una lista di esami (compreso idEsame - necessario per le seguenti interazioni)
 	 * corrispondenti ad un corso.
@@ -169,10 +165,6 @@ public class EsameDAO {
 				}
 			}
 		}
-		for (Esaminazione esaminazione : risultati) {
-			System.out.println(esaminazione.getStudente().getNome()+" "+ esaminazione.getStudente().getCognome()+" - "
-					+ esaminazione.getVoto() + " - " + esaminazione.getStato());
-		}
 		return risultati;
 	}
 	
@@ -187,12 +179,19 @@ public class EsameDAO {
 		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
 		
 		campo = escaping.get(campo);
+		if(campo == null) {
+			campo = "utente.matricola";
+			ordine = "ASC";
+		}
+		
+		if(!(ordine.equals("ASC") || ordine.equals("DESC")))
+			ordine = "ASC";
 		
 		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, utente.image, "
 				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato, "
 				+ "		corso.nomeCorso, corso.annoCorso, corso.id"
 				+ "		FROM esaminazione, utente, esame, corso "
-				+ "		WHERE esame.id = ? " // cosi' o con questa dopo le altre condizioni
+				+ "		WHERE esame.id = ? "
 				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
 				+ "		AND esame.idCorso = corso.id"
 				+ "		ORDER BY "+campo+" "+ordine;
@@ -309,7 +308,7 @@ public class EsameDAO {
 				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato, "
 				+ "		corso.nomeCorso, corso.annoCorso, corso.id"
 				+ "		FROM esaminazione, utente, esame, corso "
-				+ "		WHERE esame.id = ? " // cosi' o con questa dopo le altre condizioni
+				+ "		WHERE esame.id = ? "
 				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
 				+ "		AND esame.idCorso = corso.id";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
@@ -350,10 +349,6 @@ public class EsameDAO {
 					risultati.add(risultato);					
 				}
 			}
-		}
-		for (Esaminazione esaminazione : risultati) {
-			System.out.println(esaminazione.getStudente().getNome()+" "+ esaminazione.getStudente().getCognome()+" - "
-					+ esaminazione.getVoto() + " - " + esaminazione.getStato());
 		}
 		return risultati;
 	}

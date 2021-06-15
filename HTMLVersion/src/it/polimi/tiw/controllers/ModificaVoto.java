@@ -20,21 +20,14 @@ import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-/**
- * Servlet implementation class ModificaVoto
- */
 @WebServlet("/modificaVoto")
 public class ModificaVoto extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	private Connection connection = null;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public ModificaVoto() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
 	public void init() throws ServletException {
@@ -47,20 +40,14 @@ public class ModificaVoto extends HttpServlet {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// prendo le credenziali dalla richiesta
 		int idEsame;
 		String matricolaStudente;
 		try {
-//			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
-//			pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 			matricolaStudente = request.getParameter("matricolaStudente");
 		} catch (Exception e) {
-			// for debugging only e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame o dell'utente errato");
 			return;
 		}
@@ -71,7 +58,6 @@ public class ModificaVoto extends HttpServlet {
 		try {
 			studente = userDao.getUserFromMatricola(matricolaStudente);
 		} catch (SQLException e) {
-			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dello studente errato");
 			return;
 		}
@@ -85,11 +71,7 @@ public class ModificaVoto extends HttpServlet {
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

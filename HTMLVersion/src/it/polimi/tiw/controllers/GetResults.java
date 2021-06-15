@@ -18,9 +18,6 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import com.google.gson.Gson;
-
-import it.polimi.tiw.beans.Corso;
 import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsameDAO;
@@ -40,7 +37,6 @@ public class GetResults extends HttpServlet {
      */
     public GetResults() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
 	public void init() throws ServletException {
@@ -99,11 +95,8 @@ public class GetResults extends HttpServlet {
 		try {
 			risultati = this.getRisultatiEsamiByUserRole(user, idEsame, ordine, campo);
 		} catch (SQLException e) {
-			e.printStackTrace();
 			//TODO: modificare questo possibilmente
-			// l'eccezione indica un errore nella query al db
-			//response.sendError(400);
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore del cacchio "+e.toString());
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.toString());
 			return;
 		}
 		
@@ -138,7 +131,6 @@ public class GetResults extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 	

@@ -95,7 +95,6 @@ public class GetCorsi extends HttpServlet {
 		// nelle righe seguenti viene fatta un'interrogazione al db che pu�
 		// lanciare una SQLException, la gestione dell'eccezione viene fatta
 		// dal chiamante di questo metodo
-		//TODO: decidere se implementarlo cos� opppure differenziare nel DAO
 		CorsoDAO corsoDao = new CorsoDAO(connection);
 		if(user.getRuolo().equals("teacher"))
 			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola());

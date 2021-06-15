@@ -52,11 +52,6 @@ public class Home extends HttpServlet {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		
-//		TODO: PROVA + temporaneo
-		session.setAttribute("mail", user.getMail());
-		session.setAttribute("lastAccessedTime", new java.util.Date());
-//		---------------
-		
 		/**
 		 * La homepage mostra, sia per Studente sia per Professore, gli stessi contenuti
 		 * cioè una lista di corsi e per ogni corso una lista di esami.
@@ -72,7 +67,6 @@ public class Home extends HttpServlet {
 			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
 			// mostrata una pagina di errore, altrimenti viene gestita internamente
 			if(e.getSQLState() != "S1000") {
-				e.printStackTrace();
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 				return;
 			}

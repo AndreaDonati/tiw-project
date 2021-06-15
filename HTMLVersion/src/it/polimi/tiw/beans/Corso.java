@@ -8,7 +8,6 @@ public class Corso {
 	private User professore;
 	private int anno;
 	
-	// test
 	private List<Esame> esami;
 	
 	public Corso() {

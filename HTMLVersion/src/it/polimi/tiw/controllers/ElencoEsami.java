@@ -72,9 +72,7 @@ public class ElencoEsami extends HttpServlet {
 		try {
 			corsi = this.getCorsoContentByUserRole(user, nomeCorso);
 		} catch (SQLException e) {
-			e.printStackTrace();
 			//TODO: modificare questo possibilmente
-			// l'eccezione indica un errore nella query al db
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
 		}
@@ -87,7 +85,6 @@ public class ElencoEsami extends HttpServlet {
 			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
 			// mostrata una pagina di errore, altrimenti viene gestita internamente
 			if(e.getSQLState() != "S1000") {
-				e.printStackTrace();
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 				return;
 			} else {
@@ -118,9 +115,6 @@ public class ElencoEsami extends HttpServlet {
 				corsiEsami.add(esameDao.getEsamiFromStudenteCorso(user.getMatricola(),c.getId()));
 			}
 		}
-
-
-
 		return corsiEsami;
 	}
 
@@ -129,7 +123,6 @@ public class ElencoEsami extends HttpServlet {
 		// nelle righe seguenti viene fatta un'interrogazione al db che pu�
 		// lanciare una SQLException, la gestione dell'eccezione viene fatta
 		// dal chiamante di questo metodo
-		//TODO: decidere se implementarlo cos� opppure differenziare nel DAO
 		CorsoDAO corsoDao = new CorsoDAO(connection);
 		if(user.getRuolo().equals("teacher"))
 			corsi = corsoDao.getCorsiFromMatricolaProfessore(user.getMatricola(), nome);

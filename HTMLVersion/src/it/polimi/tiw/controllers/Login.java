@@ -54,9 +54,6 @@ public class Login extends HttpServlet {
 		String usrn = null;
 		String pwd = null;
 		try {
-			//TODO escape
-//			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
-//			pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
 			usrn = request.getParameter("username");
 			pwd = request.getParameter("pwd");
 			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
@@ -64,7 +61,6 @@ public class Login extends HttpServlet {
 			}
 
 		} catch (Exception e) {
-			// for debugging only e.printStackTrace();
 			// redireziono il client a una pagina con lo stesso template del login
 			// ma con in aggiunta il messaggio d'errore da mostrare all'utente
 			String path;

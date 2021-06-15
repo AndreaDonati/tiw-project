@@ -49,7 +49,6 @@ public class VerbalizzaVoti extends HttpServlet {
 		
 		try {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
-
 		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame errato");
 			return;
@@ -63,12 +62,10 @@ public class VerbalizzaVoti extends HttpServlet {
 		try {
 			risultati = esameDao.getRisultatiEsameProfessore(idEsame);
 		} catch (SQLException e) {
-			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.toString());
 			return;
 		}
 		if(!checkVerbalizzabili(risultati)) {
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Non ci sono voti da verbalizzare");
 			String path = getServletContext().getContextPath() + "/getResults?idEsame="+idEsame;
 			response.sendRedirect(path);
 			return;

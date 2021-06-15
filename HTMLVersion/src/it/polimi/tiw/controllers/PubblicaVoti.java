@@ -35,10 +35,7 @@ public class PubblicaVoti extends HttpServlet {
 			System.out.println(idEsame);
 
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("{\"errorMessage\":\"Identificativo dell'esame errato\"}");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame errato");
 			return;
 		}
 		
