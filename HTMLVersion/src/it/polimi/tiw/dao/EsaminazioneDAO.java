@@ -23,16 +23,19 @@ public class EsaminazioneDAO {
 	 * @return
 	 * @throws SQLException
 	 */
-	public void insertGrade(int matricolaStudente, int idEsame, String voto) throws SQLException {
+	public void insertGrade(int matricolaStudente, int idEsame, String voto, int matricolaProfessore) throws SQLException {
 		String query = "UPDATE esaminazione"
+				+ "		JOIN esame ON esaminazione.idEsame = esame.id JOIN corso ON esame.idCorso = corso.id"
 				+"		SET voto = ?, stato = 'inserito'"
 				+"		WHERE idStudente = ?"
-				+"		AND idEsame = ?";
+				+"		AND idEsame = ?"
+				+ "		AND corso.matricolaProfessore = ?";
 		
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, voto);
 			pstatement.setInt(2, matricolaStudente);
 			pstatement.setInt(3, idEsame);
+			pstatement.setInt(4, matricolaProfessore);
 			pstatement.executeUpdate();
 		}
 	}

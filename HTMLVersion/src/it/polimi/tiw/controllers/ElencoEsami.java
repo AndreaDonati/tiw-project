@@ -62,6 +62,7 @@ public class ElencoEsami extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta incompleta. Parametri mancanti.");
 			return;
 		}
+
 		/**
 		 * La homepage mostra, sia per Studente sia per Professore, gli stessi contenuti
 		 * cio� una lista di corsi e per ogni corso una lista di esami.
@@ -81,6 +82,10 @@ public class ElencoEsami extends HttpServlet {
 		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
 		try {
 			corsiEsami = this.getEsamiFromCorsoByUserRole(corsi,user);
+			// controllo contro web parameters tampering - accesso a corsi di un altro utente
+			if(corsiEsami.isEmpty()) {
+				throw new SQLException();
+			}
 		} catch (SQLException e) {
 			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
 			// mostrata una pagina di errore, altrimenti viene gestita internamente
@@ -93,7 +98,7 @@ public class ElencoEsami extends HttpServlet {
 				}
 			}
 		}
-				
+		
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
 		String path = "/Templates/ElencoEsami.html";
 		ServletContext servletContext = getServletContext();

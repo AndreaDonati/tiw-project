@@ -3,6 +3,7 @@ package it.polimi.tiw.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -18,9 +19,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.beans.Corso;
+import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsameDAO;
+import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
 /**
@@ -67,6 +71,7 @@ public class GetResults extends HttpServlet {
 				throw new Exception();
 			idEsame = Integer.parseInt(idEsameParam);
 		} catch (Exception e) {
+			// controllo contro web parameters tampering - accesso ad esami di un altro utente
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta incompleta. Parametri mancanti.");
 			return;
 		}
@@ -96,7 +101,12 @@ public class GetResults extends HttpServlet {
 			risultati = this.getRisultatiEsamiByUserRole(user, idEsame, ordine, campo);
 		} catch (SQLException e) {
 			//TODO: modificare questo possibilmente
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.toString());
+			if(e.getSQLState() != "S1000") {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			} else {
+				// controllo contro web parameters tampering - accesso ad esami di un altro utente
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			}
 			return;
 		}
 		
@@ -120,9 +130,13 @@ public class GetResults extends HttpServlet {
 		List<Esaminazione> risultati = null;
 		
 		EsameDAO esameDao = new EsameDAO(connection);
-		if(user.getRuolo().equals("teacher"))
-			risultati = esameDao.getRisultatiEsameProfessore(idEsame, ordine, campo);
-		else if(user.getRuolo().equals("student"))
+		UserDAO userDAO = new UserDAO(connection);
+		if(user.getRuolo().equals("teacher")) {
+			if(userDAO.controllaDocente(idEsame, user.getMatricola()))
+				risultati = esameDao.getRisultatiEsameProfessore(idEsame, ordine, campo, user.getMatricola());
+			else 
+				throw new SQLException();
+		}else if(user.getRuolo().equals("student"))
 			risultati = esameDao.getRisultatiEsameStudente(user.getMatricola(), idEsame);
 		return risultati;
 	}

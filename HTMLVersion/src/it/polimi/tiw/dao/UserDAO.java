@@ -48,6 +48,31 @@ public class UserDAO {
 	}
 	
 	/**
+	 * Controlla se l'utente specificato è il docente dell'esame relativo all'idEsame
+	 * @param idEsame
+	 * @param matricola
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean controllaDocente(int idEsame, int matricola) throws SQLException {
+		String query = "SELECT  matricola"
+				+ "		FROM utente JOIN corso ON utente.matricola = corso.matricolaProfessore JOIN esame ON corso.id = esame.idCorso "
+				+ "		WHERE matricola = ? "
+				+ "		AND esame.id = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, matricola);
+			pstatement.setInt(2, idEsame);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) 
+					return false;
+				else {
+					return true;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Ritorna tutti gli utenti nel db (possibilmente inutile)
 	 * @return
 	 * @throws SQLException
@@ -81,6 +106,40 @@ public class UserDAO {
 		String query = "SELECT  matricola, nome, cognome, email, role, cdl, image FROM utente  WHERE matricola = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, Integer.parseInt(matricola));
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results, credential check failed
+					return null;
+				else {
+					result.next();
+					User user = new User();
+					user.setMatricola(result.getInt("matricola"));
+					user.setNome(result.getString("nome"));
+					user.setCognome(result.getString("cognome"));
+					user.setMail(result.getString("email"));
+					user.setRuolo(result.getString("role"));
+					user.setCdl(result.getString("cdl"));
+					user.setImage(result.getString("image"));
+					return user;
+				}
+			}
+		}
+	}
+	
+    /**
+     * Ritorna lo studente corrispondente alla matricola specificata solo se è iscritto all'esame corrispondete all'idEsame
+     * @param matricola
+     * @param idEsame
+     * @return
+     * @throws SQLException
+     */
+	public User getUserFromMatricolaAndExam(String matricola, int idEsame) throws SQLException {
+		String query = "SELECT  matricola, nome, cognome, email, role, cdl, image "
+				+ " FROM utente JOIN esaminazione ON utente.matricola = esaminazione.idStudente"
+				+ " WHERE matricola = ?"
+				+ " AND esaminazione.idEsame = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, Integer.parseInt(matricola));
+			pstatement.setInt(2, idEsame);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
