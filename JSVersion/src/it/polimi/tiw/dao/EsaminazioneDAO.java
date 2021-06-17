@@ -89,27 +89,52 @@ public class EsaminazioneDAO {
 			pstatement.execute();
 		}
 		
-		// cambio i voti rifiutati in "rimandato"
-		query = "UPDATE esaminazione"
-				+"		SET voto = 'rimandato'"
-				+"		WHERE idEsame = ?"
-				+"		AND stato = 'rifiutato'";
+		con.setAutoCommit(false); // No commit per statement
+		
+		// creo un nuovo verbale
+		query = "INSERT INTO verbale (id, dataVerbale)"
+				+"		VALUES ( ? , ? )";
 		
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setInt(1, idEsame);
-			pstatement.executeUpdate();
-		}
-		
-		// cambio stato di tutti i voti 'inseriti' in 'verbalizzati' e aggiungo la dipendenza al nuovo verbale
-		query = "UPDATE esaminazione"
-				+"		SET stato = 'verbalizzato', idVerbale = ?"
-				+"		WHERE idEsame = ?"
-				+"		AND stato = 'pubblicato' OR stato = 'rifiutato'";
-		
-		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			Calendar cal = Calendar.getInstance();
+			Date today = cal.getTime();
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String date = dateFormat.format(today);
+
 			pstatement.setInt(1, idVerbale);
-			pstatement.setInt(2, idEsame);
-			pstatement.executeUpdate();
+			pstatement.setString(2, date);
+			pstatement.execute();
+			
+			// cambio i voti rifiutati in "rimandato"
+			String query2 = "UPDATE esaminazione"
+					+"		SET voto = 'rimandato'"
+					+"		WHERE idEsame = ?"
+					+"		AND stato = 'rifiutato'";
+			
+			try (PreparedStatement pstatement2 = con.prepareStatement(query2);) {
+				pstatement2.setInt(1, idEsame);
+				pstatement2.executeUpdate();
+				
+				// cambio stato di tutti i voti 'inseriti' in 'verbalizzati' e aggiungo la dipendenza al nuovo verbale
+				String query3 = "UPDATE esaminazione"
+						+"		SET stato = 'verbalizzato', idVerbale = ?"
+						+"		WHERE idEsame = ?"
+						+"		AND stato = 'pubblicato' OR stato = 'rifiutato'";
+				
+				try (PreparedStatement pstatement3 = con.prepareStatement(query3);) {
+					pstatement3.setInt(1, idVerbale);
+					pstatement3.setInt(2, idEsame);
+					pstatement3.executeUpdate();
+					
+					con.commit();
+					con.setAutoCommit(true);
+				}
+			}
+		} catch(SQLException e) {
+			con.rollback();
+			con.setAutoCommit(true);
+			throw new SQLException(e);
 		}
 		
 		return idVerbale;
