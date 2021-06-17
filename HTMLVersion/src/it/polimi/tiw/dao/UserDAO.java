@@ -73,6 +73,31 @@ public class UserDAO {
 	}
 	
 	/**
+	 * Controlla se lo studente specificato è iscritto all'esame relativo ad idEsame
+	 * @param idEsame
+	 * @param matricola
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean controllaStudente(int idEsame, int matricola) throws SQLException {
+		String query = "SELECT idStudente"
+				+ "		FROM esaminazione "
+				+ "		WHERE idStudente = ? "
+				+ "		AND idEsame = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, matricola);
+			pstatement.setInt(2, idEsame);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) 
+					return false;
+				else {
+					return true;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Ritorna tutti gli utenti nel db (possibilmente inutile)
 	 * @return
 	 * @throws SQLException

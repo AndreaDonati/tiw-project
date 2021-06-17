@@ -11,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -18,9 +19,11 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.beans.Esaminazione;
+import it.polimi.tiw.beans.User;
 import it.polimi.tiw.beans.Verbale;
 import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.dao.EsaminazioneDAO;
+import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.dao.VerbaleDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
@@ -45,6 +48,8 @@ public class VerbalizzaVoti extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
 		int idEsame;
 		
 		try {
@@ -53,6 +58,23 @@ public class VerbalizzaVoti extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame errato");
 			return;
 		}
+		
+		//controllo che l'utente sia il docente relativo al corso dell'esame
+		UserDAO userDAO = new UserDAO(connection);
+		try {
+			if(!userDAO.controllaDocente(idEsame, user.getMatricola()))
+				throw new Exception("Non sei il docente del corso di questo esame.");
+		}  catch (SQLException e) {
+			//TODO: modificare questo possibilmente
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			return;
+		} catch (Exception e) {
+			//TODO
+			// controllo contro web parameters tampering - pubblicazione voti di un esame di un altro docente
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			return;
+		}
+		
 		
 		// controllo se ci sono voti con stato "pubblicato"
 		// se non ci sono allora non ci sono voti da verbalizzare e reindirizzo

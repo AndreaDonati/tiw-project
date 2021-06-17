@@ -45,10 +45,12 @@ public class InserisciVoti extends HttpServlet {
 			voto = request.getParameter("voto");
 			
 			if(!Arrays.asList(voti).contains(voto))
+				// controllo contro web parameters tampering - inserimento di un voto non valido
 				throw new Exception();
 
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Oooooooh ma cosa provi a fare.");
+			//TODO
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri errati.");
 			return;
 		}
 		

@@ -51,7 +51,7 @@ public class RifiutaVoti extends HttpServlet {
 			return;
 		}
 		
-		// redireziono lo user alla visualizzazione del suo voto per l'esame (che sarà cambiata)
+		// redireziono lo user alla visualizzazione del suo voto per l'esame (che sarï¿½ cambiata)
 		String path = getServletContext().getContextPath() + "/getResults?idEsame="+idEsame;
 		response.sendRedirect(path);
 	}

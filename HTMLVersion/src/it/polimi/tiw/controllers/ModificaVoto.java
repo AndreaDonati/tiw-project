@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -41,15 +42,18 @@ public class ModificaVoto extends HttpServlet {
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
+		
 		// prendo le credenziali dalla richiesta
 		int idEsame;
 		String matricolaStudente;
+		
 		try {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 			matricolaStudente = request.getParameter("matricolaStudente");
 		} catch (Exception e) {
-			// controllo contro web parameters tampering - accesso ad esami di un altro utente
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame o dell'utente errato");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame o dell'utente errato.");
 			return;
 		}
 				
@@ -58,11 +62,16 @@ public class ModificaVoto extends HttpServlet {
 		User studente = null;
 		try {
 			studente = userDao.getUserFromMatricolaAndExam(matricolaStudente, idEsame);
-			if(studente == null)
-				throw new Exception();
+			if(! userDao.controllaDocente(idEsame, user.getMatricola()))
+				// controllo contro web parameters tampering - accesso ad esame di un altro docente
+				throw new Exception("Non sei il docente del corso di questo esame.");
+			if(studente == null) {
+				// controllo contro web parameters tampering - modifica voto di uno studente non registrato
+				throw new Exception("Identificativo dello studente errato.");
+			}
 		} catch (Exception e) {
-			// controllo contro web parameters tampering - modifica voto di uno studente non registrato
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dello studente errato");
+			//TODO
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
 			return;
 		}
 		

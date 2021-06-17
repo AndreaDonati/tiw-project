@@ -74,7 +74,12 @@ public class ElencoEsami extends HttpServlet {
 			corsi = this.getCorsoContentByUserRole(user, nomeCorso);
 		} catch (SQLException e) {
 			//TODO: modificare questo possibilmente
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			if(e.getSQLState() != "S1000") {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			} else {
+				//TODO controllo contro web parameters tampering - accesso ad un corso a cui lo studente non è iscritto
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Il corso ricercato non esiste o non sei iscritto a questo corso.");
+			}
 			return;
 		}
 
@@ -82,9 +87,10 @@ public class ElencoEsami extends HttpServlet {
 		List<List<Esame>> corsiEsami = new ArrayList<List<Esame>>();
 		try {
 			corsiEsami = this.getEsamiFromCorsoByUserRole(corsi,user);
-			// controllo contro web parameters tampering - accesso a corsi di un altro utente
+			
+			// controllo contro web parameters tampering - accesso a corsi di un altro docente
 			if(corsiEsami.isEmpty()) {
-				throw new SQLException();
+				throw new Exception("Il corso ricercato non esiste o non sei il docente di questo corso.");
 			}
 		} catch (SQLException e) {
 			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
@@ -97,6 +103,10 @@ public class ElencoEsami extends HttpServlet {
 					corsiEsami.add(new ArrayList<Esame>());
 				}
 			}
+		} catch (Exception e) {
+			//TODO 
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			return;
 		}
 		
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri

@@ -101,12 +101,12 @@ public class GetResults extends HttpServlet {
 			risultati = this.getRisultatiEsamiByUserRole(user, idEsame, ordine, campo);
 		} catch (SQLException e) {
 			//TODO: modificare questo possibilmente
-			if(e.getSQLState() != "S1000") {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-			} else {
-				// controllo contro web parameters tampering - accesso ad esami di un altro utente
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-			}
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			return;
+		} catch (Exception e) {
+			//TODO
+			// controllo contro web parameters tampering - accesso ad esami di un altro utente
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
 		}
 		
@@ -126,7 +126,7 @@ public class GetResults extends HttpServlet {
 		templateEngine.process(path, ctx, response.getWriter());		
 	}
 
-	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame, String ordine, String campo) throws SQLException{
+	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame, String ordine, String campo) throws Exception{
 		List<Esaminazione> risultati = null;
 		
 		EsameDAO esameDao = new EsameDAO(connection);
@@ -135,9 +135,12 @@ public class GetResults extends HttpServlet {
 			if(userDAO.controllaDocente(idEsame, user.getMatricola()))
 				risultati = esameDao.getRisultatiEsameProfessore(idEsame, ordine, campo, user.getMatricola());
 			else 
-				throw new SQLException();
+				throw new Exception("Non sei il docente del corso di questo esame.");
 		}else if(user.getRuolo().equals("student"))
-			risultati = esameDao.getRisultatiEsameStudente(user.getMatricola(), idEsame);
+			if(userDAO.controllaStudente(idEsame, user.getMatricola()))
+				risultati = esameDao.getRisultatiEsameStudente(user.getMatricola(), idEsame);
+			else
+				throw new Exception("Non sei iscritto a questo esame.");
 		return risultati;
 	}
 
