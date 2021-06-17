@@ -67,7 +67,7 @@ public class Home extends HttpServlet {
 			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
 			// mostrata una pagina di errore, altrimenti viene gestita internamente
 			if(e.getSQLState() != "S1000") {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				redirectToErrorPage(request,response, e.toString());
 				return;
 			}
 		}
@@ -103,6 +103,15 @@ public class Home extends HttpServlet {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
+			throws IOException{
+		String path = "/Templates/PaginaErrore.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("errore", message);
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 }

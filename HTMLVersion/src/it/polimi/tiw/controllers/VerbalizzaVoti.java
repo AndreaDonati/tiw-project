@@ -55,7 +55,7 @@ public class VerbalizzaVoti extends HttpServlet {
 		try {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame errato");
+			redirectToErrorPage(request,response,"Identificativo dell'esame errato.");
 			return;
 		}
 		
@@ -63,15 +63,13 @@ public class VerbalizzaVoti extends HttpServlet {
 		UserDAO userDAO = new UserDAO(connection);
 		try {
 			if(!userDAO.controllaDocente(idEsame, user.getMatricola()))
-				throw new Exception("Non sei il docente del corso di questo esame.");
+				throw new Exception("L'esame ricercato non esiste o non sei il docente di questo esame.");
 		}  catch (SQLException e) {
-			//TODO: modificare questo possibilmente
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		} catch (Exception e) {
-			//TODO
 			// controllo contro web parameters tampering - pubblicazione voti di un esame di un altro docente
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response,e.toString().replace("java.lang.Exception: ",""));
 			return;
 		}
 		
@@ -84,7 +82,7 @@ public class VerbalizzaVoti extends HttpServlet {
 		try {
 			risultati = esameDao.getRisultatiEsameProfessore(idEsame);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		}
 		if(!checkVerbalizzabili(risultati)) {
@@ -100,7 +98,7 @@ public class VerbalizzaVoti extends HttpServlet {
 		try {
 			idVerbale = esaminazioneDAO.recordGrades(idEsame);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		}
 		
@@ -110,7 +108,7 @@ public class VerbalizzaVoti extends HttpServlet {
 		try {
 			verbale = verbaleDao.getVerbale(idVerbale);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		}
 
@@ -135,6 +133,15 @@ public class VerbalizzaVoti extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
+	}
+	
+	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
+			throws IOException{
+		String path = "/Templates/PaginaErrore.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("errore", message);
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 }

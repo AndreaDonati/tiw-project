@@ -53,7 +53,7 @@ public class ModificaVoto extends HttpServlet {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 			matricolaStudente = request.getParameter("matricolaStudente");
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame o dell'utente errato.");
+			redirectToErrorPage(request,response,"Identificativo dell'esame o dello studente errato.");
 			return;
 		}
 				
@@ -64,14 +64,13 @@ public class ModificaVoto extends HttpServlet {
 			studente = userDao.getUserFromMatricolaAndExam(matricolaStudente, idEsame);
 			if(! userDao.controllaDocente(idEsame, user.getMatricola()))
 				// controllo contro web parameters tampering - accesso ad esame di un altro docente
-				throw new Exception("Non sei il docente del corso di questo esame.");
+				throw new Exception("L'esame ricercato non esiste o non sei il docente di questo esame.");
 			if(studente == null) {
 				// controllo contro web parameters tampering - modifica voto di uno studente non registrato
 				throw new Exception("Identificativo dello studente errato.");
 			}
 		} catch (Exception e) {
-			//TODO
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
+			redirectToErrorPage(request,response,e.toString().replace("java.lang.Exception: ",""));
 			return;
 		}
 		
@@ -86,6 +85,15 @@ public class ModificaVoto extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
+	}
+	
+	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
+			throws IOException{
+		String path = "/Templates/PaginaErrore.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("errore", message);
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 }

@@ -5,12 +5,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsaminazioneDAO;
@@ -21,6 +25,7 @@ import it.polimi.tiw.utils.ConnectionHandler;
 @WebServlet("/inserisciVoti")
 public class InserisciVoti extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private TemplateEngine templateEngine;
 	private Connection connection = null;
 	
     public InserisciVoti() {
@@ -44,13 +49,12 @@ public class InserisciVoti extends HttpServlet {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 			voto = request.getParameter("voto");
 			
+			// controllo contro web parameters tampering - inserimento di un voto non valido
 			if(!Arrays.asList(voti).contains(voto))
-				// controllo contro web parameters tampering - inserimento di un voto non valido
 				throw new Exception();
 
 		} catch (Exception e) {
-			//TODO
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri errati.");
+			redirectToErrorPage(request,response, "Parametri errati.");
 			return;
 		}
 		
@@ -61,7 +65,7 @@ public class InserisciVoti extends HttpServlet {
 		try {
 			esaminazioneDAO.insertGrade(matricolaStudente, idEsame, voto, user.getMatricola());
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		}
 
@@ -73,6 +77,15 @@ public class InserisciVoti extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
+	}
+	
+	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
+			throws IOException{
+		String path = "/Templates/PaginaErrore.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("errore", message);
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 }

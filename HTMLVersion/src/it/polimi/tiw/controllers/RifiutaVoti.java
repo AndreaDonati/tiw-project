@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsaminazioneDAO;
@@ -18,6 +22,7 @@ import it.polimi.tiw.utils.ConnectionHandler;
 @WebServlet("/rifiutaVoti")
 public class RifiutaVoti extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private TemplateEngine templateEngine;
 	private Connection connection = null;
 	
     public RifiutaVoti() {
@@ -37,7 +42,7 @@ public class RifiutaVoti extends HttpServlet {
 			User user = (User) request.getSession().getAttribute("user");
 			matricola = user.getMatricola();
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame o dell'utente errato");
+			redirectToErrorPage(request,response, "Identificativo dell'esame o dell'utente errato.");
 			return;
 		}
 		
@@ -47,7 +52,7 @@ public class RifiutaVoti extends HttpServlet {
 		try {
 			esaminazioneDAO.rejectGrade(idEsame, matricola);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		}
 		
@@ -59,6 +64,15 @@ public class RifiutaVoti extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
+	}
+	
+	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
+			throws IOException{
+		String path = "/Templates/PaginaErrore.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("errore", message);
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 }

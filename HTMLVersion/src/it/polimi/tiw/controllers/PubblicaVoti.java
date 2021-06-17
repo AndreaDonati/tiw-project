@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsaminazioneDAO;
@@ -19,6 +23,7 @@ import it.polimi.tiw.utils.ConnectionHandler;
 @WebServlet("/pubblicaVoti")
 public class PubblicaVoti extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private TemplateEngine templateEngine;
 	private Connection connection = null;
 
 	
@@ -40,7 +45,7 @@ public class PubblicaVoti extends HttpServlet {
 			System.out.println(idEsame);
 
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Identificativo dell'esame errato");
+			redirectToErrorPage(request,response,"Identificativo dell'esame errato.");
 			return;
 		}
 		
@@ -48,15 +53,13 @@ public class PubblicaVoti extends HttpServlet {
 		UserDAO userDAO = new UserDAO(connection);
 		try {
 			if(!userDAO.controllaDocente(idEsame, user.getMatricola()))
-				throw new Exception("Non sei il docente del corso di questo esame.");
+				throw new Exception("L'esame ricercato non esiste o non sei il docente di questo esame.");
 		}  catch (SQLException e) {
-			//TODO: modificare questo possibilmente
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		} catch (Exception e) {
-			//TODO
 			// controllo contro web parameters tampering - pubblicazione voti di un esame di un altro docente
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response,e.toString().replace("java.lang.Exception: ",""));
 			return;
 		}
 		
@@ -67,7 +70,7 @@ public class PubblicaVoti extends HttpServlet {
 		try {
 			esaminazioneDAO.publishGrades(idEsame);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		}
 
@@ -80,5 +83,15 @@ public class PubblicaVoti extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
+	
+	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
+			throws IOException{
+		String path = "/Templates/PaginaErrore.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("errore", message);
+		templateEngine.process(path, ctx, response.getWriter());
+	}
+
 
 }

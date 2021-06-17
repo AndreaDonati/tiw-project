@@ -59,7 +59,7 @@ public class ElencoEsami extends HttpServlet {
 			if(nomeCorso == null) 
 				throw new Exception();
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta incompleta. Parametri mancanti.");
+			redirectToErrorPage(request,response, "Richiesta incompleta. Parametri mancanti.");
 			return;
 		}
 
@@ -73,12 +73,11 @@ public class ElencoEsami extends HttpServlet {
 		try {
 			corsi = this.getCorsoContentByUserRole(user, nomeCorso);
 		} catch (SQLException e) {
-			//TODO: modificare questo possibilmente
 			if(e.getSQLState() != "S1000") {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				redirectToErrorPage(request,response, e.toString());
 			} else {
-				//TODO controllo contro web parameters tampering - accesso ad un corso a cui lo studente non è iscritto
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Il corso ricercato non esiste o non sei iscritto a questo corso.");
+				// controllo contro web parameters tampering - accesso ad un corso a cui lo studente non è iscritto
+				redirectToErrorPage(request,response,"Il corso ricercato non esiste o non sei iscritto a questo corso.");
 			}
 			return;
 		}
@@ -88,7 +87,7 @@ public class ElencoEsami extends HttpServlet {
 		try {
 			corsiEsami = this.getEsamiFromCorsoByUserRole(corsi,user);
 			
-			// controllo contro web parameters tampering - accesso a corsi di un altro docente
+			 
 			if(corsiEsami.isEmpty()) {
 				throw new Exception("Il corso ricercato non esiste o non sei il docente di questo corso.");
 			}
@@ -96,7 +95,7 @@ public class ElencoEsami extends HttpServlet {
 			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
 			// mostrata una pagina di errore, altrimenti viene gestita internamente
 			if(e.getSQLState() != "S1000") {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				redirectToErrorPage(request,response, e.toString());
 				return;
 			} else {
 				for(Corso corso: corsi) {
@@ -104,8 +103,7 @@ public class ElencoEsami extends HttpServlet {
 				}
 			}
 		} catch (Exception e) {
-			//TODO 
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response,e.toString().replace("java.lang.Exception: ",""));
 			return;
 		}
 		
@@ -157,6 +155,15 @@ public class ElencoEsami extends HttpServlet {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
+			throws IOException{
+		String path = "/Templates/PaginaErrore.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("errore", message);
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 }

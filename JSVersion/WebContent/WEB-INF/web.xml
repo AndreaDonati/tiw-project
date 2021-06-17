@@ -29,6 +29,8 @@
     <url-pattern>/pubblicaVoti</url-pattern>
     <url-pattern>/verbalizzaVoti</url-pattern>
     <url-pattern>/rifiutaVoti</url-pattern>
+    <url-pattern>/ElencoEsami</url-pattern>
+    <url-pattern>/inserimentoMultiplo</url-pattern>
  </filter-mapping> 
  <filter> 
   <filter-name>StudentChecker</filter-name> 

@@ -71,8 +71,7 @@ public class GetResults extends HttpServlet {
 				throw new Exception();
 			idEsame = Integer.parseInt(idEsameParam);
 		} catch (Exception e) {
-			// controllo contro web parameters tampering - accesso ad esami di un altro utente
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta incompleta. Parametri mancanti.");
+			redirectToErrorPage(request,response, "Richiesta incompleta. Parametri mancanti.");
 			return;
 		}
 
@@ -100,13 +99,11 @@ public class GetResults extends HttpServlet {
 		try {
 			risultati = this.getRisultatiEsamiByUserRole(user, idEsame, ordine, campo);
 		} catch (SQLException e) {
-			//TODO: modificare questo possibilmente
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response, e.toString());
 			return;
 		} catch (Exception e) {
-			//TODO
 			// controllo contro web parameters tampering - accesso ad esami di un altro utente
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			redirectToErrorPage(request,response,e.toString().replace("java.lang.Exception: ",""));
 			return;
 		}
 		
@@ -135,12 +132,12 @@ public class GetResults extends HttpServlet {
 			if(userDAO.controllaDocente(idEsame, user.getMatricola()))
 				risultati = esameDao.getRisultatiEsameProfessore(idEsame, ordine, campo, user.getMatricola());
 			else 
-				throw new Exception("Non sei il docente del corso di questo esame.");
+				throw new Exception("L'esame ricercato non esiste o non sei il docente di questo esame.");
 		}else if(user.getRuolo().equals("student"))
 			if(userDAO.controllaStudente(idEsame, user.getMatricola()))
 				risultati = esameDao.getRisultatiEsameStudente(user.getMatricola(), idEsame);
 			else
-				throw new Exception("Non sei iscritto a questo esame.");
+				throw new Exception("L'esame ricercato non esiste o non sei iscritto a questo esame.");
 		return risultati;
 	}
 
@@ -171,6 +168,15 @@ public class GetResults extends HttpServlet {
 				return true;
 		}
 		return false;
+	}
+	
+	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
+			throws IOException{
+		String path = "/Templates/PaginaErrore.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("errore", message);
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 }
