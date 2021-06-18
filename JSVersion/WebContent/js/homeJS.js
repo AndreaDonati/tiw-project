@@ -4,13 +4,13 @@ myApp.toastOpacity = 0;
 myApp.toastOffset = 40;
 myApp.request = {};
 
-/* Animazione Navbar on Scroll */
+/* Animazione Navbar con scorrimento - jQuery */
 $(window).scroll(function(){
     if($(document).scrollTop() > 80){
       $('nav').addClass('animate');
       $('h4').addClass('animate-side');
       $('img').addClass('animate-img');
-    }else{
+    } else{
       $('nav').removeClass('animate');
       $('h4').removeClass('animate-side');
       $('img').removeClass('animate-img');
@@ -42,10 +42,15 @@ function makeGetParameters(servletUrl, callback, paramNameValue) {
 	myApp.request.send();
 }
 
-function init() {
+function init() {	
+	// Aggiungo listener al bottone che rimanda alla home
+	document.getElementById("navbar-btn").addEventListener('click', () => {
+		resetStorage(); // cancella variabili globali che non servono più
+		resetTable(); // cancella elementi che non servono più
+		makeGet("getCorsi", showCorsi); // richiesta per ritornare alla home
+	});
+	
 	// Prendo l'elemento del loader
-	resetTable();
-	//resetStorage();
 	myApp.loaderDiv = document.getElementById("loader");	
 
 	// Start del loader 
@@ -60,15 +65,15 @@ function showInfo(request) {
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
 	 	console.log(JSON.parse(request.responseText)["errorMessage"]);
 
-    // Se 200 (OK) sostituisco informazioni utente nella navbar
+    // Se 200 (OK) sostituisco informazioni utente nella sidebar
 	if (request.readyState == 4 && request.status == 200 ) {
 		let utente = JSON.parse(request.responseText);
 		myApp.ruoloUtente = utente.ruolo;
 
 		document.getElementById("immagine").src = utente.image;
-		document.getElementById("nome").innerHTML = utente.nome + ' ' + utente.cognome;
-		document.getElementById("mail").innerHTML = utente.email.split("@")[0]+'\n@'+utente.email.split("@")[1];
-		document.getElementById("matricola").innerHTML = utente.matricola;
+		document.getElementById("nome").textContent = utente.nome + ' ' + utente.cognome;
+		document.getElementById("mail").textContent = utente.email.split("@")[0]+'\n@'+utente.email.split("@")[1];
+		document.getElementById("matricola").textContent = utente.matricola;
 	}
 }
 
@@ -76,7 +81,7 @@ function showCorsi(request) {
 	myApp.loaderDiv.style.display = "none";
 
 	document.getElementById("content").innerHTML = ""; // reset della pagina
-	document.getElementById("titleText").innerHTML = "I tuoi corsi"; // aggiorno jumbotron
+	document.getElementById("titleText").textContent = "I tuoi corsi"; // aggiorno jumbotron
 
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
@@ -111,9 +116,9 @@ function showCorsi(request) {
 			//TODO controllare se funzioan
 			let div = createDiv("", "no-results-msg", ""); // div per no results
 			let txt = document.createElement("h4");
-			myApp.ruoloUtente == "teacher" ? txt.innerHTML = "Non sei il docente di nessun corso al momento" : txt.innerHTML = "Non sei iscritto a nessun corso al momento";
-			
-			document.getElementById("content").appendChild(div.appendChild(txt));
+			myApp.ruoloUtente == "teacher" ? txt.textContent = "Non sei il docente di nessun corso al momento!" : txt.textContent = "Non sei iscritto a nessun corso al momento!";
+			div.append(txt);
+			document.getElementById("content").appendChild(div);
 			/*
 			//TODO modificare
 			if(utente.ruolo == "teacher"){
@@ -139,7 +144,7 @@ function getEsami() {
 
 	document.getElementById("content").innerHTML = ""; // reset della pagina
 
-	document.getElementById("titleText").innerHTML = "I tuoi esami"; // aggiorno jumbotron e back button (torna a HOME)	
+	document.getElementById("titleText").textContent = "I tuoi esami"; // aggiorno jumbotron e back button (torna a HOME)	
 	let btn = createBtn("a", "", ""); // creo back button
 	btn.addEventListener('click', () => {
 		makeGet("getCorsi", showCorsi); // richiesta alla servlet per tutti i corsi, callback per re-render
@@ -188,7 +193,7 @@ function showEsami(request) {
 				}
 		 	} else{
 				txt2 = document.createElement("p");
-				myApp.ruoloUtente == "teacher" ? txt2.innerHTML = "Non sono presenti appelli per questo corso" : txt2.innerHTML = "Non sei iscritto/a a nessun appello di questo corso";
+				myApp.ruoloUtente == "teacher" ? txt2.textContent = "Non sono presenti appelli per questo corso." : txt2.textContent = "Non sei iscritto/a a nessun appello di questo corso.";
 			}
 
 			let div = createDiv("panel panel-default", "pDefault"+i, ""); // div per elemento accordion
@@ -210,13 +215,13 @@ function showEsami(request) {
 
 function getRisultati() {
 	document.getElementById("content").innerHTML = "";
-	// QUI INIZIO LOADER
+
 	myApp.loaderDiv.style.display = "block";
 
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
 	document.getElementById("sottotitolo").innerHTML = ""; // aggiorno jumbotron e back button (torna a HOME)	
 	
-	document.getElementById("titleText").innerHTML = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
+	document.getElementById("titleText").textContent = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
 	let btn = createBtn("a", "", ""); // creo back button
 	btn.addEventListener('click', () => {
 		resetTable();
@@ -232,7 +237,6 @@ function getRisultati() {
 function showRisultati(request) {
 	document.getElementById("content").innerHTML = "";
 
-	// QUI FINE LOADER  
 	myApp.loaderDiv.style.display = "none";
 
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
@@ -244,199 +248,244 @@ function showRisultati(request) {
 		let risposta = JSON.parse(request.responseText);
 
 		let risultati = risposta.risultati;
-
-		//ruoloUtente = risposta.ruolo;
 		let arePubblicabili = risposta.pubblicabili;
 		let areVerbalizzabili = risposta.verbalizzabili;
 
 		if(myApp.ruoloUtente == "teacher"){
-			// prendo la lista degli studenti e la salvo in sessionStorage (servirà dopo)
-			let studenti = [];
-			risultati.forEach(e => {
-				studenti.push(e.studente);
-			});
-
-			myApp.studenti = JSON.stringify(studenti);
-
-			// prendo la lista dei risultati con voto non inserito
-			let risultatiModal = [];
-			risultati.forEach(e => {
-				if(e.stato == "non inserito") // per ogni voto non inserito aggiungo una riga di modifica nel modal
-					risultatiModal.push(e);
-			});
-
-			if(risultatiModal.length == 0){ // se non ci sono voti da modificare
-				document.getElementById("headTabellaModal").style.display = "none";
-				$("#bottoneInserimento").attr("disabled", "disabled"); 
-
-				document.getElementById("tabellaModal").innerHTML = "<br>Non ci sono voti da inserire.";
-				$("#bottoneInvia").attr("disabled", "disabled"); // disabilito bottone
-			}
-			else {
-				$("#bottoneInserimento").removeAttr("disabled");
-				document.getElementById("headTabellaModal").style.display = "";
-				document.getElementById("tabellaModal").innerHTML = "";
-
-				// riempio il modal con i dati appena ricevuti, sono sempre quelli più aggiornati
-				for(let i = 0; i < risultatiModal.length; i++){
-					let row = document.createElement("tr"); // riga della tabella
-
-					let checkbox = createCheckbox("check"+i); // creazione checkbox
-					checkbox.addEventListener('change', (event) => {
-						selezionaRiga(event.target.id); //gestione selezione della checkbox
-					});
-					let cell = document.createElement("td"); 
-					cell.append(checkbox);
-					row.appendChild(cell); //cella checkbox
-
-					let hiddenInput = createHidden();
-					hiddenInput.setAttribute("value", risultatiModal[i].studente.matricola);
-					hiddenInput.setAttribute("name", "matricola");
-
-					cell = createCell(risultatiModal[i].studente.matricola);
-
-					cell.append(hiddenInput);
-					row.appendChild(cell); //cella matricola
-
-					row.appendChild(createCell(risultatiModal[i].studente.cognome)); // cella cognome
-					row.appendChild(createCell(risultatiModal[i].studente.nome)); // cella nome
-					row.appendChild(createCell(risultatiModal[i].studente.email.split("@")[0]+'<br/>@'+risultatiModal[i].studente.email.split("@")[1])); // cella mail
-					row.appendChild(createCell(risultatiModal[i].studente.cdl)); // cella cdl
-
-					let select = createSelect("sel"+i, true); // creazione select
-					select.addEventListener('change', (event) => {
-						handleSelection(event.target); //gestione selezione della option
-					});	
-					cell = document.createElement("td"); 
-					cell.append(select);
-					row.appendChild(cell); //cella select
-
-					document.getElementById("tabellaModal").append(row);
-				}			
-				// aggiorno il campo hidden del form
-				document.getElementById("hiddenId").setAttribute("value", myApp.idEsame);
-
-				// abilito il bottone per inviare le modifiche
-				$("#bottoneInvia").removeAttr("disabled");
-			}
-			// rendo visibile il div principale
-			document.getElementById("accordion2").style.display = "block";
-
-			// rendo visibile il div della tabella prof e nascondo quella studente
-			document.getElementById("divTabellaProf").style.display = "block";
-			document.getElementById("divTabellaStud").style.display = "none";
-
-			// aggiorno titolo e data dell'appello 
-			document.getElementById("titoloCorso").innerHTML = myApp.nomeCorso + " - " + formatDate(risposta.esame.dataAppello);				
-
-			// setto la class dei bottoni pubblica e verbalizza
-			arePubblicabili ? $("#bottonePubblica").removeAttr("disabled") : $("#bottonePubblica").attr("disabled", "disabled"); 
-			areVerbalizzabili ? $("#bottoneVerbalizza").removeAttr("disabled") : $("#bottoneVerbalizza").attr("disabled", "disabled"); 
-
-			if(risultati.length >= 1 && risultati[0].id != -1){
-				document.getElementById("headTabellaProf").style.display = "";
-				document.getElementById("tabellaVotiProf").innerHTML ="";
-
-				// mostro i bottoni pubblica e verbalizza e ins multiplo
-				document.getElementById("bottonePubblica").style.display = "";
-				document.getElementById("bottoneVerbalizza").style.display = "";
-				document.getElementById("bottoneInserimento").style.display = "";
-
-				for(let i = 0; i < risultati.length; i++){
-					let row = document.createElement("tr"); // riga della tabella
-
-					row.appendChild(createCell(risultati[i].studente.matricola)); // cella matricola
-					row.appendChild(createCell(risultati[i].studente.cognome)); // cella cognome
-					row.appendChild(createCell(risultati[i].studente.nome)); // cella nome
-					row.appendChild(createCell(risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1])); // cella mail
-					row.appendChild(createCell(risultati[i].studente.cdl)); // cella cdl
-
-					if(risultati[i].voto == null)
-						row.appendChild(createCell("")); // cella voto (vuota)
-					else
-						row.appendChild(createCell(risultati[i].voto)); // cella voto 
-
-					row.appendChild(createCell(risultati[i].stato)); // cella stato
-
-					if(risultati[i].modificabile){
-						let modButton = createBtn("a", "modifica-btn", "Modifica"); // creazione bottone modifica
-						modButton.setAttribute("matricola", risultati[i].studente.matricola);
-						modButton.setAttribute("currentVoto", risultati[i].voto);
-						modButton.addEventListener('click', (event) => {
-							resetTable();
-							modificaVoti(parseInt(event.target.getAttribute("matricola")), event.target.getAttribute("currentVoto"));
-						});	
-						let cell = document.createElement("td"); 
-						cell.append(modButton);
-						row.appendChild(cell); //cella modifica
-					}
-					document.getElementById("tabellaVotiProf").append(row);
-				}
-			}
-			else{
-				document.getElementById("headTabellaProf").style.display = "none";
-				document.getElementById("tabellaVotiProf").innerHTML ="Nessuno studente iscritto all'appello."; 
-				
-				// nascondo i bottoni pubblica e verbalizza e ins multiplo
-				document.getElementById("bottonePubblica").style.display = "none";
-				document.getElementById("bottoneVerbalizza").style.display = "none";
-				document.getElementById("bottoneInserimento").style.display = "none";
-			}
+			showRisultatiProf(risultati, arePubblicabili, areVerbalizzabili, risposta);
 		} else {
-			// rendo visibile il div principale
-			document.getElementById("accordion2").style.display = "block";
+			showRisultatiStudente(risultati);
+	}
+}
 
-			// rendo visibile il div della tabella studente e nascondo quella del prof
-			document.getElementById("divTabellaStud").style.display = "block";
-			document.getElementById("divTabellaProf").style.display = "none";
+function showRisultatiProf(risultati, arePubblicabili, areVerbalizzabili, risposta){
+	// prendo la lista degli studenti e la salvo (servirà dopo)
+	let studenti = [];
+	risultati.forEach(e => {
+		studenti.push(e.studente);
+	});
+	myApp.studenti = JSON.stringify(studenti);
 
-			// aggiorno titolo
-			document.getElementById("titoloCorso").innerHTML = myApp.nomeCorso;
+	// prendo la lista dei risultati con voto non inserito
+	let risultatiModal = [];
+	risultati.forEach(e => {
+		if(e.stato == "non inserito") // per ogni voto non inserito aggiungo una riga di modifica nel modal
+			risultatiModal.push(e);
+	});
 
-			// controllo se il voto non è ancora definito
-			if(risultati == null){
-				document.getElementById("headTabellaStud").style.display = "none";
-				document.getElementById("tabellaVotiStud").innerHTML = "Voto non ancora definito.";
+	riempiModal(risultatiModal);
+	riempiTabellaRisultati(risultati, arePubblicabili, areVerbalizzabili, risposta);
+}
+
+
+function riempiModal(risultatiModal){
+	if(risultatiModal.length == 0){ // se non ci sono voti da modificare
+		document.getElementById("headTabellaModal").style.display = "none";
+		$("#bottoneInserimento").attr("disabled", "disabled"); 
+
+		document.getElementById("tabellaModal").textContent = "<br>Non ci sono voti da inserire.";
+		$("#bottoneInvia").attr("disabled", "disabled"); // disabilito bottone
+	}
+	else {
+		$("#bottoneInserimento").removeAttr("disabled");
+		document.getElementById("headTabellaModal").style.display = "";
+		document.getElementById("tabellaModal").innerHTML = "";
+
+		document.getElementById("checkAll").addEventListener('click', () => {
+			selezionaTutto();
+		});
+
+		document.getElementById("bottoneInvia").addEventListener('click', () => {
+				inserimentoMultiplo();
+		});
+
+		// riempio il modal con i dati appena ricevuti, sono sempre quelli più aggiornati
+		for(let i = 0; i < risultatiModal.length; i++){
+			let row = document.createElement("tr"); // riga della tabella
+
+			let checkbox = createCheckbox("check"+i); // creazione checkbox
+			checkbox.addEventListener('change', (event) => {
+				selezionaRiga(event.target.id); //gestione selezione della checkbox
+			});
+			let cell = document.createElement("td"); 
+			cell.append(checkbox);
+			row.appendChild(cell); //cella checkbox
+
+			let hiddenInput = createHidden();
+			hiddenInput.setAttribute("value", risultatiModal[i].studente.matricola);
+			hiddenInput.setAttribute("name", "matricola");
+
+			cell = createCell(risultatiModal[i].studente.matricola);
+
+			cell.append(hiddenInput);
+			row.appendChild(cell); //cella matricola
+
+			row.appendChild(createCell(risultatiModal[i].studente.cognome)); // cella cognome
+			row.appendChild(createCell(risultatiModal[i].studente.nome)); // cella nome
+			row.appendChild(createCell(risultatiModal[i].studente.email.split("@")[0]+'<br/>@'+risultatiModal[i].studente.email.split("@")[1])); // cella mail
+			row.appendChild(createCell(risultatiModal[i].studente.cdl)); // cella cdl
+
+			let select = createSelect("sel"+i, true); // creazione select
+			select.addEventListener('change', (event) => {
+				handleSelection(event.target); //gestione selezione della option
+			});	
+			cell = document.createElement("td"); 
+			cell.append(select);
+			row.appendChild(cell); //cella select
+
+			document.getElementById("tabellaModal").append(row);
+		}			
+		// aggiorno il campo hidden del form
+		document.getElementById("hiddenId").setAttribute("value", myApp.idEsame);
+
+		// abilito il bottone per inviare le modifiche
+		$("#bottoneInvia").removeAttr("disabled");
+	}
+}
+
+
+function riempiTabellaRisultati(risultati, arePubblicabili, areVerbalizzabili, risposta){
+	// rendo visibile il div principale
+	document.getElementById("accordion2").style.display = "block";
+
+	// rendo visibile il div della tabella prof e nascondo quella studente
+	document.getElementById("divTabellaProf").style.display = "block";
+	document.getElementById("divTabellaStud").style.display = "none";
+
+	// aggiorno titolo e data dell'appello 
+	document.getElementById("titoloCorso").textContent = myApp.nomeCorso + " - " + formatDate(risposta.esame.dataAppello);				
+
+	// setto la class dei bottoni pubblica e verbalizza
+	arePubblicabili ? $("#bottonePubblica").removeAttr("disabled") : $("#bottonePubblica").attr("disabled", "disabled"); 
+	areVerbalizzabili ? $("#bottoneVerbalizza").removeAttr("disabled") : $("#bottoneVerbalizza").attr("disabled", "disabled"); 
+
+	// e aggiungo listener ai bottoni pubblica e verbalizza
+	document.getElementById("bottonePubblica").addEventListener('click', () => {
+		pubblicaVoti();
+	});
+	document.getElementById("bottoneVerbalizza").addEventListener('click', () => {
+		verbalizzaVoti();
+	});
+
+	// aggiungo listener anche alle label della tabella
+	setLabelListeners();
+
+	if(risultati.length >= 1 && risultati[0].id != -1){
+		document.getElementById("headTabellaProf").style.display = "";
+		document.getElementById("tabellaVotiProf").innerHTML ="";
+
+		// mostro i bottoni pubblica e verbalizza e ins multiplo
+		document.getElementById("bottonePubblica").style.display = "";
+		document.getElementById("bottoneVerbalizza").style.display = "";
+		document.getElementById("bottoneInserimento").style.display = "";
+
+		for(let i = 0; i < risultati.length; i++){
+			let row = document.createElement("tr"); // riga della tabella
+
+			row.appendChild(createCell(risultati[i].studente.matricola)); // cella matricola
+			row.appendChild(createCell(risultati[i].studente.cognome)); // cella cognome
+			row.appendChild(createCell(risultati[i].studente.nome)); // cella nome
+			row.appendChild(createCell(risultati[i].studente.email.split("@")[0]+'<br/>@'+risultati[i].studente.email.split("@")[1])); // cella mail
+			row.appendChild(createCell(risultati[i].studente.cdl)); // cella cdl
+
+			if(risultati[i].voto == null)
+				row.appendChild(createCell("")); // cella voto (vuota)
+			else
+				row.appendChild(createCell(risultati[i].voto)); // cella voto 
+
+			row.appendChild(createCell(risultati[i].stato)); // cella stato
+
+			if(risultati[i].modificabile){
+				let modButton = createBtn("a", "modifica-btn", "Modifica"); // creazione bottone modifica
+				modButton.setAttribute("matricola", risultati[i].studente.matricola);
+				modButton.setAttribute("currentVoto", risultati[i].voto);
+				modButton.addEventListener('click', (event) => {
+					resetTable();
+					modificaVoti(parseInt(event.target.getAttribute("matricola")), event.target.getAttribute("currentVoto"));
+				});	
+				let cell = document.createElement("td"); 
+				cell.append(modButton);
+				row.appendChild(cell); //cella modifica
 			}
-			else{
-				document.getElementById("headTabellaStud").style.display = "";
-				document.getElementById("tabellaVotiStud").innerHTML = "";
-
-				for(let i = 0; i < risultati.length; i++){
-					let row = document.createElement("tr"); // riga della tabella
-	
-					row.appendChild(createCell(risultati[i].studente.matricola)); // cella matricola
-					row.appendChild(createCell(risultati[i].studente.nome + ' ' + risultati[i].studente.cognome)); // cella nome e cognome
-					row.appendChild(createCell(formatDate(risultati[0].esame.dataAppello))); // cella data
-	
-					if(risultati[i].voto == null)
-						row.appendChild(createCell("")); // cella voto (vuota)
-					else
-						row.appendChild(createCell(risultati[i].voto)); // cella voto 
-	
-					row.appendChild(createCell(risultati[i].stato)); // cella stato
-	
-					let rifButton;
-					if(risultati[i].rifiutabile){	
-						rifButton = createBtn("a", "rifiuta-btn", "Rifiuta"); // creazione bottone rifiuta
-						rifButton.addEventListener('click', (event) => {	
-							rifiutaVoto();
-						});	
-						let cell = document.createElement("td"); 
-						cell.append(rifButton);
-						row.appendChild(cell); //cella rifiuta
-					}
-					else{
-						if(risultati[i].stato == "verbalizzato")
-							row.appendChild(createCell("")); // cella rifiuta (vuota)
-						else
-						row.appendChild(createCell("Il voto è stato rifiutato.")); // cella rifiuta (rifiutato)
-					}	
-					document.getElementById("tabellaVotiStud").append(row);
-				}
-			}
+			document.getElementById("tabellaVotiProf").append(row);
 		}
 	}
+	else{
+		document.getElementById("headTabellaProf").style.display = "none";
+		document.getElementById("tabellaVotiProf").textContent = "Nessuno studente iscritto all'appello."; 
+
+		// nascondo i bottoni pubblica e verbalizza e ins multiplo
+		document.getElementById("bottonePubblica").style.display = "none";
+		document.getElementById("bottoneVerbalizza").style.display = "none";
+		document.getElementById("bottoneInserimento").style.display = "none";
+	}
+}
+
+function setLabelListeners(){
+	// prendo tutti gli elementi (tolgo l'ultimo dato che è vuoto)
+	let labels = document.getElementById("headTabellaProf").getElementsByTagName("th");
+
+	for (let i = 0; i < labels.length - 1; i++) {
+		labels[i].firstChild.addEventListener('click', () => {
+			ordinaTabella(i);
+		});			
+	}
+}
+
+function showRisultatiStudente(risultati){
+	// rendo visibile il div principale
+	document.getElementById("accordion2").style.display = "block";
+
+	// rendo visibile il div della tabella studente e nascondo quella del prof
+	document.getElementById("divTabellaStud").style.display = "block";
+	document.getElementById("divTabellaProf").style.display = "none";
+
+	// aggiorno titolo
+	document.getElementById("titoloCorso").textContent = myApp.nomeCorso;
+
+	// controllo se il voto non è ancora definito
+	if(risultati == null){
+		document.getElementById("headTabellaStud").style.display = "none";
+		document.getElementById("tabellaVotiStud").textContent = "Voto non ancora definito.";
+	}
+	else{
+		document.getElementById("headTabellaStud").style.display = "";
+		document.getElementById("tabellaVotiStud").innerHTML = "";
+
+		for(let i = 0; i < risultati.length; i++){
+			let row = document.createElement("tr"); // riga della tabella
+
+			row.appendChild(createCell(risultati[i].studente.matricola)); // cella matricola
+			row.appendChild(createCell(risultati[i].studente.nome + ' ' + risultati[i].studente.cognome)); // cella nome e cognome
+			row.appendChild(createCell(formatDate(risultati[0].esame.dataAppello))); // cella data
+
+			if(risultati[i].voto == null)
+				row.appendChild(createCell("")); // cella voto (vuota)
+			else
+				row.appendChild(createCell(risultati[i].voto)); // cella voto 
+
+			row.appendChild(createCell(risultati[i].stato)); // cella stato
+
+			let rifButton;
+			if(risultati[i].rifiutabile){	
+				rifButton = createBtn("a", "rifiuta-btn", "Rifiuta"); // creazione bottone rifiuta
+				rifButton.addEventListener('click', (event) => {	
+					rifiutaVoto();
+				});	
+				let cell = document.createElement("td"); 
+				cell.append(rifButton);
+				row.appendChild(cell); //cella rifiuta
+			}
+			else{
+				if(risultati[i].stato == "verbalizzato")
+					row.appendChild(createCell("")); // cella rifiuta (vuota)
+				else
+				row.appendChild(createCell("Il voto è stato rifiutato.")); // cella rifiuta (rifiutato)
+			}	
+			document.getElementById("tabellaVotiStud").append(row);
+		}
+	}
+}
 }
 
 function resetTable(){
@@ -460,7 +509,6 @@ function formatDateAndTime(date){
 }
 
 function inserimentoMultiplo(){
-	// QUI INIZIO LOADER
 	myApp.loaderDiv.style.display = "block";
 
 	myApp.request = new XMLHttpRequest(); // Nuova richiesta
@@ -475,7 +523,7 @@ function inserimentoMultiplo(){
 
 
 function modificaVoti(matricola, voto) {
-	document.getElementById("titleText").innerHTML = "Modifica Voto"; // aggiorno jumbotron e back button (torna a RISULTATI)	
+	document.getElementById("titleText").textContent = "Modifica Voto"; // aggiorno jumbotron e back button (torna a RISULTATI)	
 	let btn = createBtn("a", "", ""); // creo back button
 	btn.addEventListener('click', () => {
 		//resetTable();
@@ -515,7 +563,6 @@ function modificaVoti(matricola, voto) {
 }
 
 function inserisciVoti(){
-	// QUI INIZIO LOADER
 	myApp.loaderDiv.style.display = "block";
 
 	myApp.request = new XMLHttpRequest(); // Nuova richiesta
@@ -528,7 +575,7 @@ function inserisciVoti(){
 	myApp.request.send(formData); // Mando dati del form
 
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
-	document.getElementById("titleText").innerHTML = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
+	document.getElementById("titleText").textContent = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
 	let btn = createBtn("a", "", ""); // creo back button
 	btn.addEventListener('click', () => {
 		resetTable();
@@ -564,7 +611,7 @@ function verbalizzaVoti(){
 
 function showVerbale(request){
 	resetTable();
-	// QUI FINE LOADER   
+
 	myApp.loaderDiv.style.display = "none";
 
 	document.getElementById("content").innerHTML = ""; // rimuovo gli elementi che ci sono ora nella pagina, non servono piu
@@ -578,7 +625,7 @@ function showVerbale(request){
 		let verbale = JSON.parse(request.responseText);
 		
 		// setto il titolo con anche il bottone per tornare indietro (alla pagina Esito)
-		document.getElementById("titleText").innerHTML = "Verbale n° " + verbale.id; // aggiorno jumbotron e back button (torna a HOME)	
+		document.getElementById("titleText").textContent = "Verbale n° " + verbale.id; // aggiorno jumbotron e back button (torna a HOME)	
 		let btn = createBtn("a", "", ""); // creo back button
 		btn.addEventListener('click', () => {
 			getRisultati(); // richiesta alla servlet per tutti i corsi, callback per re-render
@@ -587,9 +634,9 @@ function showVerbale(request){
 		document.getElementById("titleText").prepend(btn); // prepend del bottone al testo
 
 		let text1 = createText("h3","","");
-		text1.innerHTML = "Data: " + formatDateAndTime(verbale.dataVerbale);
+		text1.textContent = "Data: " + formatDateAndTime(verbale.dataVerbale);
 		let text2 = createText("h4","","");
-		text2.innerHTML = verbale.risultati[0].corso.nome + " - Appello del " + formatDate(verbale.risultati[0].esame.dataAppello);
+		text2.textContent = verbale.risultati[0].corso.nome + " - Appello del " + formatDate(verbale.risultati[0].esame.dataAppello);
 		document.getElementById("sottotitolo").appendChild(text1); // append h3
 		document.getElementById("sottotitolo").appendChild(text2); // append h4
 

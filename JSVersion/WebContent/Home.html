@@ -39,7 +39,7 @@
           <table class="table">																											
       	    <thead id="headTabellaModal">																																		
       		    <tr>
-                <th><input onclick="selezionaTutto()" class="form-check-input" type="checkbox" value="" id="checkAll" style="cursor: pointer;"></th>																																			
+                <th><input class="form-check-input" type="checkbox" value="" id="checkAll" style="cursor: pointer;"></th>																																			
       		    	<th><a style="white-space: nowrap;">Matricola</a></th>																			
       		    	<th><a style="white-space: nowrap;">Cognome</a></th>																		
    			        <th><a style="white-space: nowrap;">Nome</a></th>																						
@@ -55,7 +55,7 @@
   	    </form>
       </div>
       <div class="modal-footer">
-        <button id="bottoneInvia" disabled type="button" onclick="inserimentoMultiplo()" class="btn btn-default modal-btn" data-dismiss="modal">Invia</button>'
+        <button id="bottoneInvia" disabled type="button" class="btn btn-default modal-btn" data-dismiss="modal">Invia</button>'
       </div>
     </div>
   </div>
@@ -64,7 +64,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-default navbar-fixed-top animate__animated animate__fadeIn">
   <div class="navbar-header">
-    <a class="navbar-brand" onclick="init()">Verbalizer</a>
+    <a class="navbar-brand" id="navbar-btn">Verbalizer</a>
   </div>
   <a href="Logout" class="navbar-right"><i class="fas fa-sign-out-alt logout-btn"></i>LOGOUT</a>
 </nav>   
@@ -113,13 +113,13 @@
                 	<table class="table">																															
                 		<thead id="headTabellaProf">																																				
                 			<tr>																																							
-                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(0)">Matricola<i id="freccia0" class="fas fa-chevron-up sort-i"></i></a></th>																					
-                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(1)">Cognome<i id="freccia1"></a></th>																				
-                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(2)">Nome<i id="freccia2"></a></th>																							
-                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(3)">E-mail<i id="freccia3"></a></th>																						
-                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(4)">Corso di Laurea<i id="freccia4"></a></th>																			
-                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(5)">Voto<i id="freccia5"></a></th>																					
-                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" onclick="ordinaTabella(6)">Stato<i id="freccia6"></a></th>																						
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" >Matricola<i id="freccia0" class="fas fa-chevron-up sort-i"></i></a></th>																					
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" >Cognome<i id="freccia1"></a></th>																				
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" >Nome<i id="freccia2"></a></th>																							
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" >E-mail<i id="freccia3"></a></th>																						
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" >Corso di Laurea<i id="freccia4"></a></th>																			
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" >Voto<i id="freccia5"></a></th>																					
+                				<th><a style="white-space: nowrap; cursor: pointer; user-select: none;" >Stato<i id="freccia6"></a></th>																						
                 				<th></th>																														
                 			</tr>																								
                 		</thead>																													
@@ -127,8 +127,8 @@
                 		</tbody>																																					
                 	</table>
                 	<button id="bottoneInserimento" class="a-btn" data-toggle="modal" data-target="#myModal">Inserimento Multiplo</button>																																								
-                	<button id="bottonePubblica" class="a-btn" onclick="pubblicaVoti()">Pubblica</button>																											
-                	<button id="bottoneVerbalizza" class="a-btn" onclick="verbalizzaVoti()">Verbalizza</button>	
+                	<button id="bottonePubblica" class="a-btn">Pubblica</button>																											
+                	<button id="bottoneVerbalizza" class="a-btn">Verbalizza</button>	
                 </div>	
                 <div id="divTabellaStud">
                 	<table class="table">																															

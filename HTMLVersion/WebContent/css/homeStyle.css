@@ -133,9 +133,9 @@ a:hover,a:focus{
   outline: none;
 }
 #accordion .panel{
-margin-left: 40px;
-font-family: "Montserrat", sans-serif;
-border: none;
+  margin-left: 40px;
+  font-family: "Montserrat", sans-serif;
+  border: none;
   border-radius: 10px;
   box-shadow: none;
   margin-bottom: 15px;
@@ -163,8 +163,8 @@ border: none;
   color: #676767;
 }
 #accordion .panel-body{
-border-radius: 12px;
-background: #fafafa;
+  border-radius: 12px;
+  background: #fafafa;
   padding: 10px 15px 15px;
   border: none;
   font-size: 15px;
@@ -173,115 +173,115 @@ background: #fafafa;
 }
 
 .error-title{
-	text-align: center;
 	font-weight: 600;
 }
 
 /* Button to return to the home page from the error page */
 .error-btn {
-display: block;
-width: 50%;
-text-align: center;
-padding: 8px 20px;
-border-radius: 24px;
-transition: 0.25s;
-cursor: pointer;
-font-weight: 600;
-background: white;
-color: black; 
-border: 2px solid #f1f1f1;   
-margin-top: 10px;
+  font-family: "Montserrat", sans-serif;
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 8px 20px;
+  border-radius: 24px;
+  transition: 0.25s;
+  cursor: pointer;
+  font-weight: 600;
+  background: white;
+  color: black; 
+  border: 2px solid #f1f1f1;   
+  margin-top: 10px;
 }
 
 .error-btn:hover {
-background: #3498db73;
-color: #fff;
-border: 2px solid #ffffff;   
-width: 50%;
-transition: 0.4s;
+  background: #3498db73;
+  color: #fff;
+  border: 2px solid #ffffff;   
+  width: 100%;
+  transition: 0.4s;
 }
 
 /* Accordion button */
 .a-btn {
-display: block;
-width: 100%;
-text-align: center;
-padding: 8px 20px;
-border-radius: 24px;
-transition: 0.25s;
-cursor: pointer;
-font-weight: 600;
-background: white;
-color: black; 
-border: 2px solid #f1f1f1;   
-margin-top: 10px;
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 8px 20px;
+  border-radius: 24px;
+  transition: 0.25s;
+  cursor: pointer;
+  font-weight: 600;
+  background: white;
+  color: black; 
+  border: 2px solid #f1f1f1;   
+  margin-top: 10px;
 }
 
 .a-btn:hover {
-background: #3498db73;
-color: #fff;
-border: 2px solid #ffffff;   
-width: 100%;
-transition: 0.4s;
+  background: #3498db73;
+  color: #fff;
+  border: 2px solid #ffffff;   
+  width: 100%;
+  transition: 0.4s;
 }
 
 .a-btn-disabled {
-display: block;
-width: 100%;
-text-align: center;
-padding: 8px 20px;
-border-radius: 24px;
-transition: 0.25s;
-font-weight: 600;
-background: #e9e9e9;
-color: rgb(145, 145, 145); 
-border: 2px solid #ffffff;   
-margin-top: 10px;
-opacity: 0.7;
-pointer-events:	none;
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 8px 20px;
+  border-radius: 24px;
+  transition: 0.25s;
+  font-weight: 600;
+  background: #e9e9e9;
+  color: rgb(145, 145, 145); 
+  border: 2px solid #ffffff;   
+  margin-top: 10px;
+  opacity: 0.7;
+  pointer-events:	none;
 }
 
 
 /* Rifiuta button */
 .rifiuta-btn {
-display: block;
-text-align: center;
-padding: 8px 20px;
-border-radius: 24px;
-transition: 0.25s;
-cursor: pointer;
-font-weight: 600;
-background: white;
-color: black; 
-border: 2px solid #f1f1f1;   
+  display: block;
+  text-align: center;
+  padding: 8px 20px;
+  border-radius: 24px;
+  transition: 0.25s;
+  cursor: pointer;
+  font-weight: 600;
+  background: white;
+  color: black; 
+  border: 2px solid #f1f1f1;   
 }
 
 .rifiuta-btn:hover {
-background: #dba634c9;
-color: #fff;
-border: 2px solid #ffffff;   
-transition: 0.4s;
+  background: #dba634c9;
+  color: #fff;
+  border: 2px solid #ffffff;   
+  transition: 0.4s;
 }
 
 /* Modifica button */
 .modifica-btn {
-display: block;
-text-align: center;
-padding: 8px 20px;
-border-radius: 24px;
-transition: 0.25s;
-cursor: pointer;
-font-weight: 600;
-background: white;
-color: black; 
-border: 2px solid #f1f1f1;   
+  display: block;
+  text-align: center;
+  padding: 8px 20px;
+  border-radius: 24px;
+  transition: 0.25s;
+  cursor: pointer;
+  font-weight: 600;
+  background: white;
+  color: black; 
+  border: 2px solid #f1f1f1;   
 }
 
 .modifica-btn:hover {
-background: #2ecc70be;
-color: #fff;
-border: 2px solid #ffffff;   
-transition: 0.4s;
+  background: #2ecc70be;
+  color: #fff;
+  border: 2px solid #ffffff;   
+  transition: 0.4s;
 }
 
 /* ModificaVoto page */
