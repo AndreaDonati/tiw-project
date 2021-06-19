@@ -23,7 +23,6 @@ import it.polimi.tiw.utils.ConnectionHandler;
 /**
  * Servlet Filter implementation class AuthorizationChecker
  */
-@WebFilter("/AuthorizationChecker")
 public class AuthorizationChecker implements Filter {
 	
     /**
