@@ -17,7 +17,6 @@ import it.polimi.tiw.beans.User;
 /**
  * Servlet Filter implementation class StudentChecker
  */
-@WebFilter("/StudentChecker")
 public class StudentChecker implements Filter {
 
     /**

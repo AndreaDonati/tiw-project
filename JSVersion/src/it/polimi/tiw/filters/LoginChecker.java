@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet Filter implementation class LoginChecker
  */
-@WebFilter("/LoginChecker")
 public class LoginChecker implements Filter {
 
     /**
