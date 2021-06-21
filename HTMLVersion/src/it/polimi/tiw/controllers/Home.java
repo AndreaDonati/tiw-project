@@ -25,25 +25,14 @@ import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.CorsoDAO;
 import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
+import it.polimi.tiw.utils.MyHttpServlet;
 
 @WebServlet("/Home")
-public class Home extends HttpServlet {
+public class Home extends MyHttpServlet {
 	private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
-	private Connection connection = null;
 
 	public Home() {
 		super();
-	}
-
-	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -104,14 +93,4 @@ public class Home extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-	
-	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
-			throws IOException{
-		String path = "/Templates/PaginaErrore.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("errore", message);
-		templateEngine.process(path, ctx, response.getWriter());
-	}
-
 }

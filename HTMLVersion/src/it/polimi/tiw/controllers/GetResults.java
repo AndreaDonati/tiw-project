@@ -26,15 +26,14 @@ import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
+import it.polimi.tiw.utils.MyHttpServlet;
 
 /**
  * Servlet implementation class GetResults
  */
 @WebServlet("/getResults")
-public class GetResults extends HttpServlet {
+public class GetResults extends MyHttpServlet {
 	private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
-	private Connection connection = null;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -42,16 +41,6 @@ public class GetResults extends HttpServlet {
     public GetResults() {
         super();
     }
-    
-	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		connection = ConnectionHandler.getConnection(getServletContext());
-	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -169,14 +158,4 @@ public class GetResults extends HttpServlet {
 		}
 		return false;
 	}
-	
-	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
-			throws IOException{
-		String path = "/Templates/PaginaErrore.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("errore", message);
-		templateEngine.process(path, ctx, response.getWriter());
-	}
-
 }

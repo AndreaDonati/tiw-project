@@ -8,8 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import it.polimi.tiw.utils.MyHttpServlet;
+
 @WebServlet("")
-public class RootServlet extends HttpServlet {
+public class RootServlet extends MyHttpServlet {
 	private static final long serialVersionUID = 1L;
 
     public RootServlet() {

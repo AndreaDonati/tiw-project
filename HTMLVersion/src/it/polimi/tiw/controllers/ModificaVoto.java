@@ -20,26 +20,15 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
+import it.polimi.tiw.utils.MyHttpServlet;
 
 @WebServlet("/modificaVoto")
-public class ModificaVoto extends HttpServlet {
+public class ModificaVoto extends MyHttpServlet {
 	private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
-	private Connection connection = null;
        
     public ModificaVoto() {
         super();
     }
-    
-	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		connection = ConnectionHandler.getConnection(getServletContext());
-	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
@@ -85,15 +74,6 @@ public class ModificaVoto extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
-	}
-	
-	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
-			throws IOException{
-		String path = "/Templates/PaginaErrore.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("errore", message);
-		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 }

@@ -20,21 +20,16 @@ import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsaminazioneDAO;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
+import it.polimi.tiw.utils.MyHttpServlet;
 
 
 @WebServlet("/inserisciVoti")
-public class InserisciVoti extends HttpServlet {
+public class InserisciVoti extends MyHttpServlet {
 	private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
-	private Connection connection = null;
 	
     public InserisciVoti() {
         super();
     }
-
-	public void init() throws ServletException {
-		connection = ConnectionHandler.getConnection(getServletContext());
-	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
@@ -78,14 +73,4 @@ public class InserisciVoti extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
-	
-	private void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, String message)
-			throws IOException{
-		String path = "/Templates/PaginaErrore.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("errore", message);
-		templateEngine.process(path, ctx, response.getWriter());
-	}
-
 }

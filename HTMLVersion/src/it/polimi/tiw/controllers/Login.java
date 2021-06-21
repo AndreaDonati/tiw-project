@@ -26,26 +26,15 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
+import it.polimi.tiw.utils.MyHttpServlet;
 
 @WebServlet("/Login")
 @MultipartConfig
-public class Login extends HttpServlet {
+public class Login extends MyHttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
 	public Login() {
 		super();
-	}
-
-	public void init() throws ServletException {
-		connection = ConnectionHandler.getConnection(getServletContext());
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 	}
 	
 	@Override
