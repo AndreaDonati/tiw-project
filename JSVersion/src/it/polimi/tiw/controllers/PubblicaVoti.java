@@ -32,8 +32,6 @@ public class PubblicaVoti extends HttpServlet {
 		
 		try {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
-			System.out.println(idEsame);
-
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.setContentType("application/json");

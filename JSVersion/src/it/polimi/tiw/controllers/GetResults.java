@@ -34,7 +34,6 @@ public class GetResults extends HttpServlet {
      */
     public GetResults() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
 	public void init() throws ServletException {
@@ -71,11 +70,7 @@ public class GetResults extends HttpServlet {
 		try {
 			risultati = this.getRisultatiEsamiByUserRole(user, idEsame);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			//TODO: modificare questo possibilmente
-			// l'eccezione indica un errore nella query al db
-			//response.sendError(400);
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore del cacchio "+e.toString());
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore");
 			return;
 		}
 		

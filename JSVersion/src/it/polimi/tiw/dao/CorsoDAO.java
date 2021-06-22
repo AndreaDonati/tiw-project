@@ -97,7 +97,6 @@ public class CorsoDAO {
 	
 	public List<Corso> getCorsiFromMatricolaProfessore(int matricola, String nomeCorso) throws SQLException {
 		List<Corso> corsi = new ArrayList<Corso>();
-		System.out.println(nomeCorso);
 		String query = "SELECT  id, nomeCorso, annoCorso "
 				+ "		FROM corso "
 				+ "		WHERE matricolaProfessore = ? "

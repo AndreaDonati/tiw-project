@@ -36,8 +36,6 @@ public class PubblicaVoti extends MyHttpServlet {
 		
 		try {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
-			System.out.println(idEsame);
-
 		} catch (Exception e) {
 			redirectToErrorPage(request,response,"Identificativo dell'esame errato.");
 			return;
@@ -67,8 +65,7 @@ public class PubblicaVoti extends MyHttpServlet {
 			redirectToErrorPage(request,response, e.toString());
 			return;
 		}
-
-
+		
 		// redireziono il professore alla pagina con i risultati dell'esame
 		String path = getServletContext().getContextPath() + "/getResults?idEsame=" + idEsame;
 		response.sendRedirect(path);

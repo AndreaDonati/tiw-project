@@ -70,10 +70,7 @@ public class ElencoEsami extends HttpServlet {
 		try {
 			corsi = this.getCorsoContentByUserRole(user, nomeCorso);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			//TODO: modificare questo possibilmente
-			// l'eccezione indica un errore nella query al db
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore");
 			return;
 		}
 
@@ -85,8 +82,7 @@ public class ElencoEsami extends HttpServlet {
 			// se l'eccezione non è data da un set vuoto di risultati viene loggata e viene
 			// mostrata una pagina di errore, altrimenti viene gestita internamente
 			if(e.getSQLState() != "S1000") {
-				e.printStackTrace();
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore");
 				return;
 			}
 		}
@@ -100,7 +96,6 @@ public class ElencoEsami extends HttpServlet {
 //		}
 		
 		String jsonObj = gson.toJson(corsi);
-		System.out.println(jsonObj);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
