@@ -90,17 +90,12 @@ public class ElencoEsami extends HttpServlet {
 		// Indirizza l'utente alla home e aggiunge corsi e corrispondenza corsi-esami ai parametri
 		Gson gson = new Gson();
 		
-//		Map<Corso,List<Esame>> map = new HashMap<Corso,List<Esame>>();
-//		for(int i = 0; i<corsi.size(); i++) {
-//			map.put(corsi.get(i), corsiEsami.get(i));
-//		}
-		
 		String jsonObj = gson.toJson(corsi);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-		//response.getWriter().write(jsonObj);
+
 		String jsonObj2 = gson.toJson(corsiEsami);
 		response.getWriter().write("["+jsonObj+","+jsonObj2+"]");
 
