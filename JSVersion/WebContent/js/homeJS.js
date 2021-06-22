@@ -4,19 +4,6 @@ myApp.toastOpacity = 0;
 myApp.toastOffset = 40;
 myApp.request = {};
 
-/* Animazione Navbar con scorrimento - jQuery */
-$(window).scroll(function(){
-    if($(document).scrollTop() > 80){
-      $('nav').addClass('animate');
-      $('h4').addClass('animate-side');
-      $('img').addClass('animate-img');
-    } else{
-      $('nav').removeClass('animate');
-      $('h4').removeClass('animate-side');
-      $('img').removeClass('animate-img');
-    }
-});
-
 /* Funzione per mandare richieste GET senza parametri */
 function makeGet(servletUrl, callback) {	
 	// Richiesta asincrona
@@ -48,6 +35,11 @@ function init() {
 		resetStorage(); // cancella variabili globali che non servono più
 		resetTable(); // cancella elementi che non servono più
 		makeGet("getCorsi", showCorsi); // richiesta per ritornare alla home
+	});
+
+	// Aggiungo listener al bottone logout
+	document.getElementById("logout-btn").addEventListener('click', () => {
+		delete myApp; // cancella tutte le variabili
 	});
 	
 	// Prendo l'elemento del loader
@@ -589,7 +581,7 @@ function rifiutaVoto(){
 	myFadeIn("rifiutaToast");
 	setTimeout(() => {
 		myFadeOut("rifiutaToast");
-	}, 1000);
+	}, 1500);
 	makeGetParameters("rifiutaVoti",showRisultati,["idEsame", myApp.idEsame]);
 }
 
@@ -597,7 +589,7 @@ function pubblicaVoti(){
 	myFadeIn("pubblicaToast");
 	setTimeout(() => {
 		myFadeOut("pubblicaToast");
-	}, 1000);
+	}, 1500);
 	makeGetParameters("pubblicaVoti",showRisultati,["idEsame", myApp.idEsame]);
 }
 
@@ -605,7 +597,7 @@ function verbalizzaVoti(){
 	myFadeIn("verbalizzaToast");
 	setTimeout(() => {
 		myFadeOut("verbalizzaToast");
-	}, 1000);
+	}, 1500);
 	makeGetParameters("verbalizzaVoti",showVerbale,["idEsame", myApp.idEsame]);
 }
 
@@ -685,3 +677,16 @@ function myFadeOut(element){
 	document.getElementById(element).style.opacity = myApp.toastOpacity;
 	document.getElementById(element).style.bottom = myApp.toastOffset + "px";
  }
+ 
+/* Animazione Navbar con scorrimento - jQuery */
+$(window).scroll(function(){
+    if($(document).scrollTop() > 80){
+      $('nav').addClass('animate');
+      $('h4').addClass('animate-side');
+      $('img').addClass('animate-img');
+    } else{
+      $('nav').removeClass('animate');
+      $('h4').removeClass('animate-side');
+      $('img').removeClass('animate-img');
+    }
+});
