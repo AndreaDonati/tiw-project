@@ -19,18 +19,9 @@ import it.polimi.tiw.beans.User;
 public class EsameDAO {
 	
 	private Connection con;
-	private Map<String,String> escaping;
 	
 	public EsameDAO(Connection connection) {
 		this.con = connection;
-		this.escaping = new HashMap<String, String>();
-		this.escaping.put("matricola", "utente.matricola");
-		this.escaping.put("cognome", "utente.cognome");
-		this.escaping.put("nome", "utente.nome");
-		this.escaping.put("email", "utente.email");
-		this.escaping.put("cdl", "utente.cdl");
-		this.escaping.put("voto", "esaminazione.voto");
-		this.escaping.put("stato", "esaminazione.stato");
 	}
 	
 	/**
@@ -176,10 +167,11 @@ public class EsameDAO {
 	 * @param idEsame
 	 * @return
 	 */
-	public List<Esaminazione> getRisultatiEsameProfessore(int idEsame, String ordine, String campo) throws SQLException {
+	public List<Esaminazione> getRisultatiEsameProfessore(int idEsame) throws SQLException {
 		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
 		
-		campo = escaping.get(campo);
+		String ordine = "ASC";
+		String campo = "utente.matricola";
 		
 		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, "
 				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato "

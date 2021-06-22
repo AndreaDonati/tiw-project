@@ -46,4 +46,54 @@ public class UserDAO {
 			}
 		}
 	}
+	
+	/**
+	 * Controlla se l'utente specificato è il docente dell'esame relativo all'idEsame
+	 * @param idEsame
+	 * @param matricola
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean controllaDocente(int idEsame, int matricola) throws SQLException {
+		String query = "SELECT  matricola"
+				+ "		FROM utente JOIN corso ON utente.matricola = corso.matricolaProfessore JOIN esame ON corso.id = esame.idCorso "
+				+ "		WHERE matricola = ? "
+				+ "		AND esame.id = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, matricola);
+			pstatement.setInt(2, idEsame);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) 
+					return false;
+				else {
+					return true;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Controlla se lo studente specificato è iscritto all'esame relativo ad idEsame
+	 * @param idEsame
+	 * @param matricola
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean controllaStudente(int idEsame, int matricola) throws SQLException {
+		String query = "SELECT idStudente"
+				+ "		FROM esaminazione "
+				+ "		WHERE idStudente = ? "
+				+ "		AND idEsame = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, matricola);
+			pstatement.setInt(2, idEsame);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) 
+					return false;
+				else {
+					return true;
+				}
+			}
+		}
+	}
 }

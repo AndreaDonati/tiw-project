@@ -19,6 +19,7 @@ import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsameDAO;
+import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
 /**
@@ -69,8 +70,8 @@ public class GetResults extends HttpServlet {
 		List<Esaminazione> risultati;
 		try {
 			risultati = this.getRisultatiEsamiByUserRole(user, idEsame);
-		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore");
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString().replace("java.lang.Exception: ",""));
 			return;
 		}
 		
@@ -131,14 +132,21 @@ public class GetResults extends HttpServlet {
 		return false;
 	}
 
-	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame) throws SQLException{
+	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame) throws Exception{
 		List<Esaminazione> risultati = null;
 		
 		EsameDAO esameDao = new EsameDAO(connection);
-		if(user.getRuolo().equals("teacher"))
-			risultati = esameDao.getRisultatiEsameProfessore(idEsame,"ASC","matricola");
-		else if(user.getRuolo().equals("student"))
-			risultati = esameDao.getRisultatiEsameStudente(user.getMatricola(), idEsame);
+		UserDAO userDAO = new UserDAO(connection);
+		if(user.getRuolo().equals("teacher")) {
+			if(userDAO.controllaDocente(idEsame, user.getMatricola()))
+				risultati = esameDao.getRisultatiEsameProfessore(idEsame);
+			else 
+				throw new Exception("L'esame ricercato non esiste o non sei il docente di questo esame.");
+		}else if(user.getRuolo().equals("student"))
+			if(userDAO.controllaStudente(idEsame, user.getMatricola()))
+				risultati = esameDao.getRisultatiEsameStudente(user.getMatricola(), idEsame);
+			else
+				throw new Exception("L'esame ricercato non esiste o non sei iscritto a questo esame.");
 		return risultati;
 	}
 

@@ -50,19 +50,6 @@ public class VerbalizzaVoti extends HttpServlet {
 			return;
 		}
 		
-		// controllo se ci sono voti con stato "pubblicato"
-		// se non ci sono allora non ci sono voti da verbalizzare e reindirizzo
-		// il professore alla stessa pagina
-		EsameDAO esameDao = new EsameDAO(connection);
-		List<Esaminazione> risultati = null;
-		try {
-			risultati = esameDao.getRisultatiEsameProfessore(idEsame, "ASC", "matricola");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.toString());
-			return;
-		}
-
 		// cambio lo stato dei voti relativi all'esame specificato in 'verbalizzato'
 		// e creo un nuovo verbale relativo all'esame
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
@@ -87,7 +74,6 @@ public class VerbalizzaVoti extends HttpServlet {
 		Gson gson = new Gson();
 		
 		String jsonObj = gson.toJson(verbale);
-		System.out.println("verbale: "+jsonObj);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
