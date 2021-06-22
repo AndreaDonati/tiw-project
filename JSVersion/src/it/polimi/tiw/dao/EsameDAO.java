@@ -33,10 +33,6 @@ public class EsameDAO {
 		this.escaping.put("stato", "esaminazione.stato");
 	}
 	
-//	-----------------------------------------------------------------------------------
-//	NOTA: CAMBIARE I TIPI DI RITORNO DELLE FUNZIONI CON I TIPI CORRISPONDENTI NECESSARI
-//	-----------------------------------------------------------------------------------
-	
 	/**
 	 * Ritorna una lista di esami (compreso idEsame - necessario per le seguenti interazioni)
 	 * corrispondenti ad un corso.
@@ -169,10 +165,7 @@ public class EsameDAO {
 				}
 			}
 		}
-		for (Esaminazione esaminazione : risultati) {
-			System.out.println(esaminazione.getStudente().getNome()+" "+ esaminazione.getStudente().getCognome()+" - "
-					+ esaminazione.getVoto() + " - " + esaminazione.getStato());
-		}
+		
 		return risultati;
 	}
 	
@@ -191,7 +184,7 @@ public class EsameDAO {
 		String query = "SELECT  esaminazione.id, utente.matricola, utente.nome, utente.cognome, utente.email, utente.cdl, "
 				+ "		esaminazione.idEsame, esame.dataAppello, esaminazione.idVerbale, esaminazione.voto, esaminazione.stato "
 				+ "		FROM esaminazione, utente, esame, corso "
-				+ "		WHERE esame.id = ? " // cosi' o con questa dopo le altre condizioni
+				+ "		WHERE esame.id = ? " 
 				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
 				+ "		AND esame.idCorso = corso.id"
 				+ "		ORDER BY "+campo+" "+ordine;
@@ -224,41 +217,6 @@ public class EsameDAO {
 					
 					risultati.add(risultato);					
 				}
-			}
-		}
-		// se il campo su cui ordinare � "voto", allora devo usare un ordinamento personalizzato
-		// ORDINE ASC : <vuoto>, assente, rimandato, riprovato, 18, 19, ... 30 e Lode
-		// ORDINE DESC: 30 e Lode, ..., 19, 18, riprovato, rimandato, assente, <vuoto>
-		// ORDINE ATTUALE ASC: <vuoto>, 18, 19, ... , assente, rimandato, riprovato 
-		// ORDINE ATTUALE DESC: riprovato, rimandato, assente, ..., 19, 18, <vuoto>
-		if(campo.equals("esaminazione.voto")) {
-			// ASC -> scorro la lista dall'inizio e metto in coda i numeri
-			if(ordine.equals("ASC")) {
-				List<Esaminazione> risultatiOrdinati = new ArrayList<Esaminazione>();
-				for (Esaminazione esaminazione : risultati) {
-					if(esaminazione.getVoto() != null && esaminazione.getVoto().matches(".*\\d.*")) {
-						risultatiOrdinati.add(esaminazione);
-					}
-				}
-				risultati.removeAll(risultatiOrdinati);
-				risultati.addAll(risultatiOrdinati);	
-			} else {
-				// DESC -> scorro la lista dalla fine e metto in testa i numeri
-				// prendo l'iteratore per scorrerla al contrario
-				
-				ListIterator li = risultati.listIterator(risultati.size());
-				List<Esaminazione> risultatiOrdinati = new ArrayList<Esaminazione>();
-				// Scorro la lista al contrario
-				while(li.hasPrevious()) {
-					Esaminazione esaminazione = (Esaminazione) li.previous();
-					if(esaminazione.getVoto() != null && esaminazione.getVoto().matches(".*\\d.*")) {
-						risultatiOrdinati.add(esaminazione);
-					}
-				}
-				risultati.removeAll(risultatiOrdinati);
-				Collections.reverse(risultatiOrdinati);
-				risultatiOrdinati.addAll(risultati);
-				risultati = risultatiOrdinati;	
 			}
 		}
 		
