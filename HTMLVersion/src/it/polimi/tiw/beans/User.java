@@ -1,5 +1,7 @@
 package it.polimi.tiw.beans;
 
+import java.util.Base64;
+
 public class User {
 
 	private int matricola;
@@ -63,7 +65,7 @@ public class User {
 	}
 
 	public void setImage(String image) {
-		this.image = "./img/"+image;
+		this.image = "data:image/jpeg;base64,"+image;
 	}
 
 }
