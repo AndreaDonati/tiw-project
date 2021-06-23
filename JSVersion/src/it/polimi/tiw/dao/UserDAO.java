@@ -1,10 +1,12 @@
 package it.polimi.tiw.dao;
 
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import it.polimi.tiw.beans.User;
@@ -40,7 +42,12 @@ public class UserDAO {
 					user.setNome(result.getString("nome"));
 					user.setCognome(result.getString("cognome"));
 					user.setRuolo(result.getString("role"));
-					user.setImage(result.getString("image"));
+					// prendo l'immagine dal db come blob, prendo il suo encoding in base64 e lo
+					// setto come immagine dell'utente
+					Blob imageBlob = result.getBlob("image");
+					byte[] imageBytes = imageBlob.getBytes(1, (int) imageBlob.length());
+					String encodedImage = Base64.getEncoder().encodeToString(imageBytes);
+					user.setImage(encodedImage);
 					return user;
 				}
 			}

@@ -29,6 +29,30 @@ function makeGetParameters(servletUrl, callback, paramNameValue) {
 	myApp.request.send();
 }
 
+function makePost(servletUrl, callback) {
+	myApp.loaderDiv.style.display = "block";
+
+	myApp.request = new XMLHttpRequest(); // Nuova richiesta
+	let url = servletUrl; // URL della Servlet
+
+	myApp.request.onreadystatechange = function (req) {callback(req.target);};; // Chiamata al callback
+	myApp.request.open("POST", url); // Richiesta POST all'URL
+	myApp.request.send(); // Mando la richiesta
+}
+
+function makePostForm(formName, servletUrl, callback) {
+	myApp.loaderDiv.style.display = "block";
+
+	myApp.request = new XMLHttpRequest(); // Nuova richiesta
+	let url = servletUrl; // URL della Servlet
+	let formElement = document.querySelector("#"+formName+""); // Prendo parametri dal form
+	let formData = new FormData(formElement);
+
+	myApp.request.onreadystatechange = function (req) {callback(req.target);};; // Chiamata al callback
+	myApp.request.open("POST", url); // Richiesta POST all'URL
+	myApp.request.send(formData); // Mando dati del form
+}
+
 function init() {	
 	// Aggiungo listener al bottone che rimanda alla home
 	document.getElementById("navbar-btn").addEventListener('click', () => {
@@ -48,7 +72,8 @@ function init() {
 	// Start del loader 
 	myApp.loaderDiv.style.display = "block";
 
-	makeGet("getInfoUtente", showInfo); // Chiamata alla servlet che restituisce i dati della sessione
+	//makeGet("getInfoUtente", showInfo); // Chiamata alla servlet che restituisce i dati della sessione
+	makePost("getInfoUtente", showInfo); // Chiamata alla servlet che restituisce i dati della sessione
 	makeGet("getCorsi", showCorsi); // Dati dei corsi disponibili
 }
 
@@ -501,16 +526,7 @@ function formatDateAndTime(date){
 }
 
 function inserimentoMultiplo(){
-	myApp.loaderDiv.style.display = "block";
-
-	myApp.request = new XMLHttpRequest(); // Nuova richiesta
-	let url = 'inserimentoMultiplo'; // URL della Servlet
-	let formElement = document.querySelector("#modalForm"); // Prendo parametri dal form
-	let formData = new FormData(formElement);
-
-	myApp.request.onreadystatechange = function (req) {showRisultati(req.target);};; // Chiamata al callback
-	myApp.request.open("POST", url); // Richiesta POST all'URL
-	myApp.request.send(formData); // Mando dati del form);
+	makePostForm("modalForm","inserimentoMultiplo",showRisultati);
 }
 
 
@@ -555,16 +571,7 @@ function modificaVoti(matricola, voto) {
 }
 
 function inserisciVoti(){
-	myApp.loaderDiv.style.display = "block";
-
-	myApp.request = new XMLHttpRequest(); // Nuova richiesta
-	let url = 'inserisciVoti'; // URL della Servlet
-	let formElement = document.querySelector("#modificaForm"); // Prendo parametri dal form
-	let formData = new FormData(formElement);
-
-	myApp.request.onreadystatechange = function (req) {showRisultati(req.target);};; // Chiamata al callback
-	myApp.request.open("POST", url); // Richiesta POST all'URL
-	myApp.request.send(formData); // Mando dati del form
+	makePostForm("modificaForm", "inserisciVoti", showRisultati);
 
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
 	document.getElementById("titleText").textContent = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
