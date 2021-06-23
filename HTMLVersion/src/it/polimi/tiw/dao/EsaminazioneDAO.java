@@ -20,6 +20,7 @@ public class EsaminazioneDAO {
 	 * @param matricolaStudente
 	 * @param idEsame
 	 * @param voto
+	 * @param matricolaProfessore
 	 * @return
 	 * @throws SQLException
 	 */

@@ -14,7 +14,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsaminazioneDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
@@ -43,10 +45,10 @@ public class InserimentoMultiplo extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		// recupero parametri dalla richiesta
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
 		int idEsame;
-		
+		// recupero parametri dalla richiesta
 		try {
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
 		} catch (Exception e) {
@@ -83,7 +85,7 @@ public class InserimentoMultiplo extends HttpServlet {
 		for (String matricola : matricoleVoti.keySet()) {
 			// inserisco voto nel db
 			try {
-				esaminazioneDAO.insertGrade(Integer.parseInt(matricola), idEsame, matricoleVoti.get(matricola));
+				esaminazioneDAO.insertGrade(Integer.parseInt(matricola), idEsame, matricoleVoti.get(matricola), user.getMatricola());
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 				return;

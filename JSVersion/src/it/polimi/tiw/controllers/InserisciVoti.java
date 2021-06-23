@@ -3,6 +3,7 @@ package it.polimi.tiw.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -12,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsaminazioneDAO;
@@ -34,19 +36,22 @@ public class InserisciVoti extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
 		int matricolaStudente;
 		int idEsame;
 		String voto;
+		String[] voti = {"", "assente", "rimandato", "riprovato", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30 e Lode"};
 		
 		try {
 			matricolaStudente = Integer.parseInt(request.getParameter("matricola"));
 			idEsame = Integer.parseInt(request.getParameter("idEsame"));
-			voto = request.getParameter("voto");			
+			voto = request.getParameter("voto");
+			
+			if(!Arrays.asList(voti).contains(voto))
+				throw new Exception();
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write(e.toString());
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Parameri errati");
 			return;
 		}
 		
@@ -55,7 +60,7 @@ public class InserisciVoti extends HttpServlet {
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
 		
 		try {
-			esaminazioneDAO.insertGrade(matricolaStudente, idEsame, voto);
+			esaminazioneDAO.insertGrade(matricolaStudente, idEsame, voto, user.getMatricola());
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
