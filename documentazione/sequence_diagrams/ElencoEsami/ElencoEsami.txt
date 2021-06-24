@@ -1,0 +1,31 @@
+title Event: ElencoEsami
+
+participant Client
+participant ElencoEsami
+
+participant EsameDAO
+participant CorsoDAO
+
+participant ctx
+participant TemplateEngine
+
+Client->ElencoEsami: nomeCorso
+ElencoEsami->ElencoEsami: session.getAttribute(user)
+ElencoEsami->ElencoEsami: getCorsoContentByUserRole(user, nomeCorso)
+alt user == teacher
+ElencoEsami->CorsoDAO: getCorsiFromMatricolaProfessore(user.matricola, nomeCorso)
+else user == student
+ElencoEsami->CorsoDAO: getCorsiFromMatricolaStudente(user.matricola), nomeCorso)
+end
+CorsoDAO->ElencoEsami: corsi
+alt  user == teacher
+ElencoEsami->ElencoEsami: getEsamiFromCorsoByUserRole(corsi,user)
+ElencoEsami->EsameDAO: getEsamiFromCorso(corso.id)
+else user == student
+ElencoEsami->EsameDAO: getEsamiFromStudenteCorso(user.matricola, corso.id)
+end 
+alt user == teacher
+EsameDAO->ElencoEsami: esami
+ElencoEsami->ctx: setVariable(corsi)
+ElencoEsami->ctx: setVariable(esami)
+ElencoEsami->TemplateEngine: process(ctx,"ElencoEsami.html")

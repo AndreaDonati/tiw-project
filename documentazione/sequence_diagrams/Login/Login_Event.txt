@@ -1,0 +1,28 @@
+title Event: Login
+
+participant Client
+participant LoginChecker
+participant Login
+
+participant UserDAO
+
+participant Home
+
+Client->LoginChecker: GET "/"
+LoginChecker->LoginChecker: check if user is already logged in
+
+alt user is already logged in (there is a valid session)
+LoginChecker->Home: GoToHomePage Event
+else user is not logged in (there is no valid session)
+LoginChecker->Client: sendRedirect("/index.html")
+Client->Login: Login(username, password)
+Login->UserDAO: checkCredentials(username, password)
+alt invalid credentials
+UserDAO->Login: invalid credentials
+Login->Client: invalid credentials
+else valid credentials
+UserDAO->Login: valid credentials
+Login->Client: sendRedirect("/Home")
+Client->Home: GoToHomePage
+end 
+end
