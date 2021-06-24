@@ -1,0 +1,21 @@
+title Inseirmento multiplo
+participant Client
+participant InserimentoMultiplo
+participant EsaminazioneDAO
+
+note left of Client: Si suppone che il client\nsia un professore e che\nstia visualizzando i risultati\ndi un appello
+activate Client
+Client->Client: pressione del bottone "Inserimento Multiplo"
+Client->Client: selezione dei voti nella pagina modale
+Client->Client: pressione del bottone "Invia"
+Client->InserimentoMultiplo: POST: idEsame, parameterMap\n(con associazione matricolaStudente - voto) 
+activate InserimentoMultiplo
+InserimentoMultiplo->InserimentoMultiplo: session.getAttribute(user)
+InserimentoMultiplo->InserimentoMultiplo: processParameterMap()
+loop per ogni coppia matricolaStudente - voto
+activate EsaminazioneDAO
+InserimentoMultiplo->EsaminazioneDAO: insertGrade(matricolaStudente, idEsame, voto, user.matricola)
+deactivate EsaminazioneDAO
+end 
+InserimentoMultiplo->Client: sendRedirect("/getResults?idEsame=" + idEsame)
+deactivate InserimentoMultiplo
