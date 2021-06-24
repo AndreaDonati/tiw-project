@@ -1,0 +1,12 @@
+title Event: Logout
+
+participant Client
+participant Logout
+
+activate Client
+Client->Logout: 
+activate Logout
+Logout->Logout: session.invalidate()
+Logout->Client: sendRedirect("/index.html")
+deactivate Logout
+deactivate Client
