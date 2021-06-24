@@ -20,19 +20,23 @@ public class EsaminazioneDAO {
 	 * @param matricolaStudente
 	 * @param idEsame
 	 * @param voto
+	 * @param matricolaProfessore
 	 * @return
 	 * @throws SQLException
 	 */
-	public void insertGrade(int matricolaStudente, int idEsame, String voto) throws SQLException {
+	public void insertGrade(int matricolaStudente, int idEsame, String voto, int matricolaProfessore) throws SQLException {
 		String query = "UPDATE esaminazione"
+				+ "		JOIN esame ON esaminazione.idEsame = esame.id JOIN corso ON esame.idCorso = corso.id"
 				+"		SET voto = ?, stato = 'inserito'"
 				+"		WHERE idStudente = ?"
-				+"		AND idEsame = ?";
+				+"		AND idEsame = ?"
+				+ "		AND corso.matricolaProfessore = ?";
 		
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, voto);
 			pstatement.setInt(2, matricolaStudente);
 			pstatement.setInt(3, idEsame);
+			pstatement.setInt(4, matricolaProfessore);
 			pstatement.executeUpdate();
 		}
 	}
@@ -71,22 +75,6 @@ public class EsaminazioneDAO {
 				result.next();
 				idVerbale = result.getInt("MAX(id)") + 1;
 			}
-		}
-		
-		// creo un nuovo verbale
-		query = "INSERT INTO verbale (id, dataVerbale)"
-				+"		VALUES ( ? , ? )";
-		
-		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			Calendar cal = Calendar.getInstance();
-			Date today = cal.getTime();
-
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = dateFormat.format(today);
-
-			pstatement.setInt(1, idVerbale);
-			pstatement.setString(2, date);
-			pstatement.execute();
 		}
 		
 		con.setAutoCommit(false); // No commit per statement

@@ -70,6 +70,9 @@ public class GetResults extends HttpServlet {
 		List<Esaminazione> risultati;
 		try {
 			risultati = this.getRisultatiEsamiByUserRole(user, idEsame);
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			return;
 		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString().replace("java.lang.Exception: ",""));
 			return;
@@ -110,28 +113,6 @@ public class GetResults extends HttpServlet {
 								  ", \"esame\": "+ jsonEsame+"}");
 	}
 
-	private boolean areVerbalizzabili(List<Esaminazione> risultati) {
-		if(risultati == null || risultati.get(0).getId() == -1)
-			return false;
-		
-		for (Esaminazione esaminazione : risultati) {
-			if(esaminazione.isVerbalizzabile())
-				return true;
-		}
-		return false;
-	}
-
-	private boolean arePubblicabili(List<Esaminazione> risultati) {
-		if(risultati == null || risultati.get(0).getId() == -1)
-			return false;
-		
-		for (Esaminazione esaminazione : risultati) {
-			if(esaminazione.isPubblicabile())
-				return true;
-		}
-		return false;
-	}
-
 	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame) throws Exception{
 		List<Esaminazione> risultati = null;
 		
@@ -157,5 +138,28 @@ public class GetResults extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
+	
+	private boolean areVerbalizzabili(List<Esaminazione> risultati) {
+		if(risultati == null || risultati.get(0).getId() == -1)
+			return false;
+		
+		for (Esaminazione esaminazione : risultati) {
+			if(esaminazione.isVerbalizzabile())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean arePubblicabili(List<Esaminazione> risultati) {
+		if(risultati == null || risultati.get(0).getId() == -1)
+			return false;
+		
+		for (Esaminazione esaminazione : risultati) {
+			if(esaminazione.isPubblicabile())
+				return true;
+		}
+		return false;
+	}
+
 
 }

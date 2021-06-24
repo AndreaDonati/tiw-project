@@ -175,7 +175,7 @@ public class EsameDAO {
 	 * @param idEsame
 	 * @return
 	 */
-	public List<Esaminazione> getRisultatiEsameProfessore(int idEsame, String ordine, String campo, int matricola) throws SQLException {
+	public List<Esaminazione> getRisultatiEsameProfessore(int idEsame, String ordine, String campo) throws SQLException {
 		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
 		
 		campo = escaping.get(campo);
@@ -194,11 +194,9 @@ public class EsameDAO {
 				+ "		WHERE esame.id = ? "
 				+ "		AND esaminazione.idEsame = esame.id AND esaminazione.idStudente = utente.matricola "
 				+ "		AND esame.idCorso = corso.id"
-				+ "		AND corso.matricolaProfessore = ?"
 				+ "		ORDER BY "+campo+" "+ordine;
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, idEsame);
-			pstatement.setInt(2, matricola);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
 					Esaminazione risultato = new Esaminazione();

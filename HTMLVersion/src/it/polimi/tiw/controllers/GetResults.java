@@ -119,7 +119,7 @@ public class GetResults extends MyHttpServlet {
 		UserDAO userDAO = new UserDAO(connection);
 		if(user.getRuolo().equals("teacher")) {
 			if(userDAO.controllaDocente(idEsame, user.getMatricola()))
-				risultati = esameDao.getRisultatiEsameProfessore(idEsame, ordine, campo, user.getMatricola());
+				risultati = esameDao.getRisultatiEsameProfessore(idEsame, ordine, campo);
 			else 
 				throw new Exception("L'esame ricercato non esiste o non sei il docente di questo esame.");
 		}else if(user.getRuolo().equals("student"))
