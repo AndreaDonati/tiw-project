@@ -47,7 +47,6 @@ public class RifiutaVoti extends HttpServlet {
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
 		try {
 			esaminazioneDAO.rejectGrade(idEsame, matricola);
-			System.out.println("voto rifiutato");
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			return;
