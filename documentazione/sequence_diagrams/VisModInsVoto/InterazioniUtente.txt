@@ -1,0 +1,87 @@
+title Interazioni Utente dopo Selezione Appello
+participant Client
+participant GetResults
+participant EsameDAO
+participant ModificaVoto
+participant UserDAO
+participant InserisciVoti
+participant RifiutaVoti
+participant EsaminazioneDAO
+
+participant ctx
+participant TemplateEngine
+
+activate Client
+
+Client->GetResults: idEsame, ordine, campo
+activate GetResults
+GetResults->GetResults: session.getAttribute(user)
+GetResults->GetResults: getRisultatiEsamiByUserRole(user, nomeCorso)
+alt user == teacher
+GetResults->EsameDAO: getRisultatiEsameProfessore(idEsame, ordine, campo)
+activate EsameDAO
+else user == student
+GetResults->EsameDAO: getRisultatiEsameStudente(user.matricola, idEsame)
+end
+EsameDAO->GetResults: risultati_esami
+deactivate EsameDAO
+
+GetResults->GetResults: aggiornaOrdine(ordine)
+
+GetResults->ctx: setVariable(risultati_esami)
+activate ctx
+GetResults->ctx: setVariable(campo)
+GetResults->ctx: setVariable(ordine)
+GetResults->TemplateEngine: process(ctx,"RisultatiEsame.html")
+activate TemplateEngine
+deactivate GetResults
+TemplateEngine->Client: RisultatiEsame.html
+deactivate TemplateEngine
+deactivate ctx
+
+
+
+
+alt user == teacher
+
+Client->Client: pressione del bottone "Modifica"
+Client->ModificaVoto: idEsame, matricolaStudente
+activate ModificaVoto
+ModificaVoto->ModificaVoto: session.getAttribute(user)
+ModificaVoto->UserDAO: getUsersFromMatricolaAndExam(matricolaStudente, idEsame)
+activate UserDAO
+UserDAO->ModificaVoto: info_studente
+deactivate UserDAO
+ModificaVoto->ctx: setVariable(info_studente)
+activate ctx
+ModificaVoto->ctx: setVariable(idEsame)
+ModificaVoto->TemplateEngine: process(ctx,"ModificaVoto.html")
+activate TemplateEngine
+deactivate ModificaVoto
+TemplateEngine->Client: ModificaVoto.html
+deactivate ctx
+deactivate TemplateEngine
+
+Client->Client: selezione del nuovo voto
+Client->Client: pressione del tasto "Applica"
+
+Client->InserisciVoti: matricolaStudente, idEsame, voto
+activate InserisciVoti
+InserisciVoti->InserisciVoti: session.getAttribute(user)
+activate EsaminazioneDAO
+InserisciVoti->EsaminazioneDAO: insertGrade(matricolaStudente, idEsame, voto)
+deactivate EsaminazioneDAO
+InserisciVoti->Client: sendRedirect("getResults?idEsame=" + idEsame)
+deactivate InserisciVoti
+else user == student
+Client->Client: pressione del bottone "Rifiuta"
+Client->RifiutaVoti: idEsame
+activate RifiutaVoti
+RifiutaVoti->RifiutaVoti: session.getAttribute(user)
+activate EsaminazioneDAO
+RifiutaVoti->EsaminazioneDAO: rejectGrade(idEsame, user.matricola)
+deactivate EsaminazioneDAO
+RifiutaVoti->Client: sendRedirect("getResults?idEsame=" + idEsame)
+deactivate RifiutaVoti
+end
+deactivate Client
