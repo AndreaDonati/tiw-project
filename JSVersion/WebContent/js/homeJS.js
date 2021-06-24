@@ -53,6 +53,17 @@ function makePostForm(formName, servletUrl, callback) {
 	myApp.request.send(formData); // Mando dati del form
 }
 
+function setLabelListeners(){
+	// prendo tutti gli elementi (tolgo l'ultimo dato che è vuoto)
+	let labels = document.getElementById("headTabellaProf").getElementsByTagName("th");
+
+	for (let i = 0; i < labels.length - 1; i++) {
+		labels[i].firstChild.addEventListener('click', () => {
+			ordinaTabella(i);
+		});			
+	}
+}
+
 function init() {	
 	// Aggiungo listener al bottone che rimanda alla home
 	document.getElementById("navbar-btn").addEventListener('click', () => {
@@ -66,6 +77,18 @@ function init() {
 		delete myApp; // cancella tutte le variabili
 	});
 	
+	// e aggiungo listener ai bottoni pubblica e verbalizza
+	document.getElementById("bottonePubblica").addEventListener('click', () => {
+		pubblicaVoti();
+	});
+	document.getElementById("bottoneVerbalizza").addEventListener('click', () => {
+		verbalizzaVoti();
+	});
+
+	// aggiungo listener anche alle label della tabella
+	setLabelListeners();
+
+
 	// Prendo l'elemento del loader
 	myApp.loaderDiv = document.getElementById("loader");	
 
@@ -376,17 +399,6 @@ function riempiTabellaRisultati(risultati, arePubblicabili, areVerbalizzabili, r
 	arePubblicabili ? $("#bottonePubblica").removeAttr("disabled") : $("#bottonePubblica").attr("disabled", "disabled"); 
 	areVerbalizzabili ? $("#bottoneVerbalizza").removeAttr("disabled") : $("#bottoneVerbalizza").attr("disabled", "disabled"); 
 
-	// e aggiungo listener ai bottoni pubblica e verbalizza
-	document.getElementById("bottonePubblica").addEventListener('click', () => {
-		pubblicaVoti();
-	});
-	document.getElementById("bottoneVerbalizza").addEventListener('click', () => {
-		verbalizzaVoti();
-	});
-
-	// aggiungo listener anche alle label della tabella
-	setLabelListeners();
-
 	if(risultati.length >= 1 && risultati[0].id != -1){
 		document.getElementById("headTabellaProf").style.display = "";
 		document.getElementById("tabellaVotiProf").innerHTML ="";
@@ -435,17 +447,6 @@ function riempiTabellaRisultati(risultati, arePubblicabili, areVerbalizzabili, r
 		document.getElementById("bottonePubblica").style.display = "none";
 		document.getElementById("bottoneVerbalizza").style.display = "none";
 		document.getElementById("bottoneInserimento").style.display = "none";
-	}
-}
-
-function setLabelListeners(){
-	// prendo tutti gli elementi (tolgo l'ultimo dato che è vuoto)
-	let labels = document.getElementById("headTabellaProf").getElementsByTagName("th");
-
-	for (let i = 0; i < labels.length - 1; i++) {
-		labels[i].firstChild.addEventListener('click', () => {
-			ordinaTabella(i);
-		});			
 	}
 }
 
