@@ -87,7 +87,7 @@ public class InserimentoMultiplo extends HttpServlet {
 			try {
 				esaminazioneDAO.insertGrade(Integer.parseInt(matricola), idEsame, matricoleVoti.get(matricola), user.getMatricola());
 			} catch (SQLException e) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore");
 				return;
 			}
 		}
