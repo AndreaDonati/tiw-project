@@ -1,0 +1,42 @@
+title PubblicaVoti e VerbalizzaVoti
+participant Client
+participant PubblicaVoti
+participant VerbalizzaVoti
+participant EsaminazioneDAO
+participant VerbaleDAO
+
+participant ctx
+participant TemplateEngine
+
+note left of Client: Si suppone che il client\nsia un professore e che\nstia visualizzando i risultati\ndi un appello
+activate Client
+Client->Client: pressione del bottone "Pubblica"
+Client->PubblicaVoti: idEsame
+activate PubblicaVoti
+activate EsaminazioneDAO
+PubblicaVoti->EsaminazioneDAO: publishGrades(idEsame)
+deactivate EsaminazioneDAO
+PubblicaVoti->Client: sendRedirect("/getResults?idEsame=" + idEsame)
+deactivate PubblicaVoti
+Client->Client: pressione del bottone "Verbalizza"
+Client->VerbalizzaVoti: idEsame
+activate VerbalizzaVoti
+VerbalizzaVoti->EsaminazioneDAO: recordGrades(idEsame)
+activate EsaminazioneDAO
+EsaminazioneDAO->EsaminazioneDAO: crea nuovo verbale
+EsaminazioneDAO->EsaminazioneDAO: cambia rifiutato in rimandato
+EsaminazioneDAO->EsaminazioneDAO: aggiorna stato dei voti
+deactivate EsaminazioneDAO
+VerbalizzaVoti->VerbaleDAO: getVerbale(idVerbale)
+activate VerbaleDAO
+VerbaleDAO->VerbalizzaVoti: verbale
+deactivate VerbaleDAO
+activate ctx
+VerbalizzaVoti->ctx: setVariable(verbale)
+deactivate ctx
+VerbalizzaVoti->TemplateEngine: process(ctx,"Verbale.html")
+activate TemplateEngine
+deactivate VerbalizzaVoti
+TemplateEngine->Client: Verbale.html
+deactivate TemplateEngine
+deactivate Client
