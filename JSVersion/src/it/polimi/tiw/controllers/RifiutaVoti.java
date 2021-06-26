@@ -42,7 +42,6 @@ public class RifiutaVoti extends HttpServlet {
 			return;
 		}
 		
-		
 		// cambio lo stato dell'esame specificato in 'rifiutato' per l'utente preso dalla sessione corrente
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
 		try {
@@ -52,15 +51,22 @@ public class RifiutaVoti extends HttpServlet {
 			return;
 		}
 		
-		// redireziono lo user alla visualizzazione del suo voto per l'esame (che sarà cambiata)
+		// redireziono lo user alla visualizzazione del suo voto per l'esame (che sarï¿½ cambiata)
 		String path = getServletContext().getContextPath() + "/getResults?idEsame="+idEsame;
 		response.sendRedirect(path);
 	}
 
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		doGet(request, response);
+	}
+	
+	public void destroy() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

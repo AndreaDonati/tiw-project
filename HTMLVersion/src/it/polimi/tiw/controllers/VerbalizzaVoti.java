@@ -1,23 +1,17 @@
 package it.polimi.tiw.controllers;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-
 import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.beans.Verbale;
@@ -25,7 +19,6 @@ import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.dao.EsaminazioneDAO;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.dao.VerbaleDAO;
-import it.polimi.tiw.utils.ConnectionHandler;
 import it.polimi.tiw.utils.MyHttpServlet;
 
 @WebServlet("/verbalizzaVoti")
@@ -108,6 +101,10 @@ public class VerbalizzaVoti extends MyHttpServlet {
 		ctx.setVariable("verbale", verbale);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
 
 	private boolean checkVerbalizzabili(List<Esaminazione> risultati) {
 		if(risultati == null)
@@ -120,7 +117,4 @@ public class VerbalizzaVoti extends MyHttpServlet {
 		return false;
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-	}
 }

@@ -7,12 +7,9 @@ public class Corso {
 	private String nome;
 	private User professore;
 	private int anno;
-	
 	private List<Esame> esami;
 	
-	public Corso() {
-		// Default constructor
-	}
+	public Corso() {}
 	
 	public void setId(int id) {
 		this.id = id;

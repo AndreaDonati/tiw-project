@@ -20,7 +20,6 @@ import it.polimi.tiw.utils.ConnectionHandler;
 public class PubblicaVoti extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-
 	
     public PubblicaVoti() {
         super();
@@ -59,7 +58,6 @@ public class PubblicaVoti extends HttpServlet {
 			return;
 		}
 		
-		
 		// cambio lo stato dei voti relativi all'esame specificato in 'pubblicato'
 		EsaminazioneDAO esaminazioneDAO = new EsaminazioneDAO(connection);
 		
@@ -70,7 +68,6 @@ public class PubblicaVoti extends HttpServlet {
 			return;
 		}
 
-
 		// redireziono il professore alla pagina con i risultati dell'esame
 		String path = getServletContext().getContextPath() + "/getResults?idEsame=" + idEsame;
 		response.sendRedirect(path);
@@ -80,4 +77,11 @@ public class PubblicaVoti extends HttpServlet {
 		doGet(request, response);
 	}
 
+	public void destroy() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

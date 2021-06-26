@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Iterator;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +14,6 @@ import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsaminazioneDAO;
-import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
 
@@ -76,4 +72,11 @@ public class InserisciVoti extends HttpServlet {
 		doGet(request, response);
 	}
 
+	public void destroy() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

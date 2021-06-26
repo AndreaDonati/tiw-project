@@ -1,31 +1,21 @@
 package it.polimi.tiw.controllers;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-
-import it.polimi.tiw.beans.Corso;
-import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.EsameDAO;
 import it.polimi.tiw.dao.UserDAO;
-import it.polimi.tiw.utils.ConnectionHandler;
 import it.polimi.tiw.utils.MyHttpServlet;
 
 /**
@@ -35,16 +25,10 @@ import it.polimi.tiw.utils.MyHttpServlet;
 public class GetResults extends MyHttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public GetResults() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		//recupero lo user dalla sessione
@@ -111,6 +95,10 @@ public class GetResults extends MyHttpServlet {
 		ctx.setVariable("ordine", ordine.equals("ASC") ? "DESC" : "ASC");
 		templateEngine.process(path, ctx, response.getWriter());		
 	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
 
 	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame, String ordine, String campo) throws Exception{
 		List<Esaminazione> risultati = null;
@@ -128,13 +116,6 @@ public class GetResults extends MyHttpServlet {
 			else
 				throw new Exception("L'esame ricercato non esiste o non sei iscritto a questo esame.");
 		return risultati;
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
 	}
 	
 	private boolean areVerbalizzabili(List<Esaminazione> risultati) {

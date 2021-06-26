@@ -15,19 +15,12 @@ import javax.servlet.http.HttpSession;
 public class RootServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public RootServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// controllo se lo user è già loggato o deve ancora loggarsi
+		// controllo se lo user ï¿½ giï¿½ loggato o deve ancora loggarsi
 		String homepath = request.getServletContext().getContextPath() + "/Home.html";
 		HttpSession session = request.getSession();
 		if (!(session.isNew() || session.getAttribute("user") == null)) {
@@ -40,11 +33,7 @@ public class RootServlet extends HttpServlet {
 		response.sendRedirect(path);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

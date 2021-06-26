@@ -1,16 +1,12 @@
 package it.polimi.tiw.beans;
 
-import java.util.Date;
-
 public class Esame {
 
 	private int id;
 	private Corso corso;
 	private String dataAppello;
 	
-	public Esame() {
-		// Default constructor
-	}
+	public Esame() {}
 	
 	public int getId() {
 		return id;

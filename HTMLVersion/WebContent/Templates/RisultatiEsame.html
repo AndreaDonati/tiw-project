@@ -75,10 +75,10 @@
 											<tbody th:remove="all-but-first">
 												<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
 													<td th:text="${risultati[i].studente.matricola}">000000</td>
-													<td th:text="${risultati[i].studente.cognome}">Bravo</td>
-													<td th:text="${risultati[i].studente.nome}">Studente</td>
+													<td th:text="${risultati[i].studente.cognome}">Gregorio</td>
+													<td th:text="${risultati[i].studente.nome}">Galletti</td>
 													<td th:utext="${#strings.substringBefore(risultati[i].studente.mail,'@') + '<br/>'+'@'+#strings.substringAfter(risultati[i].studente.mail,'@') }">studente.bravo@mail.polimi.it</td>
-													<td th:text="${risultati[i].studente.cdl}">Corso degli Studenti Bravi</td>
+													<td th:text="${risultati[i].studente.cdl}">Corso standard</td>
 													<td th:text="${risultati[i].voto}">30 e Lode</td>
 													<td th:text="${risultati[i].stato}">Verbalizzato</td>
 													<td th:if="${risultati[i].isModificabile()}"><a class="modifica-btn" th:href="@{/modificaVoto(idEsame=${risultati[i].esame.id},matricolaStudente=${risultati[i].studente.matricola})}">Modifica</a></td>
@@ -98,11 +98,11 @@
 											</thead>
 											<tbody th:remove="all-but-first">
 												<tr th:each="i : ${#numbers.sequence( 0, risultati.size-1)}">
-													<td class="my-td" th:text="${risultati[i].studente.matricola}">Studente Bravo</td>
-													<td class="my-td" th:text="${risultati[i].studente.nome + ' ' + risultati[i].studente.cognome}">Studente Bravo</td>
+													<td class="my-td" th:text="${risultati[i].studente.matricola}">matricola</td>
+													<td class="my-td" th:text="${risultati[i].studente.nome + ' ' + risultati[i].studente.cognome}">Gregorio Galletti</td>
 													<td class="my-td" th:text="${risultati[i].esame.dataAppello}">09-06-1996</td>
 													<td class="my-td" th:text="${risultati[i].voto}">30 e Lode</td>
-													<td class="my-td" th:if="${#strings.equals(risultati[i].stato,'rifiutato')}">Il voto è stato rifiutato.</td>
+													<td class="my-td" th:if="${#strings.equals(risultati[i].stato,'rifiutato')}">Il voto &#232; stato rifiutato.</td>
 													<td th:if="${risultati[i].voto != null and risultati[i].isRifiutabile()}"><a class="rifiuta-btn" th:href="@{/rifiutaVoti(idEsame=${risultati[i].esame.id})}">Rifiuta</a></td>
 												</tr>
 											</tbody>

@@ -41,9 +41,6 @@ public class Login extends HttpServlet {
 		String usrn = null;
 		String pwd = null;
 		try {
-			//TODO esape
-//			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
-//			pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
 			usrn = request.getParameter("username");
 			pwd = request.getParameter("pwd");
 			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {

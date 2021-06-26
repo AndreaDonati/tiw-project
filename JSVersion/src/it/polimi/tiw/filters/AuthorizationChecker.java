@@ -1,7 +1,6 @@
 package it.polimi.tiw.filters;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,23 +23,10 @@ import it.polimi.tiw.utils.ConnectionHandler;
  */
 public class AuthorizationChecker implements Filter {
 	
-    /**
-     * Default constructor. 
-     */
-    public AuthorizationChecker() {
-        // TODO Auto-generated constructor stub
-    }
+    public AuthorizationChecker() {}
 
-	/**
-	 * @see Filter#destroy()
-	 */
-	public void destroy() {
-		// TODO Auto-generated method stub
-	}
+	public void destroy() {}
 
-	/**
-	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
-	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {		
 		// casting necessario delle variabili
 		HttpServletRequest req = (HttpServletRequest) request;
@@ -73,7 +58,7 @@ public class AuthorizationChecker implements Filter {
 		
 		// cerco se tra i corsiInsegnati c'e'  il corso a cui 
 		// corrisponde l'esame di cui sta modificando il voto
-		//TODO: se questo parametro non è nella richiesta il server ritorna una pagina di errore, ok o non ok?
+		//TODO: se questo parametro non ï¿½ nella richiesta il server ritorna una pagina di errore, ok o non ok?
 		int idCorso = Integer.parseInt(req.getParameter("idCorso"));
 		if(!checkIdCorsoInCorsiInsegnati(idCorso, corsiInsegnati)) {
 			System.out.println("Professore non autorizzato.");
@@ -93,11 +78,8 @@ public class AuthorizationChecker implements Filter {
 		return false;
 	}
 
-	/**
-	 * @see Filter#init(FilterConfig)
-	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -57,9 +57,9 @@
 				</thead>
 				<tbody th:remove="all-but-first">
 					<tr th:each="i : ${#numbers.sequence( 0, verbale.risultati.size-1)}">
-						<td th:text="${verbale.risultati[i].studente.matricola}">Studente Bravo</td>
-						<td th:text="${verbale.risultati[i].studente.cognome}">Bravo</td>
-						<td th:text="${verbale.risultati[i].studente.nome}">Studente</td>
+						<td th:text="${verbale.risultati[i].studente.matricola}">matricola</td>
+						<td th:text="${verbale.risultati[i].studente.cognome}">Galletti</td>
+						<td th:text="${verbale.risultati[i].studente.nome}">Gregorio</td>
 						<td th:text="${verbale.risultati[i].voto}">30 e Lode</td>
 					</tr>
 				</tbody>

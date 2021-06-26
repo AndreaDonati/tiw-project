@@ -11,9 +11,7 @@ public class Esaminazione {
 	private boolean modificabile;
 	private boolean rifiutabile;
 	
-	public Esaminazione() {
-		// Default constructor
-	}
+	public Esaminazione() {}
 	
 	public void setId(int id) {
 		this.id = id;

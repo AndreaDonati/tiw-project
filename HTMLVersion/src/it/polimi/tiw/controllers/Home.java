@@ -1,30 +1,20 @@
 package it.polimi.tiw.controllers;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-
 import it.polimi.tiw.beans.Corso;
-import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.CorsoDAO;
-import it.polimi.tiw.dao.EsameDAO;
-import it.polimi.tiw.utils.ConnectionHandler;
 import it.polimi.tiw.utils.MyHttpServlet;
 
 @WebServlet("/Home")
@@ -68,6 +58,11 @@ public class Home extends MyHttpServlet {
 		ctx.setVariable("allCorsi", corsi);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
+	}
 
 	// interroga il db per ottenere la lista di corsi insegnati o frequentati dall'utente
 	private List<Corso> getCorsiContentByUserRole(User user) throws SQLException{
@@ -81,16 +76,4 @@ public class Home extends MyHttpServlet {
 		return corsi;
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doGet(request, response);
-	}
-
-	public void destroy() {
-		try {
-			ConnectionHandler.closeConnection(connection);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
 }

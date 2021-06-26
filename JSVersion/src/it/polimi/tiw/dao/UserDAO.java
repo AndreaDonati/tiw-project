@@ -5,10 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
-
 import it.polimi.tiw.beans.User;
 
 public class UserDAO {

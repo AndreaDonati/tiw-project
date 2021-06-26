@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
 
-import it.polimi.tiw.beans.Corso;
 import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.Esaminazione;
 import it.polimi.tiw.beans.User;
@@ -30,9 +29,6 @@ public class GetResults extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public GetResults() {
         super();
     }
@@ -41,9 +37,6 @@ public class GetResults extends HttpServlet {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		//recupero lo user dalla sessione
@@ -112,6 +105,10 @@ public class GetResults extends HttpServlet {
 								  ", \"verbalizzabili\": "+areVerbalizzabili(risultati)+
 								  ", \"esame\": "+ jsonEsame+"}");
 	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
 
 	private List<Esaminazione> getRisultatiEsamiByUserRole(User user, int idEsame) throws Exception{
 		List<Esaminazione> risultati = null;
@@ -129,14 +126,6 @@ public class GetResults extends HttpServlet {
 			else
 				throw new Exception("L'esame ricercato non esiste o non sei iscritto a questo esame.");
 		return risultati;
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
 	}
 	
 	private boolean areVerbalizzabili(List<Esaminazione> risultati) {
@@ -161,5 +150,12 @@ public class GetResults extends HttpServlet {
 		return false;
 	}
 
+	public void destroy() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

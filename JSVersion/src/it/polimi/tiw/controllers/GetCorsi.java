@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,22 +27,14 @@ public class GetCorsi extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public GetCorsi() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
     
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
@@ -78,11 +69,7 @@ public class GetCorsi extends HttpServlet {
 		response.getWriter().write(jsonObj);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
@@ -97,6 +84,14 @@ public class GetCorsi extends HttpServlet {
 		else if(user.getRuolo().equals("student"))
 			corsi = corsoDao.getCorsiFromMatricolaStudente(user.getMatricola());
 		return corsi;
+	}
+	
+	public void destroy() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

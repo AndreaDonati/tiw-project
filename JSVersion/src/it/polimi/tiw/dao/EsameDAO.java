@@ -5,12 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
 import it.polimi.tiw.beans.Corso;
 import it.polimi.tiw.beans.Esame;
 import it.polimi.tiw.beans.Esaminazione;
@@ -29,6 +24,7 @@ public class EsameDAO {
 	 * corrispondenti ad un corso.
 	 * @param idCorso
 	 * @return
+	 * @throws SQLException
 	 */
 	public List<Esame> getEsamiFromCorso(int idCorso) throws SQLException {
 		List<Esame> esami = new ArrayList<Esame>();
@@ -56,9 +52,10 @@ public class EsameDAO {
 	/**
 	 * Ritorna una lista di esami (compreso idEsame - necessario per le seguenti interazioni)
 	 * di un corso, fatti da uno studente (matricola)
-	 * @param matricola: matricola dello STUDENTE
+	 * @param matricola: matricola dello studente
 	 * @param idCorso
 	 * @return
+	 * @throws SQLException
 	 */
 	public List<Esame> getEsamiFromStudenteCorso(int matricola, int idCorso) throws SQLException {
 		List<Esame> esami = new ArrayList<Esame>();
@@ -89,9 +86,10 @@ public class EsameDAO {
 
 	/**
 	 * Ritorna i risultati di uno specifico esame (idEsame) di uno specifico studente (matricola)
-	 * @param matricola: matricola dello STUDENTE
+	 * @param matricola: matricola dello studente
 	 * @param idEsame
 	 * @return
+	 * @throws SQLException
 	 */
 	public List<Esaminazione> getRisultatiEsameStudente(int matricola, int idEsame) throws SQLException {
 		List<Esaminazione> risultati = new ArrayList<Esaminazione>();
@@ -161,9 +159,8 @@ public class EsameDAO {
 	}
 	
 	/**
-	 * Ritorna tutti i risultati di uno specifico esame (idEsame) di un corso insegnato da uno
-	 * specifico professore (matricola)
-	 * @param matricola: matricola del PROFESSORE
+	 * Ritorna tutti i risultati di uno specifico esame (idEsame) ordinati in maniera crescente 
+	 * rispetto alle matricole degli studenti iscritti
 	 * @param idEsame
 	 * @return
 	 */

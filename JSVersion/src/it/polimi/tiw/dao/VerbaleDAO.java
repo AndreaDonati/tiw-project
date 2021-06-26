@@ -22,6 +22,7 @@ public class VerbaleDAO {
 	 * Ritorna tutti i dati relativi ad un verbale
 	 * @param idVerbale
 	 * @return Verbale
+	 * @throws SQLException
 	 */
 	public Verbale getVerbale(int idVerbale) throws SQLException {
 		Verbale verbale = new Verbale();

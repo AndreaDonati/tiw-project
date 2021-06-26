@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.polimi.tiw.beans.Corso;
-import it.polimi.tiw.beans.User;
 
 public class CorsoDAO {
 	private Connection con;
@@ -18,10 +17,10 @@ public class CorsoDAO {
 	}
 	
 	/**
-	 * Ritorna una lista di corsi corrispondenti ai corsi degli esami a cui lo studente con matricola specificata
-	 * � iscritto.
+	 * Ritorna una lista di corsi a cui lo studente è iscritto
 	 * @param matricola
 	 * @return
+	 * @throws SQLException
 	 */
 	public List<Corso> getCorsiFromMatricolaStudente(int matricola) throws SQLException{
 		List<Corso> corsi = new ArrayList<Corso>();
@@ -46,6 +45,13 @@ public class CorsoDAO {
 		return corsi;
 	}
 	
+	/**
+	 * Ritorna una lista di corsi differenziati per anno relativi al corso specificato a cui lo studente è iscritto
+	 * @param matricola
+	 * @param nomeCorso
+	 * @return
+	 * @throws SQLException
+	 */
 	public List<Corso> getCorsiFromMatricolaStudente(int matricola, String nomeCorso) throws SQLException{
 		List<Corso> corsi = new ArrayList<Corso>();
 		
@@ -73,6 +79,12 @@ public class CorsoDAO {
 		return corsi;
 	}
 	
+	/**
+	 * Ritorna una lista di corsi di cui il professore è docente
+	 * @param matricola
+	 * @return
+	 * @throws SQLException
+	 */
 	public List<Corso> getCorsiFromMatricolaProfessore(int matricola) throws SQLException {
 		List<Corso> corsi = new ArrayList<Corso>();
 		
@@ -95,6 +107,13 @@ public class CorsoDAO {
 		return corsi;
 	}
 	
+	/**
+	 * Ritorna una lista di corsi differenziati per anno relativi al corso specificato di cui il professore è docente
+	 * @param matricola
+	 * @param nomeCorso
+	 * @return
+	 * @throws SQLException
+	 */
 	public List<Corso> getCorsiFromMatricolaProfessore(int matricola, String nomeCorso) throws SQLException {
 		List<Corso> corsi = new ArrayList<Corso>();
 		String query = "SELECT  id, nomeCorso, annoCorso "

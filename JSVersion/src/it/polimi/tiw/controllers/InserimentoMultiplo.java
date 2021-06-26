@@ -29,21 +29,14 @@ public class InserimentoMultiplo extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public InserimentoMultiplo() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 	
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
@@ -97,11 +90,15 @@ public class InserimentoMultiplo extends HttpServlet {
 		response.sendRedirect(path);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		doGet(request, response);
 	}
 
+	public void destroy() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
