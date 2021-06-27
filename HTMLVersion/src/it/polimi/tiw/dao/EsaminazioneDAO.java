@@ -30,6 +30,7 @@ public class EsaminazioneDAO {
 				+"		SET voto = ?, stato = 'inserito'"
 				+"		WHERE idStudente = ?"
 				+"		AND idEsame = ?"
+				+"		AND (stato = 'non inserito' OR stato = 'inserito') "
 				+ "		AND corso.matricolaProfessore = ?";
 		
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
