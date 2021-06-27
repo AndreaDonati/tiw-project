@@ -67,6 +67,7 @@ function setLabelListeners(){
 function init() {	
 	// Aggiungo listener al bottone che rimanda alla home
 	document.getElementById("navbar-btn").addEventListener('click', () => {
+		window.document.title = "Home";
 		resetStorage(); // cancella variabili globali che non servono più
 		resetTable(); // cancella elementi che non servono più
 		makeGet("getCorsi", showCorsi); // richiesta per ritornare alla home
@@ -121,7 +122,7 @@ function showCorsi(request) {
 	myApp.loaderDiv.style.display = "none";
 
 	document.getElementById("content").innerHTML = ""; // reset della pagina
-	document.getElementById("titleText").textContent = "I tuoi corsi"; // aggiorno jumbotron
+	document.getElementById("titleText").textContent = "Corsi"; // aggiorno jumbotron
 
     // Se 400 (Bad request) o 401 (Unauthorized) loggo l'errore
 	if (request.readyState == 4 && (request.status == 400 || request.status == 401)) 
@@ -143,7 +144,6 @@ function showCorsi(request) {
 					myApp.nomeCorso = event.target.getAttribute("nome");
 					document.getElementById("accordion").innerHTML = "";
 					getEsami(); // richiesta alla servlet per il corso selezionato
-
 				});
 				txt.appendChild(btn);
 
@@ -153,28 +153,12 @@ function showCorsi(request) {
 			}
 			document.getElementById("content").appendChild(accordionDiv);
 		} else{
-			//TODO controllare se funzioan
+			// Non ci sono corsi disponibili
 			let div = createDiv("", "no-results-msg", ""); // div per no results
 			let txt = document.createElement("h4");
 			myApp.ruoloUtente == "teacher" ? txt.textContent = "Non sei il docente di nessun corso al momento!" : txt.textContent = "Non sei iscritto a nessun corso al momento!";
 			div.append(txt);
 			document.getElementById("content").appendChild(div);
-			/*
-			//TODO modificare
-			if(utente.ruolo == "teacher"){
-				$("#content").append(
-					'<div id="no-results-msg" class="jumbotron animate__animated animate__backInRight animate__fast">'+
-					'	<h4>Non sei il docente di nessun corso al momento</h4>'+
-					'</div>'
-				);
-				} else{
-					$("#content").append(
-					'<div id="no-results-msg" class="jumbotron animate__animated animate__backInRight animate__fast">'+
-					'	<h4>Non sei iscritto a nessun corso al momento</h4>'+
-					'</div>'
-					);
-				}
-			*/
 		}
 	}
 }
@@ -184,9 +168,11 @@ function getEsami() {
 
 	document.getElementById("content").innerHTML = ""; // reset della pagina
 
-	document.getElementById("titleText").textContent = "I tuoi esami"; // aggiorno jumbotron e back button (torna a HOME)	
+	window.document.title = "Appelli";
+	document.getElementById("titleText").textContent = "Appelli"; // aggiorno jumbotron e back button (torna a HOME)	
 	let btn = createBtn("a", "", ""); // creo back button
 	btn.addEventListener('click', () => {
+		window.document.title = "Home";
 		makeGet("getCorsi", showCorsi); // richiesta alla servlet per tutti i corsi, callback per re-render
 	});
 	btn.appendChild(createIcon("fas fa-chevron-left back-btn")); // append dell'icona al bottone
@@ -261,9 +247,11 @@ function getRisultati() {
 	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
 	document.getElementById("sottotitolo").innerHTML = ""; // aggiorno jumbotron e back button (torna a HOME)	
 	
-	document.getElementById("titleText").textContent = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
+	myApp.ruoloUtente == "teacher" ? window.document.title = "Iscritti" : window.document.title = "Esito";
+	myApp.ruoloUtente == "teacher" ? document.getElementById("titleText").textContent = "Iscritti" : document.getElementById("titleText").textContent = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
 	let btn = createBtn("a", "", ""); // creo back button
 	btn.addEventListener('click', () => {
+		window.document.title = "Appelli";
 		resetTable();
 		$("#checkAll").prop("checked", false);
 		getEsami(); // richiesta alla servlet per tutti i corsi, callback per re-render
@@ -532,10 +520,11 @@ function inserimentoMultiplo(){
 
 
 function modificaVoti(matricola, voto) {
+	window.document.title = "Modifica Voto";
 	document.getElementById("titleText").textContent = "Modifica Voto"; // aggiorno jumbotron e back button (torna a RISULTATI)	
 	let btn = createBtn("a", "", ""); // creo back button
 	btn.addEventListener('click', () => {
-		//resetTable();
+		myApp.ruoloUtente == "teacher" ? window.document.title = "Iscritti" : window.document.title = "Esito";
 		getRisultati(); // richiesta alla servlet per tutti i corsi, callback per re-render
 	});
 	btn.appendChild(createIcon("fas fa-chevron-left back-btn")); // append dell'icona al bottone
@@ -574,10 +563,12 @@ function modificaVoti(matricola, voto) {
 function inserisciVoti(){
 	makePostForm("modificaForm", "inserisciVoti", showRisultati);
 
-	// aggiorno anche il titolo della pagina e il back button (torna a ESAMI)
-	document.getElementById("titleText").textContent = "Esito"; // aggiorno jumbotron e back button (torna a HOME)	
+	// aggiorno anche il titolo della pagina e il back button (torna a RISULTATI)
+	myApp.ruoloUtente == "teacher" ? window.document.title = "Iscritti" : window.document.title = "Esito";
+	myApp.ruoloUtente == "teacher" ? document.getElementById("titleText").textContent = "Iscritti" : document.getElementById("titleText").textContent = "Esito"; // aggiorno jumbotron e back button
 	let btn = createBtn("a", "", ""); // creo back button
 	btn.addEventListener('click', () => {
+		window.document.title = "Appelli";
 		resetTable();
 		getEsami(); // richiesta alla servlet per tutti i corsi, callback per re-render
 	});
@@ -625,9 +616,11 @@ function showVerbale(request){
 		let verbale = JSON.parse(request.responseText);
 		
 		// setto il titolo con anche il bottone per tornare indietro (alla pagina Esito)
+		window.document.title = "Verbale";
 		document.getElementById("titleText").textContent = "Verbale n° " + verbale.id; // aggiorno jumbotron e back button (torna a HOME)	
 		let btn = createBtn("a", "", ""); // creo back button
 		btn.addEventListener('click', () => {
+			myApp.ruoloUtente == "teacher" ? window.document.title = "Iscritti" : window.document.title = "Esito";
 			getRisultati(); // richiesta alla servlet per tutti i corsi, callback per re-render
 		});
 		btn.appendChild(createIcon("fas fa-chevron-left back-btn")); // append dell'icona al bottone
