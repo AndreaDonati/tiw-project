@@ -11,7 +11,7 @@
   </context-param>
   <context-param>
     <param-name>dbPassword</param-name>
-    <param-value>myPassword</param-value>
+    <param-value>G1org1na</param-value>
   </context-param>
   <context-param>
     <param-name>dbDriver</param-name>
@@ -31,13 +31,5 @@
     <url-pattern>/rifiutaVoti</url-pattern>
     <url-pattern>/ElencoEsami</url-pattern>
     <url-pattern>/inserimentoMultiplo</url-pattern>
- </filter-mapping> 
- <filter> 
-  <filter-name>StudentChecker</filter-name> 
-      <filter-class>it.polimi.tiw.filters.StudentChecker</filter-class> 
- </filter> 
- <filter-mapping> 
-    <filter-name>StudentChecker</filter-name> 
-    <url-pattern>/rifiutaVoti</url-pattern>
  </filter-mapping> 
 </web-app>

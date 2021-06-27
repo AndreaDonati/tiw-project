@@ -1,0 +1,62 @@
+title Login
+
+participant Client
+participant LoginChecker
+participant Login
+
+participant UserDAO
+
+participant Home
+participant CorsoDAO
+
+participant ctx
+participant TemplateEngine
+
+activate Client
+Client->LoginChecker: GET "/"
+activate LoginChecker
+LoginChecker->LoginChecker: controlla se l'utente è già loggato
+
+alt l'utente è già loggato (esiste una sessione valida)
+LoginChecker->Home:
+deactivate LoginChecker
+activate Home
+Home->Home: session.getAttribute(user)
+Home->CorsoDAO: getCorsi(user.getMatricola())
+activate CorsoDAO
+CorsoDAO->Home: corsi
+deactivate CorsoDAO
+activate ctx
+Home->ctx: setVariable(corsi)
+deactivate ctx
+Home->TemplateEngine: process(ctx, "Home.html")
+activate TemplateEngine
+deactivate Home
+TemplateEngine->Client: Home.html
+deactivate TemplateEngine
+deactivate Client
+else l'utente non è loggato (nessuna sessione valida)
+activate Client
+activate LoginChecker
+LoginChecker->Client: sendRedirect("/index.html")
+deactivate LoginChecker
+Client->Login: Login(username, password)
+activate Login
+Login->UserDAO: checkCredentials(username, password)
+activate UserDAO
+alt invalid credentials
+UserDAO->Login: invalid credentials
+deactivate UserDAO
+Login->Client: invalid credentials
+deactivate Login
+else valid credentials
+activate Login
+activate UserDAO
+UserDAO->Login: valid credentials
+deactivate UserDAO
+Login->Client: sendRedirect("/Home")
+deactivate Login
+end 
+end
+alt
+deactivate Client

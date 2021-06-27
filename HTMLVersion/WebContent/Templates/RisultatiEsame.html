@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Esito</title>
+<title th:text="${#strings.equals(session.user.ruolo,'teacher') ? 'Iscritti' : 'Esito'}">Esito</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -11,8 +11,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-<!-- PROVA -->
-
   
 <nav class="navbar navbar-default navbar-fixed-top">
   <div class="navbar-header">
@@ -39,7 +37,7 @@
       <div class="jumbotron" id="title">
         <h3>
           <a th:href="@{/ElencoEsami(nomeCorso=${risultati[0].corso.nome})}"><i class="fas fa-chevron-left back-btn"></i></a>
-          Esito
+          <span th:text="${#strings.equals(session.user.ruolo,'teacher') ? 'Iscritti' : 'Esito'}"></span>
         </h3>
       </div>
       
