@@ -470,8 +470,6 @@ function showRisultatiStudente(risultati){
 			else
 				row.appendChild(createCell(risultati[i].voto)); // cella voto 
 
-			row.appendChild(createCell(risultati[i].stato)); // cella stato
-
 			let rifButton;
 			if(risultati[i].rifiutabile){	
 				rifButton = createBtn("a", "rifiuta-btn", "Rifiuta"); // creazione bottone rifiuta
