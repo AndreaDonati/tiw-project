@@ -18,17 +18,8 @@ public class RootServlet extends MyHttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// controllo se lo user � gi� loggato o deve ancora loggarsi
 		String homepath = request.getServletContext().getContextPath() + "/Home";
-		HttpSession session = request.getSession();
-		if (!(session.isNew() || session.getAttribute("user") == null)) {
-			response.sendRedirect(homepath);
-			return;
-		}
-		
-		// default redirect
-		String path = request.getServletContext().getContextPath() + "/index.html";
-		response.sendRedirect(path);
+		response.sendRedirect(homepath);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
