@@ -23,6 +23,7 @@
  </filter> 
  <filter-mapping> 
     <filter-name>LoginChecker</filter-name> 
+    <url-pattern>/</url-pattern>
     <url-pattern>/Home</url-pattern> 
     <url-pattern>/getResults</url-pattern>
     <url-pattern>/inserisciVoti</url-pattern>
