@@ -27,15 +27,15 @@ CREATE TABLE `esaminazione` (
   `idStudente` int NOT NULL,
   `idEsame` int NOT NULL,
   `idVerbale` int DEFAULT NULL,
-  `voto` varchar(45) DEFAULT NULL,
+  `voto` enum('','assente','rimandato','riprovato','18','19','20','21','22','23','24','25','26','27','28','29','30','30 e lode') NOT NULL DEFAULT '',
   `stato` enum('non inserito','inserito','pubblicato','rifiutato','verbalizzato') NOT NULL DEFAULT 'non inserito',
   PRIMARY KEY (`id`),
   KEY `fk_idStudente_idx` (`idStudente`),
   KEY `fk_idEsame_idx` (`idEsame`),
   KEY `fk_idVerbale_idx` (`idVerbale`),
-  CONSTRAINT `fk_idEsame` FOREIGN KEY (`idEsame`) REFERENCES `esame` (`id`),
-  CONSTRAINT `fk_idStudente` FOREIGN KEY (`idStudente`) REFERENCES `utente` (`matricola`),
-  CONSTRAINT `fk_idVerbale` FOREIGN KEY (`idVerbale`) REFERENCES `verbale` (`id`)
+  CONSTRAINT `fk_idEsame` FOREIGN KEY (`idEsame`) REFERENCES `esame` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_idStudente` FOREIGN KEY (`idStudente`) REFERENCES `utente` (`matricola`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_idVerbale` FOREIGN KEY (`idVerbale`) REFERENCES `verbale` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=20007 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -45,7 +45,7 @@ CREATE TABLE `esaminazione` (
 
 LOCK TABLES `esaminazione` WRITE;
 /*!40000 ALTER TABLE `esaminazione` DISABLE KEYS */;
-INSERT INTO `esaminazione` VALUES (10000,800001,3000,3000,'rimandato','verbalizzato'),(10001,800001,3001,3001,'30','verbalizzato'),(20000,800001,2005,2005,'rimandato','verbalizzato'),(20001,800001,2006,2006,'rimandato','verbalizzato'),(20002,800001,2010,NULL,NULL,'non inserito'),(20003,800002,2010,NULL,NULL,'non inserito'),(20004,800003,2010,NULL,NULL,'non inserito'),(20005,800004,2010,NULL,NULL,'non inserito'),(20006,800005,2010,NULL,NULL,'non inserito');
+INSERT INTO `esaminazione` VALUES (10000,800001,3000,3000,'rimandato','verbalizzato'),(10001,800001,3001,3001,'30','verbalizzato'),(20000,800001,2005,2005,'rimandato','verbalizzato'),(20001,800001,2006,2006,'rimandato','verbalizzato'),(20002,800001,2010,NULL,'','non inserito'),(20003,800002,2010,NULL,'','non inserito'),(20004,800003,2010,NULL,'','non inserito'),(20005,800004,2010,NULL,'','non inserito'),(20006,800005,2010,NULL,'','non inserito');
 /*!40000 ALTER TABLE `esaminazione` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -58,4 +58,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-07 15:08:34
+-- Dump completed on 2021-06-27 13:23:57
