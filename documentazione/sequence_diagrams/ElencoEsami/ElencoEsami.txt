@@ -8,24 +8,35 @@ participant CorsoDAO
 
 participant ctx
 participant TemplateEngine
-
+activate Client
 Client->ElencoEsami: nomeCorso
+activate ElencoEsami
 ElencoEsami->ElencoEsami: session.getAttribute(user)
 ElencoEsami->ElencoEsami: getCorsoContentByUserRole(user, nomeCorso)
 alt user == teacher
 ElencoEsami->CorsoDAO: getCorsiFromMatricolaProfessore(user.matricola, nomeCorso)
+activate CorsoDAO
 else user == student
 ElencoEsami->CorsoDAO: getCorsiFromMatricolaStudente(user.matricola), nomeCorso)
 end
 CorsoDAO->ElencoEsami: corsi
+deactivate CorsoDAO
 alt  user == teacher
 ElencoEsami->ElencoEsami: getEsamiFromCorsoByUserRole(corsi,user)
 ElencoEsami->EsameDAO: getEsamiFromCorso(corso.id)
+activate EsameDAO
 else user == student
 ElencoEsami->EsameDAO: getEsamiFromStudenteCorso(user.matricola, corso.id)
 end 
-alt user == teacher
 EsameDAO->ElencoEsami: esami
+deactivate EsameDAO
 ElencoEsami->ctx: setVariable(corsi)
+activate ctx
 ElencoEsami->ctx: setVariable(esami)
+deactivate ctx
 ElencoEsami->TemplateEngine: process(ctx,"ElencoEsami.html")
+activate TemplateEngine
+deactivate ElencoEsami
+TemplateEngine->Client: ElencoEsami.html
+deactivate TemplateEngine
+deactivate Client
