@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.utils.MyHttpServlet;
 
-@WebServlet("")
+@WebServlet("/*")
 public class RootServlet extends MyHttpServlet {
 	private static final long serialVersionUID = 1L;
 
