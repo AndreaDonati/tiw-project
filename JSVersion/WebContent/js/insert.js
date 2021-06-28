@@ -24,7 +24,6 @@ function selezionaTutto(){
 
 /* Gestione della selezione di una singola checkbox */
 function selezionaRiga(id){
-    console.log(id.length)
     let index = parseInt(id.charAt(id.length-1));
 
     if($("#check"+index).prop("checked")) {// se non è gia nella lista
