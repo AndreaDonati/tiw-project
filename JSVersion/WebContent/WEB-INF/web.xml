@@ -32,5 +32,7 @@
     <url-pattern>/rifiutaVoti</url-pattern>
     <url-pattern>/ElencoEsami</url-pattern>
     <url-pattern>/inserimentoMultiplo</url-pattern>
+    <url-pattern>/getCorsi</url-pattern> 
+    <url-pattern>/getInfoUtente</url-pattern> 
  </filter-mapping> 
 </web-app>
